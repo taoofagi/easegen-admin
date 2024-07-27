@@ -13,5 +13,7 @@ public interface ErrorCodeConstants {
     ErrorCode DIGITAL_HUMANS_NOT_EXISTS = new ErrorCode(1-0010-000-000, "数字人模型不存在");
     // ========== digitalcourse 模块 1-0010-000-001 ==========
     ErrorCode BACKGROUNDS_NOT_EXISTS = new ErrorCode(1-0010-000-001, "背景信息（PPT背景、板书、插图、字幕等）不存在");
+    // ========== digitalcourse 模块 1-0010-000-001 ==========
+    ErrorCode VOICES_NOT_EXISTS = new ErrorCode(1-0010-000-002, "声音模型不存在");
 
 }
