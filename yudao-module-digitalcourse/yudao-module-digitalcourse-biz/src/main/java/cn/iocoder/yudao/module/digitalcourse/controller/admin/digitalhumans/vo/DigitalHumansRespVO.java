@@ -37,6 +37,10 @@ public class DigitalHumansRespVO {
     @ExcelProperty("数字人名称")
     private String name;
 
+    @Schema(description = "数字人编码", requiredMode = Schema.RequiredMode.REQUIRED, example = "zhangsan")
+    @ExcelProperty("数字人编码")
+    private String code;
+
     @Schema(description = "姿势", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty(value = "姿势", converter = DictConvert.class)
     @DictFormat("infra_boolean_string") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中

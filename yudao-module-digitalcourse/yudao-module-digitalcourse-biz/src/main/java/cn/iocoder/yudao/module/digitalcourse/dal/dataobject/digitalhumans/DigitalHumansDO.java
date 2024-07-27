@@ -53,10 +53,6 @@ public class DigitalHumansDO extends BaseDO {
      */
     private Integer gender;
     /**
-     * 性别描述
-     */
-    private String genderDesc;
-    /**
      * 抠图标识
      *
      * 枚举 {@link TODO infra_boolean_string 对应的类}
@@ -71,6 +67,10 @@ public class DigitalHumansDO extends BaseDO {
      */
     private String name;
     /**
+     * 数字人编码
+     */
+    private String code;
+    /**
      * 图片URL
      */
     private String pictureUrl;
@@ -80,10 +80,6 @@ public class DigitalHumansDO extends BaseDO {
      * 枚举 {@link TODO infra_boolean_string 对应的类}
      */
     private Integer posture;
-    /**
-     * 姿势描述
-     */
-    private String postureDesc;
     /**
      * 快照高度
      */
@@ -97,10 +93,6 @@ public class DigitalHumansDO extends BaseDO {
      */
     private Integer snapshotWidth;
     /**
-     * 状态描述
-     */
-    private String statusDesc;
-    /**
      * 提交ID
      */
     private String submitId;
@@ -110,10 +102,6 @@ public class DigitalHumansDO extends BaseDO {
      * 枚举 {@link TODO infra_boolean_string 对应的类}
      */
     private Integer type;
-    /**
-     * 类型描述
-     */
-    private String typeDesc;
     /**
      * 使用通用模型
      *

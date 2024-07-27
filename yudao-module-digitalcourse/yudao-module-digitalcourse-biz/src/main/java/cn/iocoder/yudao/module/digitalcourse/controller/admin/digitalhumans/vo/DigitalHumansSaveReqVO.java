@@ -32,6 +32,10 @@ public class DigitalHumansSaveReqVO {
     @NotEmpty(message = "数字人名称不能为空")
     private String name;
 
+    @Schema(description = "数字人编码", requiredMode = Schema.RequiredMode.REQUIRED, example = "zhangsan")
+    @NotEmpty(message = "数字人编码不能为空")
+    private String code;
+
     @Schema(description = "图片URL", requiredMode = Schema.RequiredMode.REQUIRED, example = "https://www.iocoder.cn")
     @NotEmpty(message = "图片URL不能为空")
     private String pictureUrl;
