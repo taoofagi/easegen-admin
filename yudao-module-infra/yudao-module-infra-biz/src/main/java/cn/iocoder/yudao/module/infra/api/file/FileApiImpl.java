@@ -23,4 +23,14 @@ public class FileApiImpl implements FileApi {
         return fileService.createFile(name, path, content);
     }
 
+    @Override
+    public byte[] getFileContent(Long configId, String path) {
+        try {
+            byte[] fileContent = fileService.getFileContent(configId, path);
+            return fileContent;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
