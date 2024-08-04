@@ -17,11 +17,10 @@
         <revision>2.2.0-snapshot</revision>
         <flatten-maven-plugin.version>1.6.0</flatten-maven-plugin.version>
         <!-- 统一依赖管理 -->
-        <spring.boot.version>2.7.18</spring.boot.version>
+        <spring.boot.version>3.3.1</spring.boot.version>
         <!-- Web 相关 -->
-        <springdoc.version>1.7.0</springdoc.version>
+        <springdoc.version>2.3.0</springdoc.version>
         <knife4j.version>4.5.0</knife4j.version>
-        <servlet.versoin>2.5</servlet.versoin>
         <!-- DB 相关 -->
         <druid.version>1.2.23</druid.version>
         <mybatis.version>3.5.16</mybatis.version>
@@ -39,21 +38,22 @@
         <!-- 服务保障相关 -->
         <lock4j.version>2.2.7</lock4j.version>
         <!-- 监控相关 -->
-        <skywalking.version>8.12.0</skywalking.version>
-        <spring-boot-admin.version>2.7.15</spring-boot-admin.version>
+        <skywalking.version>9.0.0</skywalking.version>
+        <spring-boot-admin.version>3.3.2</spring-boot-admin.version>
         <opentracing.version>0.33.0</opentracing.version>
         <!-- Test 测试相关 -->
-        <podam.version>7.2.11.RELEASE</podam.version> <!-- Spring Boot 2.X 最多使用 7.2.11 版本 -->
+        <podam.version>8.0.2.RELEASE</podam.version>
         <jedis-mock.version>1.1.2</jedis-mock.version>
-        <mockito-inline.version>4.11.0</mockito-inline.version>
+        <mockito-inline.version>5.2.0</mockito-inline.version>
         <!-- Bpm 工作流相关 -->
-        <flowable.version>6.8.0</flowable.version>
+        <flowable.version>7.0.1</flowable.version>
         <!-- 工具类相关 -->
-        <captcha-plus.version>1.0.10</captcha-plus.version>
+        <captcha-plus.version>2.0.3</captcha-plus.version>
         <jsoup.version>1.18.1</jsoup.version>
         <lombok.version>1.18.34</lombok.version>
         <mapstruct.version>1.5.5.Final</mapstruct.version>
-        <hutool.version>5.8.29</hutool.version>
+        <hutool-5.version>5.8.29</hutool-5.version>
+        <hutool-6.version>6.0.0-M14</hutool-6.version>
         <easyexcel.verion>3.3.4</easyexcel.verion>
         <velocity.version>2.3</velocity.version>
         <fastjson.version>1.2.83</fastjson.version>
@@ -72,7 +72,7 @@
         <aliyun-java-sdk-core.version>4.6.4</aliyun-java-sdk-core.version>
         <aliyun-java-sdk-dysmsapi.version>2.2.1</aliyun-java-sdk-dysmsapi.version>
         <tencentcloud-sdk-java.version>3.1.880</tencentcloud-sdk-java.version>
-        <justauth.version>1.0.8</justauth.version>
+        <justauth.version>2.0.5</justauth.version>
         <jimureport.version>1.7.8</jimureport.version>
         <xercesImpl.version>2.12.2</xercesImpl.version>
         <weixin-java.version>4.6.0</weixin-java.version>
@@ -146,12 +146,12 @@
 
             <dependency>
                 <groupId>com.github.xiaoymin</groupId>
-                <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
+                <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
                 <version>${knife4j.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-ui</artifactId>
+                <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
                 <version>${springdoc.version}</version>
             </dependency>
 
@@ -164,7 +164,7 @@
 
             <dependency>
                 <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-starter</artifactId>
+                <artifactId>druid-spring-boot-3-starter</artifactId>
                 <version>${druid.version}</version>
             </dependency>
             <dependency>
@@ -174,7 +174,7 @@
             </dependency>
             <dependency>
                 <groupId>com.baomidou</groupId>
-                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
             <dependency>
@@ -184,7 +184,7 @@
             </dependency>
             <dependency>
                 <groupId>com.baomidou</groupId>
-                <artifactId>dynamic-datasource-spring-boot-starter</artifactId> <!-- 多数据源 -->
+                <artifactId>dynamic-datasource-spring-boot3-starter</artifactId> <!-- 多数据源 -->
                 <version>${dynamic-datasource.version}</version>
             </dependency>
             <dependency>
@@ -234,17 +234,7 @@
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-starter-actuator</artifactId>
                     </exclusion>
-                    <exclusion>
-                        <groupId>org.redisson</groupId>
-                        <!-- 使用 redisson-spring-data-27 替代，解决 Tuple NoClassDefFoundError 报错 -->
-                        <artifactId>redisson-spring-data-33</artifactId>
-                    </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.redisson</groupId>
-                <artifactId>redisson-spring-data-27</artifactId>
-                <version>${redisson.version}</version>
             </dependency>
 
             <dependency>
@@ -462,7 +452,12 @@
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-all</artifactId>
-                <version>${hutool.version}</version>
+                <version>${hutool-5.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dromara.hutool</groupId>
+                <artifactId>hutool-extra</artifactId>
+                <version>${hutool-6.version}</version>
             </dependency>
 
             <dependency>
@@ -497,12 +492,6 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.google.inject</groupId>
-                <artifactId>guice</artifactId>
-                <version>${guice.version}</version>
             </dependency>
 
             <dependency>
@@ -617,7 +606,7 @@
             <!-- 积木报表-->
             <dependency>
                 <groupId>org.jeecgframework.jimureport</groupId>
-                <artifactId>jimureport-spring-boot-starter</artifactId>
+                <artifactId>jimureport-spring-boot3-starter-fastjson2</artifactId>
                 <version>${jimureport.version}</version>
                 <exclusions>
                     <exclusion>

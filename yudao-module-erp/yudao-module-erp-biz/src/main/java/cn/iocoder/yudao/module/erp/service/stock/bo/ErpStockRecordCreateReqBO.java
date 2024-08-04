@@ -1,6 +1,6 @@
 package cn.iocoder.yudao.module.erp.service.stock.bo;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

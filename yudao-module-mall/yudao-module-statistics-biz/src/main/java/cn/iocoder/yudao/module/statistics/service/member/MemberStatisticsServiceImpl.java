@@ -1,7 +1,6 @@
 package cn.iocoder.yudao.module.statistics.service.member;
 
 import cn.hutool.core.date.LocalDateTimeUtil;
-import cn.hutool.core.util.ObjUtil;
 import cn.iocoder.yudao.framework.common.enums.UserTypeEnum;
 import cn.iocoder.yudao.framework.ip.core.Area;
 import cn.iocoder.yudao.framework.ip.core.enums.AreaTypeEnum;
@@ -19,7 +18,7 @@ import cn.iocoder.yudao.module.statistics.service.trade.TradeStatisticsService;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -72,7 +71,7 @@ public class MemberStatisticsServiceImpl implements MemberStatisticsService {
                 (a, b) -> new MemberAreaStatisticsRespBO()
                         .setOrderCreateUserCount(a.getOrderCreateUserCount() + b.getOrderCreateUserCount())
                         .setOrderPayUserCount(a.getOrderPayUserCount() + b.getOrderPayUserCount())
-                        .setOrderPayPrice(ObjUtil.defaultIfNull(a.getOrderPayPrice(), 0) + ObjUtil.defaultIfNull(b.getOrderPayPrice(), 0)));
+                        .setOrderPayPrice(a.getOrderPayPrice() + b.getOrderPayPrice()));
         // 拼接数据
         List<Area> areaList = AreaUtils.getByType(AreaTypeEnum.PROVINCE, area -> area);
         areaList.add(new Area().setId(null).setName("未知"));

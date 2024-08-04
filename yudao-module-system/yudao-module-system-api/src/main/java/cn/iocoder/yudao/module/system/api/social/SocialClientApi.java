@@ -2,8 +2,7 @@ package cn.iocoder.yudao.module.system.api.social;
 
 import cn.iocoder.yudao.module.system.api.social.dto.*;
 import cn.iocoder.yudao.module.system.enums.social.SocialTypeEnum;
-
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 import java.util.List;
 

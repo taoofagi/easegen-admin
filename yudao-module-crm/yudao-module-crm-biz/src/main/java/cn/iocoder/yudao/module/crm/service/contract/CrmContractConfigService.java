@@ -2,8 +2,7 @@ package cn.iocoder.yudao.module.crm.service.contract;
 
 import cn.iocoder.yudao.module.crm.controller.admin.contract.vo.config.CrmContractConfigSaveReqVO;
 import cn.iocoder.yudao.module.crm.dal.dataobject.contract.CrmContractConfigDO;
-
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 /**
  * 合同配置 Service 接口

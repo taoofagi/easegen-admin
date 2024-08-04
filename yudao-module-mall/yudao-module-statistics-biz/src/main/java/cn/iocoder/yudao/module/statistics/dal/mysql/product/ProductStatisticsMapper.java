@@ -46,7 +46,7 @@ public interface ProductStatisticsMapper extends BaseMapperX<ProductStatisticsDO
      * @param reqVO 查询参数
      * @return LambdaWrapper
      */
-    static MPJLambdaWrapperX<ProductStatisticsDO> buildWrapper(ProductStatisticsReqVO reqVO) {
+    private static MPJLambdaWrapperX<ProductStatisticsDO> buildWrapper(ProductStatisticsReqVO reqVO) {
         return new MPJLambdaWrapperX<ProductStatisticsDO>()
                 .betweenIfPresent(ProductStatisticsDO::getTime, reqVO.getTimes())
                 .selectSum(ProductStatisticsDO::getBrowseCount)
