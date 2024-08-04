@@ -1,7 +1,7 @@
 package cn.iocoder.yudao.module.digitalcourse.service.backgrounds;
 
 import java.util.*;
-import javax.validation.*;
+import jakarta.validation.*;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.backgrounds.vo.*;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.backgrounds.BackgroundsDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
