@@ -38,8 +38,6 @@ mybatis:
 
 # Lock4j 配置项（单元测试，禁用 Lock4j）
 
-# Resilience4j 配置项
-
 --- #################### 监控相关配置 ####################
 
 --- #################### 芋道相关配置 ####################
@@ -48,8 +46,3 @@ mybatis:
 yudao:
   info:
     base-package: cn.iocoder.yudao.module
-  captcha:
-    timeout: 5m
-    width: 160
-    height: 60
-    enable: true

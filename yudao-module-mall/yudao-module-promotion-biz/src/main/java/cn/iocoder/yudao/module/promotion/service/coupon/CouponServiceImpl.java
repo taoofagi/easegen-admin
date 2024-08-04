@@ -70,7 +70,7 @@ public class CouponServiceImpl implements CouponService {
             throw exception(COUPON_STATUS_NOT_UNUSED);
         }
         // 校验有效期；为避免定时器没跑，实际优惠劵已经过期
-        if (LocalDateTimeUtils.isBetween(coupon.getValidStartTime(), coupon.getValidEndTime())) {
+        if (!LocalDateTimeUtils.isBetween(coupon.getValidStartTime(), coupon.getValidEndTime())) {
             throw exception(COUPON_VALID_TIME_NOT_NOW);
         }
     }
@@ -119,7 +119,7 @@ public class CouponServiceImpl implements CouponService {
         Integer status = LocalDateTimeUtils.beforeNow(coupon.getValidEndTime())
                 ? CouponStatusEnum.EXPIRE.getStatus() // 退还时可能已经过期了
                 : CouponStatusEnum.UNUSED.getStatus();
-        int updateCount = couponMapper.updateByIdAndStatus(id, CouponStatusEnum.UNUSED.getStatus(),
+        int updateCount = couponMapper.updateByIdAndStatus(id, CouponStatusEnum.USED.getStatus(),
                 new CouponDO().setStatus(status));
         if (updateCount == 0) {
             throw exception(COUPON_STATUS_NOT_USED);
@@ -194,9 +194,12 @@ public class CouponServiceImpl implements CouponService {
 
     @Override
     public List<CouponDO> getMatchCouponList(Long userId, AppCouponMatchReqVO matchReqVO) {
-        return couponMapper.selectListByUserIdAndStatusAndUsePriceLeAndProductScope(userId,
+        List<CouponDO> list = couponMapper.selectListByUserIdAndStatusAndUsePriceLeAndProductScope(userId,
                 CouponStatusEnum.UNUSED.getStatus(),
                 matchReqVO.getPrice(), matchReqVO.getSpuIds(), matchReqVO.getCategoryIds());
+        // 兜底逻辑：如果 CouponExpireJob 未执行，status 未变成 EXPIRE ，但是 validEndTime 已经过期了，需要进行过滤
+        list.removeIf(coupon -> !LocalDateTimeUtils.isBetween(coupon.getValidStartTime(), coupon.getValidEndTime()));
+        return list;
     }
 
     @Override
@@ -212,7 +215,7 @@ public class CouponServiceImpl implements CouponService {
         int count = 0;
         for (CouponDO coupon : list) {
             try {
-                boolean success = getSelf().expireCoupon(coupon);
+                boolean success = expireCoupon(coupon);
                 if (success) {
                     count++;
                 }
@@ -313,6 +316,11 @@ public class CouponServiceImpl implements CouponService {
         // 移除达到领取限制的用户
         Map<Long, Integer> userTakeCountMap = CollStreamUtil.groupBy(alreadyTakeCoupons, CouponDO::getUserId, Collectors.summingInt(c -> 1));
         userIds.removeIf(userId -> MapUtil.getInt(userTakeCountMap, userId, 0) >= couponTemplate.getTakeLimitCount());
+    }
+
+    @Override
+    public CouponDO getCoupon(Long userId, Long id) {
+        return couponMapper.selectByIdAndUserId(id, userId);
     }
 
     /**
