@@ -5,10 +5,9 @@ import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.module.system.dal.dataobject.dept.PostDO;
 import cn.iocoder.yudao.module.system.service.dept.PostService;
 import com.mzt.logapi.service.IParseFunction;
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.Resource;
 
 /**
  * 岗位名字的 {@link IParseFunction} 实现类

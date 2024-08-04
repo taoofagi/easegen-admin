@@ -2,6 +2,7 @@ package cn.iocoder.yudao.module.bpm.framework.flowable.core.listener;
 
 import cn.iocoder.yudao.module.bpm.service.task.BpmProcessInstanceService;
 import com.google.common.collect.ImmutableSet;
+import jakarta.annotation.Resource;
 import org.flowable.common.engine.api.delegate.event.FlowableEngineEntityEvent;
 import org.flowable.common.engine.api.delegate.event.FlowableEngineEventType;
 import org.flowable.engine.delegate.event.AbstractFlowableEngineEventListener;
@@ -10,7 +11,6 @@ import org.flowable.engine.runtime.ProcessInstance;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.Set;
 
 /**

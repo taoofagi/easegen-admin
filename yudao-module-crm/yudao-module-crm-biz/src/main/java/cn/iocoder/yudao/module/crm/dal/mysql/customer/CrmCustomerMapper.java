@@ -108,7 +108,7 @@ public interface CrmCustomerMapper extends BaseMapperX<CrmCustomerDO> {
         return selectCount(query);
     }
 
-    static MPJLambdaWrapperX<CrmCustomerDO> buildPutPoolRemindCustomerQuery(CrmCustomerPageReqVO pageReqVO,
+    private static MPJLambdaWrapperX<CrmCustomerDO> buildPutPoolRemindCustomerQuery(CrmCustomerPageReqVO pageReqVO,
                                                                                     CrmCustomerPoolConfigDO poolConfig,
                                                                                     Long ownerUserId) {
         MPJLambdaWrapperX<CrmCustomerDO> query = new MPJLambdaWrapperX<>();

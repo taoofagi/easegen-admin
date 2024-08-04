@@ -1,11 +1,10 @@
 package cn.iocoder.yudao.module.bpm.service.definition;
 
-import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.module.bpm.controller.admin.definition.vo.listener.BpmProcessListenerPageReqVO;
 import cn.iocoder.yudao.module.bpm.controller.admin.definition.vo.listener.BpmProcessListenerSaveReqVO;
+import jakarta.validation.*;
 import cn.iocoder.yudao.module.bpm.dal.dataobject.definition.BpmProcessListenerDO;
-
-import javax.validation.Valid;
+import cn.iocoder.yudao.framework.common.pojo.PageResult;
 
 /**
  * BPM 流程监听器 Service 接口
