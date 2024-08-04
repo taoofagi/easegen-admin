@@ -3,7 +3,7 @@ package cn.iocoder.yudao.module.digitalcourse.controller.admin.backgrounds.vo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import java.util.*;
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 import java.util.*;
 
 @Schema(description = "管理后台 - 背景信息（PPT背景、板书、插图、字幕等）新增/修改 Request VO")

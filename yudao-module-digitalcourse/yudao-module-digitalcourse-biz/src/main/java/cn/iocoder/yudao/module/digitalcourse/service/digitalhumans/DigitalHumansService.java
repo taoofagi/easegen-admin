@@ -1,7 +1,7 @@
 package cn.iocoder.yudao.module.digitalcourse.service.digitalhumans;
 
 import java.util.*;
-import javax.validation.*;
+import jakarta.validation.*;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.digitalhumans.vo.*;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.digitalhumans.DigitalHumansDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;

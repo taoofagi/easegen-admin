@@ -1,7 +1,7 @@
 package cn.iocoder.yudao.module.digitalcourse.service.voices;
 
 import java.util.*;
-import javax.validation.*;
+import jakarta.validation.*;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.voices.vo.*;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.voices.VoicesDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
