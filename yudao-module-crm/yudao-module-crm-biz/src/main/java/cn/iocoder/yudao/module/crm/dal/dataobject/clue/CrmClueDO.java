@@ -2,6 +2,7 @@ package cn.iocoder.yudao.module.crm.dal.dataobject.clue;
 
 import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
 import cn.iocoder.yudao.module.crm.dal.dataobject.customer.CrmCustomerDO;
+import cn.iocoder.yudao.module.crm.enums.DictTypeConstants;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -9,9 +10,8 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-// TODO 芋艿：字段的顺序，需要整理下；
 /**
- * 线索 DO
+ * CRM 线索 DO
  *
  * @author Wanwan
  */
@@ -31,50 +31,98 @@ public class CrmClueDO extends BaseDO {
     @TableId
     private Long id;
     /**
-     * 转化状态
+     * 线索名称
      */
-    private Boolean transformStatus;
+    private String name;
+
     /**
      * 跟进状态
      */
     private Boolean followUpStatus;
     /**
-     * 线索名称
+     * 最后跟进时间
      */
-    private String name;
+    private LocalDateTime contactLastTime;
     /**
-     * 客户 id
-     *
-     * 关联 {@link CrmCustomerDO#getId()}
+     * 最后跟进内容
      */
-    private Long customerId;
+    private String contactLastContent;
     /**
      * 下次联系时间
      */
     private LocalDateTime contactNextTime;
+
     /**
-     * 电话
+     * 负责人的用户编号
+     *
+     * 关联 AdminUserDO 的 id 字段
      */
-    private String telephone;
+    private Long ownerUserId;
+
+    /**
+     * 转化状态
+     *
+     * true 表示已转换，会更新 {@link #customerId} 字段
+     */
+    private Boolean transformStatus;
+    /**
+     * 客户编号
+     *
+     * 关联 {@link CrmCustomerDO#getId()}
+     */
+    private Long customerId;
+
     /**
      * 手机号
      */
     private String mobile;
     /**
-     * 地址
+     * 电话
      */
-    private String address;
+    private String telephone;
     /**
-     * 最后跟进时间 TODO 添加跟进记录时更新该值
+     * QQ
      */
-    private LocalDateTime contactLastTime;
+    private String qq;
+    /**
+     * wechat
+     */
+    private String wechat;
+    /**
+     * email
+     */
+    private String email;
+    /**
+     * 所在地
+     *
+     * 关联 {@link cn.iocoder.yudao.framework.ip.core.Area#getId()} 字段
+     */
+    private Integer areaId;
+    /**
+     * 详细地址
+     */
+    private String detailAddress;
+    /**
+     * 所属行业
+     *
+     * 对应字典 {@link DictTypeConstants#CRM_CUSTOMER_INDUSTRY}
+     */
+    private Integer industryId;
+    /**
+     * 客户等级
+     *
+     * 对应字典 {@link DictTypeConstants#CRM_CUSTOMER_LEVEL}
+     */
+    private Integer level;
+    /**
+     * 客户来源
+     *
+     * 对应字典 {@link DictTypeConstants#CRM_CUSTOMER_SOURCE}
+     */
+    private Integer source;
     /**
      * 备注
      */
     private String remark;
-
-    // TODO 芋艿：客户级别；
-    // TODO 芋艿：线索来源；
-    // TODO 芋艿：客户行业；
 
 }

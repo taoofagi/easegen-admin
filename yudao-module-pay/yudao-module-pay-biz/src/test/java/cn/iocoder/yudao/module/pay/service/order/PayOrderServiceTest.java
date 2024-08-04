@@ -945,7 +945,7 @@ public class PayOrderServiceTest extends BaseDbAndRedisUnitTest {
             int count = orderService.syncOrder(minCreateTime);
             // 断言
             assertEquals(count, 0);
-            verify(payOrderServiceImpl).notifyOrder(same(channel), same(respDTO));
+            verify(payOrderServiceImpl, never()).notifyOrder(same(channel), same(respDTO));
         }
     }
 

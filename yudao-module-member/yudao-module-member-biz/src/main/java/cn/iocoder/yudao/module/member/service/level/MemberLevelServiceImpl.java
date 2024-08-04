@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.member.enums.ErrorCodeConstants.*;
@@ -241,10 +242,8 @@ public class MemberLevelServiceImpl implements MemberLevelService {
         MemberUserDO user = memberUserService.getUser(userId);
         Integer userExperience = ObjUtil.defaultIfNull(user.getExperience(), 0);
         userExperience = NumberUtil.max(userExperience + experience, 0); // 防止扣出负数
-        MemberLevelRecordDO levelRecord = new MemberLevelRecordDO()
-                .setUserId(user.getId())
-                .setExperience(experience)
-                .setUserExperience(userExperience);
+        MemberLevelRecordDO levelRecord = new MemberLevelRecordDO().setUserId(user.getId())
+                .setExperience(experience).setUserExperience(userExperience).setLevelId(user.getLevelId());
         memberExperienceRecordService.createExperienceRecord(userId, experience, userExperience,
                 bizType, bizId);
 
@@ -259,7 +258,7 @@ public class MemberLevelServiceImpl implements MemberLevelService {
         }
 
         // 3. 更新会员表上的等级编号、经验值
-        memberUserService.updateUserLevel(user.getId(), levelRecord.getLevelId(), userExperience);
+        memberUserService.updateUserLevel(user.getId(), Optional.ofNullable(levelRecord.getLevelId()).orElse(user.getLevelId()), userExperience);
     }
 
     /**

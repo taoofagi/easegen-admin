@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 @Schema(description = "用户 App - 订单交易的明细 Response VO")
@@ -19,6 +18,9 @@ public class AppTradeOrderDetailRespVO {
 
     @Schema(description = "订单流水号", requiredMode = Schema.RequiredMode.REQUIRED, example = "1146347329394184195")
     private String no;
+
+    @Schema(description = "订单类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "0")
+    private Integer type;
 
     @Schema(description = "下单时间", requiredMode = Schema.RequiredMode.REQUIRED)
     private LocalDateTime createTime;
@@ -118,6 +120,12 @@ public class AppTradeOrderDetailRespVO {
 
     // ========== 售后基本信息 ==========
 
+    @Schema(description = "售后状态", example = "0")
+    private Integer refundStatus;
+
+    @Schema(description = "退款金额，单位：分", example = "100")
+    private Integer refundPrice;
+
     // ========== 营销基本信息 ==========
 
     @Schema(description = "优惠劵编号", example = "1024")
@@ -128,6 +136,12 @@ public class AppTradeOrderDetailRespVO {
 
     @Schema(description = "积分抵扣的金额", requiredMode = Schema.RequiredMode.REQUIRED, example = "100")
     private Integer pointPrice;
+
+    @Schema(description = "VIP 减免金额", requiredMode = Schema.RequiredMode.REQUIRED, example = "888")
+    private Integer vipPrice;
+
+    @Schema(description = "拼团记录编号", example = "100")
+    private Long combinationRecordId;
 
     /**
      * 订单项数组

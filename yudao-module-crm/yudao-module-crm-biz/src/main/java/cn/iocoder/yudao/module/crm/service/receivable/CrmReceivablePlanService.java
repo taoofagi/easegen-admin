@@ -1,13 +1,17 @@
 package cn.iocoder.yudao.module.crm.service.receivable;
 
-import java.util.*;
-import javax.validation.*;
-import cn.iocoder.yudao.module.crm.controller.admin.receivable.vo.*;
-import cn.iocoder.yudao.module.crm.dal.dataobject.receivable.CrmReceivablePlanDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.module.crm.controller.admin.receivable.vo.plan.CrmReceivablePlanPageReqVO;
+import cn.iocoder.yudao.module.crm.controller.admin.receivable.vo.plan.CrmReceivablePlanSaveReqVO;
+import cn.iocoder.yudao.module.crm.dal.dataobject.customer.CrmCustomerDO;
+import cn.iocoder.yudao.module.crm.dal.dataobject.receivable.CrmReceivablePlanDO;
+
+import javax.validation.Valid;
+import java.util.Collection;
+import java.util.List;
 
 /**
- * 回款计划 Service 接口
+ * CRM 回款计划 Service 接口
  *
  * @author 芋道源码
  */
@@ -19,14 +23,22 @@ public interface CrmReceivablePlanService {
      * @param createReqVO 创建信息
      * @return 编号
      */
-    Long createReceivablePlan(@Valid CrmReceivablePlanCreateReqVO createReqVO);
+    Long createReceivablePlan(@Valid CrmReceivablePlanSaveReqVO createReqVO);
 
     /**
      * 更新回款计划
      *
      * @param updateReqVO 更新信息
      */
-    void updateReceivablePlan(@Valid CrmReceivablePlanUpdateReqVO updateReqVO);
+    void updateReceivablePlan(@Valid CrmReceivablePlanSaveReqVO updateReqVO);
+
+    /**
+     * 更新回款计划关联的回款编号
+     *
+     * @param id           编号
+     * @param receivableId 回款编号
+     */
+    void updateReceivablePlanReceivableId(Long id, Long receivableId);
 
     /**
      * 删除回款计划
@@ -54,17 +66,30 @@ public interface CrmReceivablePlanService {
     /**
      * 获得回款计划分页
      *
+     * 数据权限：基于 {@link CrmReceivablePlanDO} 读取
+     *
+     * @param pageReqVO 分页查询
+     * @param userId    用户编号
+     * @return 回款计划分页
+     */
+    PageResult<CrmReceivablePlanDO> getReceivablePlanPage(CrmReceivablePlanPageReqVO pageReqVO, Long userId);
+
+    /**
+     * 获得回款计划分页，基于指定客户
+     *
+     * 数据权限：基于 {@link CrmCustomerDO} 读取
+     *
      * @param pageReqVO 分页查询
      * @return 回款计划分页
      */
-    PageResult<CrmReceivablePlanDO> getReceivablePlanPage(CrmReceivablePlanPageReqVO pageReqVO);
+    PageResult<CrmReceivablePlanDO> getReceivablePlanPageByCustomerId(CrmReceivablePlanPageReqVO pageReqVO);
 
     /**
-     * 获得回款计划列表, 用于 Excel 导出
+     * 获得待回款提醒数量
      *
-     * @param exportReqVO 查询条件
-     * @return 回款计划列表
+     * @param userId 用户编号
+     * @return 提醒数量
      */
-    List<CrmReceivablePlanDO> getReceivablePlanList(CrmReceivablePlanExportReqVO exportReqVO);
+    Long getReceivablePlanRemindCount(Long userId);
 
 }

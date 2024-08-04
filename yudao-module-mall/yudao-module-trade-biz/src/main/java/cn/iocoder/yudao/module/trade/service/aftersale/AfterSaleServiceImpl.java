@@ -2,6 +2,7 @@ package cn.iocoder.yudao.module.trade.service.aftersale;
 
 import cn.hutool.core.map.MapUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.ObjectUtils;
@@ -32,6 +33,7 @@ import cn.iocoder.yudao.module.trade.service.delivery.DeliveryExpressService;
 import cn.iocoder.yudao.module.trade.service.order.TradeOrderQueryService;
 import cn.iocoder.yudao.module.trade.service.order.TradeOrderUpdateService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
@@ -55,6 +57,7 @@ import static cn.iocoder.yudao.module.trade.enums.ErrorCodeConstants.*;
 public class AfterSaleServiceImpl implements AfterSaleService {
 
     @Resource
+    @Lazy // 延迟加载，避免循环依赖
     private TradeOrderUpdateService tradeOrderUpdateService;
     @Resource
     private TradeOrderQueryService tradeOrderQueryService;
@@ -244,7 +247,7 @@ public class AfterSaleServiceImpl implements AfterSaleService {
     @AfterSaleLog(operateType = AfterSaleOperateTypeEnum.MEMBER_DELIVERY)
     public void deliveryAfterSale(Long userId, AppAfterSaleDeliveryReqVO deliveryReqVO) {
         // 校验售后单存在，并状态未退货
-        AfterSaleDO afterSale = tradeAfterSaleMapper.selectById(deliveryReqVO.getId());
+        AfterSaleDO afterSale = tradeAfterSaleMapper.selectByIdAndUserId(deliveryReqVO.getId(), userId);
         if (afterSale == null) {
             throw exception(AFTER_SALE_NOT_FOUND);
         }
@@ -262,7 +265,7 @@ public class AfterSaleServiceImpl implements AfterSaleService {
         // 记录售后日志
         AfterSaleLogUtils.setAfterSaleInfo(afterSale.getId(), afterSale.getStatus(),
                 AfterSaleStatusEnum.BUYER_DELIVERY.getStatus(),
-                MapUtil.<String, Object>builder().put("expressName", express.getName())
+                MapUtil.<String, Object>builder().put("deliveryName", express.getName())
                         .put("logisticsNo", deliveryReqVO.getLogisticsNo()).build());
 
         // TODO 发送售后消息
@@ -368,7 +371,8 @@ public class AfterSaleServiceImpl implements AfterSaleService {
             @Override
             public void afterCommit() {
                 // 创建退款单
-                PayRefundCreateReqDTO createReqDTO = AfterSaleConvert.INSTANCE.convert(userIp, afterSale, tradeOrderProperties);
+                PayRefundCreateReqDTO createReqDTO = AfterSaleConvert.INSTANCE.convert(userIp, afterSale, tradeOrderProperties)
+                        .setReason(StrUtil.format("退款【{}】", afterSale.getSpuName()));
                 Long payRefundId = payRefundApi.createRefund(createReqDTO);
                 // 更新售后单的退款单号
                 tradeAfterSaleMapper.updateById(new AfterSaleDO().setId(afterSale.getId()).setPayRefundId(payRefundId));
@@ -381,7 +385,7 @@ public class AfterSaleServiceImpl implements AfterSaleService {
     @AfterSaleLog(operateType = AfterSaleOperateTypeEnum.MEMBER_CANCEL)
     public void cancelAfterSale(Long userId, Long id) {
         // 校验售后单的状态，并状态待退款
-        AfterSaleDO afterSale = tradeAfterSaleMapper.selectById(id);
+        AfterSaleDO afterSale = tradeAfterSaleMapper.selectByIdAndUserId(id, userId);
         if (afterSale == null) {
             throw exception(AFTER_SALE_NOT_FOUND);
         }

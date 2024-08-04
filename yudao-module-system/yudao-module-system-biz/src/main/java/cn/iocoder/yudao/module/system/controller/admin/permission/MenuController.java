@@ -50,7 +50,7 @@ public class MenuController {
 
     @DeleteMapping("/delete")
     @Operation(summary = "删除菜单")
-    @Parameter(name = "id", description = "角色编号", required= true, example = "1024")
+    @Parameter(name = "id", description = "菜单编号", required= true, example = "1024")
     @PreAuthorize("@ss.hasPermission('system:menu:delete')")
     public CommonResult<Boolean> deleteMenu(@RequestParam("id") Long id) {
         menuService.deleteMenu(id);
@@ -72,6 +72,7 @@ public class MenuController {
     public CommonResult<List<MenuSimpleRespVO>> getSimpleMenuList() {
         List<MenuDO> list = menuService.getMenuListByTenant(
                 new MenuListReqVO().setStatus(CommonStatusEnum.ENABLE.getStatus()));
+        list = menuService.filterDisableMenus(list);
         list.sort(Comparator.comparing(MenuDO::getSort));
         return success(BeanUtils.toBean(list, MenuSimpleRespVO.class));
     }

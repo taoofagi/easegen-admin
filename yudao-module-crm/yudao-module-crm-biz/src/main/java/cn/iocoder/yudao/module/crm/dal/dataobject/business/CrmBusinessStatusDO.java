@@ -1,12 +1,15 @@
 package cn.iocoder.yudao.module.crm.dal.dataobject.business;
 
+import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
 /**
- * 商机状态 DO
+ * CRM 商机状态 DO
+ *
+ * 注意，它是个配置表
  *
  * @author ljlleo
  */
@@ -17,7 +20,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CrmBusinessStatusDO {
+public class CrmBusinessStatusDO extends BaseDO {
 
     /**
      * 主键
@@ -35,11 +38,9 @@ public class CrmBusinessStatusDO {
      */
     private String name;
     /**
-     * 赢单率
-     *
-     * TODO 这里是不是改成 Integer 存储，百分比 * 100 ；
+     * 赢单率，百分比
      */
-    private String percent;
+    private Integer percent;
     /**
      * 排序
      */

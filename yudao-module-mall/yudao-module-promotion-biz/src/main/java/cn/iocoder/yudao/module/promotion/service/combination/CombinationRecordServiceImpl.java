@@ -5,6 +5,7 @@ import cn.hutool.core.util.ObjUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.iocoder.yudao.framework.common.core.KeyValue;
 import cn.iocoder.yudao.framework.common.enums.CommonStatusEnum;
+import cn.iocoder.yudao.framework.common.enums.UserTypeEnum;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.json.JsonUtils;
 import cn.iocoder.yudao.module.member.api.user.MemberUserApi;
@@ -16,15 +17,19 @@ import cn.iocoder.yudao.module.product.api.spu.dto.ProductSpuRespDTO;
 import cn.iocoder.yudao.module.promotion.api.combination.dto.CombinationRecordCreateReqDTO;
 import cn.iocoder.yudao.module.promotion.api.combination.dto.CombinationValidateJoinRespDTO;
 import cn.iocoder.yudao.module.promotion.controller.admin.combination.vo.recrod.CombinationRecordReqPageVO;
+import cn.iocoder.yudao.module.promotion.controller.app.combination.vo.record.AppCombinationRecordPageReqVO;
 import cn.iocoder.yudao.module.promotion.convert.combination.CombinationActivityConvert;
 import cn.iocoder.yudao.module.promotion.dal.dataobject.combination.CombinationActivityDO;
 import cn.iocoder.yudao.module.promotion.dal.dataobject.combination.CombinationProductDO;
 import cn.iocoder.yudao.module.promotion.dal.dataobject.combination.CombinationRecordDO;
 import cn.iocoder.yudao.module.promotion.dal.mysql.combination.CombinationRecordMapper;
 import cn.iocoder.yudao.module.promotion.enums.combination.CombinationRecordStatusEnum;
+import cn.iocoder.yudao.module.system.api.social.SocialClientApi;
+import cn.iocoder.yudao.module.system.api.social.dto.SocialWxaSubscribeMessageSendReqDTO;
 import cn.iocoder.yudao.module.trade.api.order.TradeOrderApi;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -39,6 +44,7 @@ import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.
 import static cn.iocoder.yudao.framework.common.util.date.LocalDateTimeUtils.afterNow;
 import static cn.iocoder.yudao.framework.common.util.date.LocalDateTimeUtils.beforeNow;
 import static cn.iocoder.yudao.module.promotion.enums.ErrorCodeConstants.*;
+import static cn.iocoder.yudao.module.promotion.enums.MessageTemplateConstants.COMBINATION_SUCCESS;
 
 // TODO 芋艿：等拼团记录做完，完整 review 下
 
@@ -65,8 +71,10 @@ public class CombinationRecordServiceImpl implements CombinationRecordService {
     private ProductSkuApi productSkuApi;
 
     @Resource
-    @Lazy
+    @Lazy // 延迟加载，避免循环依赖
     private TradeOrderApi tradeOrderApi;
+    @Resource
+    public SocialClientApi socialClientApi;
 
     // TODO @芋艿：在详细预览下；
     @Override
@@ -159,7 +167,7 @@ public class CombinationRecordServiceImpl implements CombinationRecordService {
         // 2.1. 如果是团长需要设置 headId 为 CombinationRecordDO#HEAD_ID_GROUP
         if (record.getHeadId() == null) {
             record.setStartTime(LocalDateTime.now())
-                    .setExpireTime(keyValue.getKey().getStartTime().plusHours(keyValue.getKey().getLimitDuration()))
+                    .setExpireTime(LocalDateTime.now().plusHours(keyValue.getKey().getLimitDuration()))
                     .setHeadId(CombinationRecordDO.HEAD_ID_GROUP);
         } else {
             // 2.2.有团长的情况下需要设置开始时间和过期时间为团长的
@@ -204,7 +212,25 @@ public class CombinationRecordServiceImpl implements CombinationRecordService {
             }
             updateRecords.add(updateRecord);
         });
-        combinationRecordMapper.updateBatch(updateRecords);
+        Boolean updateSuccess = combinationRecordMapper.updateBatch(updateRecords);
+
+        // 3. 拼团成功发送订阅消息
+        if (updateSuccess && isFull) {
+            records.forEach(item -> {
+                getSelf().sendCombinationResultMessage(item);
+            });
+        }
+    }
+
+    @Async
+    public void sendCombinationResultMessage(CombinationRecordDO record) {
+        // 构建并发送模版消息
+        socialClientApi.sendWxaSubscribeMessage(new SocialWxaSubscribeMessageSendReqDTO()
+                .setUserId(record.getUserId()).setUserType(UserTypeEnum.MEMBER.getValue())
+                .setTemplateTitle(COMBINATION_SUCCESS)
+                .setPage("pages/order/detail?id=" + record.getOrderId()) // 订单详情页
+                .addMessage("thing1", "商品拼团活动") // 活动标题
+                .addMessage("thing2", "恭喜您拼团成功！我们将尽快为您发货。")); // 温馨提示
     }
 
     @Override
@@ -406,6 +432,11 @@ public class CombinationRecordServiceImpl implements CombinationRecordService {
         });
         combinationRecordMapper.updateBatch(updateRecords);
         return records;
+    }
+
+    @Override
+    public PageResult<CombinationRecordDO> getCombinationRecordPage(Long userId, AppCombinationRecordPageReqVO pageReqVO) {
+        return combinationRecordMapper.selectPage(userId, pageReqVO);
     }
 
     /**

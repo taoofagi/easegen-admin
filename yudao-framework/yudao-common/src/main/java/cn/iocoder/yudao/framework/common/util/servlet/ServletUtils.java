@@ -88,18 +88,24 @@ public class ServletUtils {
         return ServletUtil.getClientIP(request);
     }
 
-    // TODO @疯狂：terminal 还是从 ServletUtils 里拿，更容易全局治理；
-
     public static boolean isJsonRequest(ServletRequest request) {
         return StrUtil.startWithIgnoreCase(request.getContentType(), MediaType.APPLICATION_JSON_VALUE);
     }
 
     public static String getBody(HttpServletRequest request) {
-        return ServletUtil.getBody(request);
+        // 只有在 json 请求在读取，因为只有 CacheRequestBodyFilter 才会进行缓存，支持重复读取
+        if (isJsonRequest(request)) {
+            return ServletUtil.getBody(request);
+        }
+        return null;
     }
 
     public static byte[] getBodyBytes(HttpServletRequest request) {
-        return ServletUtil.getBodyBytes(request);
+        // 只有在 json 请求在读取，因为只有 CacheRequestBodyFilter 才会进行缓存，支持重复读取
+        if (isJsonRequest(request)) {
+            return ServletUtil.getBodyBytes(request);
+        }
+        return null;
     }
 
     public static String getClientIP(HttpServletRequest request) {

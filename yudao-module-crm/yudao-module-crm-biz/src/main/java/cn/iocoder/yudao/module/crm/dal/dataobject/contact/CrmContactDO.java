@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.module.crm.dal.dataobject.contact;
 
 import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
+import cn.iocoder.yudao.module.crm.dal.dataobject.customer.CrmCustomerDO;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -29,9 +30,36 @@ public class CrmContactDO extends BaseDO {
     @TableId
     private Long id;
     /**
+     * 联系人姓名
+     */
+    private String name;
+    /**
+     * 客户编号
+     *
+     * 关联 {@link CrmCustomerDO#getId()}
+     */
+    private Long customerId;
+
+    /**
+     * 最后跟进时间
+     */
+    private LocalDateTime contactLastTime;
+    /**
+     * 最后跟进内容
+     */
+    private String contactLastContent;
+    /**
      * 下次联系时间
      */
-    private LocalDateTime nextTime;
+    private LocalDateTime contactNextTime;
+
+    /**
+     * 负责人用户编号
+     *
+     * 关联 AdminUserDO 的 id 字段
+     */
+    private Long ownerUserId;
+
     /**
      * 手机号
      */
@@ -45,36 +73,6 @@ public class CrmContactDO extends BaseDO {
      */
     private String email;
     /**
-     * 客户编号
-     */
-    private Long customerId;
-    /**
-     * 地址
-     */
-    private String address;
-    /**
-     * 备注
-     */
-    private String remark;
-    /**
-     * 最后跟进时间
-     */
-    private LocalDateTime lastTime;
-    /**
-     * 直属上级
-     *
-     * 关联 {@link CrmContactDO#id}
-     */
-    private Long parentId;
-    /**
-     * 姓名
-     */
-    private String name;
-    /**
-     * 职位
-     */
-    private String post;
-    /**
      * QQ
      */
     private Long qq;
@@ -82,6 +80,16 @@ public class CrmContactDO extends BaseDO {
      * 微信
      */
     private String wechat;
+    /**
+     * 所在地
+     *
+     * 关联 {@link cn.iocoder.yudao.framework.ip.core.Area#getId()} 字段
+     */
+    private Integer areaId;
+    /**
+     * 详细地址
+     */
+    private String detailAddress;
     /**
      * 性别
      *
@@ -93,17 +101,18 @@ public class CrmContactDO extends BaseDO {
      */
     private Boolean master;
     /**
-     * 负责人用户编号
-     *
-     * 关联 AdminUserDO 的 id 字段
+     * 职位
      */
-    private Long ownerUserId;
-
+    private String post;
     /**
-     * 所在地
+     * 直属上级
      *
-     * 关联 {@link cn.iocoder.yudao.framework.ip.core.Area#getId()} 字段
+     * 关联 {@link CrmContactDO#id}
      */
-    private Integer areaId;
+    private Long parentId;
+    /**
+     * 备注
+     */
+    private String remark;
 
 }
