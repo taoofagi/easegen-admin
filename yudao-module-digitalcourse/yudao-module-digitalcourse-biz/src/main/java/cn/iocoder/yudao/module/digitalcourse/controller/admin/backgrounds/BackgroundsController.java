@@ -22,9 +22,6 @@ import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 
 import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
 
-import cn.iocoder.yudao.framework.operatelog.core.annotations.OperateLog;
-import static cn.iocoder.yudao.framework.operatelog.core.enums.OperateTypeEnum.*;
-
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.backgrounds.vo.*;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.backgrounds.BackgroundsDO;
 import cn.iocoder.yudao.module.digitalcourse.service.backgrounds.BackgroundsService;
@@ -82,7 +79,6 @@ public class BackgroundsController {
     @GetMapping("/export-excel")
     @Operation(summary = "导出背景信息（PPT背景、板书、插图、字幕等） Excel")
     @PreAuthorize("@ss.hasPermission('digitalcourse:backgrounds:export')")
-    @OperateLog(type = EXPORT)
     public void exportBackgroundsExcel(@Valid BackgroundsPageReqVO pageReqVO,
               HttpServletResponse response) throws IOException {
         pageReqVO.setPageSize(PageParam.PAGE_SIZE_NONE);

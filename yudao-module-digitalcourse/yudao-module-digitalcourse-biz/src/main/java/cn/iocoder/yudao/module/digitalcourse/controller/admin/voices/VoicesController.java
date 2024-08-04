@@ -22,9 +22,6 @@ import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 
 import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
 
-import cn.iocoder.yudao.framework.operatelog.core.annotations.OperateLog;
-import static cn.iocoder.yudao.framework.operatelog.core.enums.OperateTypeEnum.*;
-
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.voices.vo.*;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.voices.VoicesDO;
 import cn.iocoder.yudao.module.digitalcourse.service.voices.VoicesService;
@@ -82,7 +79,6 @@ public class VoicesController {
     @GetMapping("/export-excel")
     @Operation(summary = "导出声音管理 Excel")
     @PreAuthorize("@ss.hasPermission('digitalcourse:voices:export')")
-    @OperateLog(type = EXPORT)
     public void exportVoicesExcel(@Valid VoicesPageReqVO pageReqVO,
               HttpServletResponse response) throws IOException {
         pageReqVO.setPageSize(PageParam.PAGE_SIZE_NONE);

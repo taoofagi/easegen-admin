@@ -22,9 +22,6 @@ import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 
 import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
 
-import cn.iocoder.yudao.framework.operatelog.core.annotations.OperateLog;
-import static cn.iocoder.yudao.framework.operatelog.core.enums.OperateTypeEnum.*;
-
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.digitalhumans.vo.*;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.digitalhumans.DigitalHumansDO;
 import cn.iocoder.yudao.module.digitalcourse.service.digitalhumans.DigitalHumansService;
@@ -82,7 +79,6 @@ public class DigitalHumansController {
     @GetMapping("/export-excel")
     @Operation(summary = "导出数字人模型 Excel")
     @PreAuthorize("@ss.hasPermission('digitalcourse:digital-humans:export')")
-    @OperateLog(type = EXPORT)
     public void exportDigitalHumansExcel(@Valid DigitalHumansPageReqVO pageReqVO,
               HttpServletResponse response) throws IOException {
         pageReqVO.setPageSize(PageParam.PAGE_SIZE_NONE);
