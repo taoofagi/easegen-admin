@@ -8,14 +8,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "用户 APP - 社交绑定 Request VO，使用 code 授权码")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class AppSocialUserBindReqVO {
 
     @Schema(description = "社交平台的类型，参见 SocialTypeEnum 枚举值", requiredMode = Schema.RequiredMode.REQUIRED, example = "10")

@@ -1,7 +1,6 @@
 package cn.iocoder.yudao.module.product.dal.mysql.comment;
 
 import cn.hutool.core.util.ObjectUtil;
-import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
@@ -26,19 +25,18 @@ public interface ProductCommentMapper extends BaseMapperX<ProductCommentDO> {
     }
 
     static void appendTabQuery(LambdaQueryWrapperX<ProductCommentDO> queryWrapper, Integer type) {
-        LambdaQueryWrapperX<ProductCommentDO> queryWrapperX = new LambdaQueryWrapperX<>();
         // 构建好评查询语句：好评计算 总评 >= 4
         if (ObjectUtil.equal(type, AppCommentPageReqVO.GOOD_COMMENT)) {
-            queryWrapperX.ge(ProductCommentDO::getScores, 4);
+            queryWrapper.ge(ProductCommentDO::getScores, 4);
         }
         // 构建中评查询语句：中评计算 总评 >= 3 且 总评 < 4
         if (ObjectUtil.equal(type, AppCommentPageReqVO.MEDIOCRE_COMMENT)) {
-            queryWrapperX.ge(ProductCommentDO::getScores, 3);
-            queryWrapperX.lt(ProductCommentDO::getScores, 4);
+            queryWrapper.ge(ProductCommentDO::getScores, 3);
+            queryWrapper.lt(ProductCommentDO::getScores, 4);
         }
         // 构建差评查询语句：差评计算 总评 < 3
         if (ObjectUtil.equal(type, AppCommentPageReqVO.NEGATIVE_COMMENT)) {
-            queryWrapperX.lt(ProductCommentDO::getScores, 3);
+            queryWrapper.lt(ProductCommentDO::getScores, 3);
         }
     }
 
@@ -57,23 +55,6 @@ public interface ProductCommentMapper extends BaseMapperX<ProductCommentDO> {
         return selectOne(new LambdaQueryWrapperX<ProductCommentDO>()
                 .eq(ProductCommentDO::getUserId, userId)
                 .eq(ProductCommentDO::getOrderItemId, orderItemId));
-    }
-
-    default Long selectCountBySpuId(Long spuId, Boolean visible, Integer type) {
-        LambdaQueryWrapperX<ProductCommentDO> queryWrapper = new LambdaQueryWrapperX<ProductCommentDO>()
-                .eqIfPresent(ProductCommentDO::getSpuId, spuId)
-                .eqIfPresent(ProductCommentDO::getVisible, visible);
-        // 构建评价查询语句
-        appendTabQuery(queryWrapper, type);
-        return selectCount(queryWrapper);
-    }
-
-    default PageResult<ProductCommentDO> selectCommentList(Long spuId, Integer count) {
-        // 构建分页查询条件
-        return selectPage(new PageParam().setPageSize(count), new LambdaQueryWrapperX<ProductCommentDO>()
-                .eqIfPresent(ProductCommentDO::getSpuId, spuId)
-                .orderByDesc(ProductCommentDO::getCreateTime)
-        );
     }
 
 }

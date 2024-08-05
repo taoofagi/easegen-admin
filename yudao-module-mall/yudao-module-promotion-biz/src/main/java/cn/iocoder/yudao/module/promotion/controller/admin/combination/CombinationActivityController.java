@@ -20,8 +20,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
-import javax.validation.Valid;
+import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -63,7 +63,7 @@ public class CombinationActivityController {
     @Operation(summary = "关闭拼团活动")
     @Parameter(name = "id", description = "编号", required = true)
     @PreAuthorize("@ss.hasPermission('promotion:combination-activity:close')")
-    public CommonResult<Boolean> closeSeckillActivity(@RequestParam("id") Long id) {
+    public CommonResult<Boolean> closeCombinationActivity(@RequestParam("id") Long id) {
         combinationActivityService.closeCombinationActivityById(id);
         return success(true);
     }

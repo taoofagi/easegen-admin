@@ -16,7 +16,7 @@ import cn.iocoder.yudao.module.trade.service.price.bo.TradePriceCalculateRespBO;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -90,7 +90,7 @@ public class TradeCouponPriceCalculator implements TradePriceCalculator {
         if (PromotionDiscountTypeEnum.PRICE.getType().equals(coupon.getDiscountType())) { // 减价
             return coupon.getDiscountPrice();
         } else if (PromotionDiscountTypeEnum.PERCENT.getType().equals(coupon.getDiscountType())) { // 打折
-            int couponPrice = totalPayPrice * coupon.getDiscountPercent() / 100;
+            int couponPrice = totalPayPrice - (totalPayPrice * coupon.getDiscountPercent() / 100);
             return coupon.getDiscountLimitPrice() == null ? couponPrice
                     : Math.min(couponPrice, coupon.getDiscountLimitPrice()); // 优惠上限
         }

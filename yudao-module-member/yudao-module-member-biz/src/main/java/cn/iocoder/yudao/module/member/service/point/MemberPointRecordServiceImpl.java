@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.module.member.controller.admin.point.vo.recrod.MemberPointRecordPageReqVO;
+import cn.iocoder.yudao.module.member.controller.app.point.vo.AppMemberPointRecordPageReqVO;
 import cn.iocoder.yudao.module.member.dal.dataobject.point.MemberPointRecordDO;
 import cn.iocoder.yudao.module.member.dal.dataobject.user.MemberUserDO;
 import cn.iocoder.yudao.module.member.dal.mysql.point.MemberPointRecordMapper;
@@ -17,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.annotation.Validated;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 import java.util.Set;
 
@@ -59,8 +60,8 @@ public class MemberPointRecordServiceImpl implements MemberPointRecordService {
     }
 
     @Override
-    public PageResult<MemberPointRecordDO> getPointRecordPage(Long userId, PageParam pageVO) {
-        return memberPointRecordMapper.selectPage(userId, pageVO);
+    public PageResult<MemberPointRecordDO> getPointRecordPage(Long userId, AppMemberPointRecordPageReqVO pageReqVO) {
+        return memberPointRecordMapper.selectPage(userId, pageReqVO);
     }
 
     @Override

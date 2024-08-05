@@ -6,7 +6,7 @@ import cn.iocoder.yudao.module.pay.controller.admin.wallet.vo.rechargepackage.Wa
 import cn.iocoder.yudao.module.pay.controller.admin.wallet.vo.rechargepackage.WalletRechargePackagePageReqVO;
 import cn.iocoder.yudao.module.pay.controller.admin.wallet.vo.rechargepackage.WalletRechargePackageRespVO;
 import cn.iocoder.yudao.module.pay.controller.admin.wallet.vo.rechargepackage.WalletRechargePackageUpdateReqVO;
-import cn.iocoder.yudao.module.pay.convert.wallet.WalletRechargePackageConvert;
+import cn.iocoder.yudao.module.pay.convert.wallet.PayWalletRechargePackageConvert;
 import cn.iocoder.yudao.module.pay.dal.dataobject.wallet.PayWalletRechargePackageDO;
 import cn.iocoder.yudao.module.pay.service.wallet.PayWalletRechargePackageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,8 +16,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
-import javax.validation.Valid;
+import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 
@@ -61,7 +61,7 @@ public class PayWalletRechargePackageController {
     @PreAuthorize("@ss.hasPermission('pay:wallet-recharge-package:query')")
     public CommonResult<WalletRechargePackageRespVO> getWalletRechargePackage(@RequestParam("id") Long id) {
         PayWalletRechargePackageDO walletRechargePackage = walletRechargePackageService.getWalletRechargePackage(id);
-        return success(WalletRechargePackageConvert.INSTANCE.convert(walletRechargePackage));
+        return success(PayWalletRechargePackageConvert.INSTANCE.convert(walletRechargePackage));
     }
 
     @GetMapping("/page")
@@ -69,7 +69,7 @@ public class PayWalletRechargePackageController {
     @PreAuthorize("@ss.hasPermission('pay:wallet-recharge-package:query')")
     public CommonResult<PageResult<WalletRechargePackageRespVO>> getWalletRechargePackagePage(@Valid WalletRechargePackagePageReqVO pageVO) {
         PageResult<PayWalletRechargePackageDO> pageResult = walletRechargePackageService.getWalletRechargePackagePage(pageVO);
-        return success(WalletRechargePackageConvert.INSTANCE.convertPage(pageResult));
+        return success(PayWalletRechargePackageConvert.INSTANCE.convertPage(pageResult));
     }
 
 }

@@ -21,15 +21,14 @@ import cn.iocoder.yudao.module.system.service.social.SocialUserService;
 import cn.iocoder.yudao.module.system.service.user.AdminUserService;
 import com.xingyuv.captcha.model.common.ResponseModel;
 import com.xingyuv.captcha.service.CaptchaService;
+import jakarta.annotation.Resource;
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-
-import javax.annotation.Resource;
-import javax.validation.ConstraintViolationException;
-import javax.validation.Validation;
-import javax.validation.Validator;
 
 import static cn.hutool.core.util.RandomUtil.randomEle;
 import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertPojoEquals;
@@ -208,8 +207,8 @@ public class AdminAuthServiceImplTest extends BaseDbUnitTest {
     public void testSmsLogin_success() {
         // 准备参数
         String mobile = randomString();
-        String scene = randomString();
-        AuthSmsLoginReqVO reqVO = new AuthSmsLoginReqVO(mobile, scene);
+        String code = randomString();
+        AuthSmsLoginReqVO reqVO = new AuthSmsLoginReqVO(mobile, code);
         // mock 方法（用户信息）
         AdminUserDO user = randomPojo(AdminUserDO.class, o -> o.setId(1L));
         when(userService.getUserByMobile(eq(mobile))).thenReturn(user);
@@ -236,8 +235,8 @@ public class AdminAuthServiceImplTest extends BaseDbUnitTest {
         AuthSocialLoginReqVO reqVO = randomPojo(AuthSocialLoginReqVO.class);
         // mock 方法（绑定的用户编号）
         Long userId = 1L;
-        when(socialUserService.getSocialUser(eq(UserTypeEnum.ADMIN.getValue()), eq(reqVO.getType()),
-                eq(reqVO.getCode()), eq(reqVO.getState()))).thenReturn(new SocialUserRespDTO(randomString(), userId));
+        when(socialUserService.getSocialUserByCode(eq(UserTypeEnum.ADMIN.getValue()), eq(reqVO.getType()),
+                eq(reqVO.getCode()), eq(reqVO.getState()))).thenReturn(new SocialUserRespDTO(randomString(), randomString(), randomString(), userId));
         // mock（用户）
         AdminUserDO user = randomPojo(AdminUserDO.class, o -> o.setId(userId));
         when(userService.getUser(eq(userId))).thenReturn(user);

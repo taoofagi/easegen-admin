@@ -8,9 +8,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.hibernate.validator.constraints.Range;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -86,10 +86,6 @@ public class TradeConfigBaseVO {
     @NotNull(message = "用户提现手续费百分比不能为空")
     @PositiveOrZero(message = "用户提现手续费百分比不能是负数")
     private Integer brokerageWithdrawFeePercent;
-
-    @Schema(description = "提现银行", requiredMode = Schema.RequiredMode.REQUIRED, example = "[0, 1]")
-    @NotEmpty(message = "提现银行不能为空")
-    private List<Integer> brokerageBankNames;
 
     @Schema(description = "佣金冻结时间(天)", requiredMode = Schema.RequiredMode.REQUIRED, example = "7")
     @NotNull(message = "佣金冻结时间(天)不能为空")

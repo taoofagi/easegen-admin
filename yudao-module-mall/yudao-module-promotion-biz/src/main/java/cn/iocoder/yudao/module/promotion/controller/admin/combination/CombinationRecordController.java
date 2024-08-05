@@ -21,8 +21,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.Resource;
-import javax.validation.Valid;
+import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
@@ -43,7 +43,8 @@ public class CombinationRecordController {
     @GetMapping("/page")
     @Operation(summary = "获得拼团记录分页")
     @PreAuthorize("@ss.hasPermission('promotion:combination-record:query')")
-    public CommonResult<PageResult<CombinationRecordPageItemRespVO>> getBargainRecordPage(@Valid CombinationRecordReqPageVO pageVO) {
+    public CommonResult<PageResult<CombinationRecordPageItemRespVO>> getCombinationRecordPage(
+            @Valid CombinationRecordReqPageVO pageVO) {
         PageResult<CombinationRecordDO> recordPage = combinationRecordService.getCombinationRecordPage(pageVO);
         // 拼接数据
         List<CombinationActivityDO> activities = combinationActivityService.getCombinationActivityListByIds(

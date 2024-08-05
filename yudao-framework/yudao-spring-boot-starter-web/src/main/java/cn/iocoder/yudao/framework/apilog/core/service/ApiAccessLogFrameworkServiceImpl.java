@@ -1,9 +1,9 @@
 package cn.iocoder.yudao.framework.apilog.core.service;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.iocoder.yudao.module.infra.api.logger.ApiAccessLogApi;
 import cn.iocoder.yudao.module.infra.api.logger.dto.ApiAccessLogCreateReqDTO;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 
 /**
@@ -14,15 +14,20 @@ import org.springframework.scheduling.annotation.Async;
  * @author 芋道源码
  */
 @RequiredArgsConstructor
+@Slf4j
 public class ApiAccessLogFrameworkServiceImpl implements ApiAccessLogFrameworkService {
 
     private final ApiAccessLogApi apiAccessLogApi;
 
     @Override
     @Async
-    public void createApiAccessLog(ApiAccessLog apiAccessLog) {
-        ApiAccessLogCreateReqDTO reqDTO = BeanUtil.copyProperties(apiAccessLog, ApiAccessLogCreateReqDTO.class);
-        apiAccessLogApi.createApiAccessLog(reqDTO);
+    public void createApiAccessLog(ApiAccessLogCreateReqDTO reqDTO) {
+        try {
+            apiAccessLogApi.createApiAccessLog(reqDTO);
+        } catch (Throwable ex) {
+            // 由于 @Async 异步调用，这里打印下日志，更容易跟进
+            log.error("[createApiAccessLog][url({}) log({}) 发生异常]", reqDTO.getRequestUrl(), reqDTO, ex);
+        }
     }
 
 }

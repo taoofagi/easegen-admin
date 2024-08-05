@@ -14,8 +14,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
-import javax.validation.Valid;
+import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 import static cn.iocoder.yudao.framework.security.core.util.SecurityFrameworkUtils.getLoginUserId;
@@ -57,17 +57,25 @@ public class AppMemberUserController {
         return success(true);
     }
 
+    @PutMapping("/update-mobile-by-weixin")
+    @Operation(summary = "基于微信小程序的授权码，修改用户手机")
+    @PreAuthenticated
+    public CommonResult<Boolean> updateUserMobileByWeixin(@RequestBody @Valid AppMemberUserUpdateMobileByWeixinReqVO reqVO) {
+        userService.updateUserMobileByWeixin(getLoginUserId(), reqVO);
+        return success(true);
+    }
+
     @PutMapping("/update-password")
     @Operation(summary = "修改用户密码", description = "用户修改密码时使用")
     @PreAuthenticated
-    public CommonResult<Boolean> updatePassword(@RequestBody @Valid AppMemberUserUpdatePasswordReqVO reqVO) {
+    public CommonResult<Boolean> updateUserPassword(@RequestBody @Valid AppMemberUserUpdatePasswordReqVO reqVO) {
         userService.updateUserPassword(getLoginUserId(), reqVO);
         return success(true);
     }
 
     @PutMapping("/reset-password")
     @Operation(summary = "重置密码", description = "用户忘记密码时使用")
-    public CommonResult<Boolean> resetPassword(@RequestBody @Valid AppMemberUserResetPasswordReqVO reqVO) {
+    public CommonResult<Boolean> resetUserPassword(@RequestBody @Valid AppMemberUserResetPasswordReqVO reqVO) {
         userService.resetUserPassword(reqVO);
         return success(true);
     }

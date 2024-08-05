@@ -1,15 +1,18 @@
 package cn.iocoder.yudao.module.crm.dal.dataobject.business;
 
 import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
+import cn.iocoder.yudao.module.crm.dal.dataobject.customer.CrmCustomerDO;
+import cn.iocoder.yudao.module.crm.enums.business.CrmBusinessEndStatusEnum;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * 商机 DO
+ * CRM 商机 DO
  *
  * @author ljlleo
  */
@@ -24,7 +27,7 @@ import java.time.LocalDateTime;
 public class CrmBusinessDO extends BaseDO {
 
     /**
-     * 主键
+     * 编号
      */
     @TableId
     private Long id;
@@ -33,7 +36,34 @@ public class CrmBusinessDO extends BaseDO {
      */
     private String name;
     /**
-     * 商机状态类型编号
+     * 客户编号
+     *
+     * 关联 {@link CrmCustomerDO#getId()}
+     */
+    private Long customerId;
+
+    /**
+     * 跟进状态
+     */
+    private Boolean followUpStatus;
+    /**
+     * 最后跟进时间
+     */
+    private LocalDateTime contactLastTime;
+    /**
+     * 下次联系时间
+     */
+    private LocalDateTime contactNextTime;
+
+    /**
+     * 负责人的用户编号
+     *
+     * 关联 AdminUserDO 的 id 字段
+     */
+    private Long ownerUserId;
+
+    /**
+     * 商机状态组编号
      *
      *  关联 {@link CrmBusinessStatusTypeDO#getId()}
      */
@@ -45,56 +75,37 @@ public class CrmBusinessDO extends BaseDO {
      */
     private Long statusId;
     /**
-     * 下次联系时间
-     */
-    private LocalDateTime contactNextTime;
-    /**
-     * 客户编号
+     * 结束状态
      *
-     * TODO @ljileo：这个字段，后续要写下关联的实体哈
-     */
-    private Long customerId;
-    /**
-     * 预计成交日期
-     */
-    private LocalDateTime dealTime;
-    /**
-     * 商机金额
-     *
-     */
-    private Integer price;
-    /**
-     * 整单折扣
-     *
-     */
-    private Integer discountPercent;
-    /**
-     * 产品总金额，单位：分
-     */
-    private Integer productPrice;
-    /**
-     * 备注
-     */
-    private String remark;
-    /**
-     * 1赢单2输单3无效
-     *
-     * TODO @lijie：搞个枚举；
+     * 枚举 {@link CrmBusinessEndStatusEnum}
      */
     private Integer endStatus;
     /**
      * 结束时的备注
      */
     private String endRemark;
+
     /**
-     * 最后跟进时间
+     * 预计成交日期
      */
-    private LocalDateTime contactLastTime;
+    private LocalDateTime dealTime;
     /**
-     * 跟进状态
+     * 产品总金额，单位：元
      *
-     * TODO @lijie：目前就是 Boolean；是否跟进
+     * productPrice = ∑({@link CrmBusinessProductDO#getTotalPrice()})
      */
-    private Integer followUpStatus;
+    private BigDecimal totalProductPrice;
+    /**
+     * 整单折扣，百分比
+     */
+    private BigDecimal discountPercent;
+    /**
+     * 商机总金额，单位：元
+     */
+    private BigDecimal totalPrice;
+    /**
+     * 备注
+     */
+    private String remark;
 
 }

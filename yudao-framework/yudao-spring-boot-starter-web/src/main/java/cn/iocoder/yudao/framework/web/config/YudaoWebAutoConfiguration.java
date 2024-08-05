@@ -9,6 +9,7 @@ import cn.iocoder.yudao.framework.web.core.handler.GlobalResponseBodyHandler;
 import cn.iocoder.yudao.framework.web.core.util.WebFrameworkUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -24,8 +25,8 @@ import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.annotation.Resource;
-import javax.servlet.Filter;
+import jakarta.annotation.Resource;
+import jakarta.servlet.Filter;
 
 @AutoConfiguration
 @EnableConfigurationProperties(WebProperties.class)
@@ -122,7 +123,9 @@ public class YudaoWebAutoConfiguration implements WebMvcConfigurer {
      * @param restTemplateBuilder {@link RestTemplateAutoConfiguration#restTemplateBuilder}
      */
     @Bean
+    @ConditionalOnMissingBean
     public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
         return restTemplateBuilder.build();
     }
+
 }

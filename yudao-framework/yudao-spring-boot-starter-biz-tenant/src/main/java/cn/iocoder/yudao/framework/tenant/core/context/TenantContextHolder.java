@@ -21,7 +21,7 @@ public class TenantContextHolder {
     private static final ThreadLocal<Boolean> IGNORE = new TransmittableThreadLocal<>();
 
     /**
-     * 获得租户编号。
+     * 获得租户编号
      *
      * @return 租户编号
      */

@@ -3,7 +3,7 @@ package cn.iocoder.yudao.module.digitalcourse.controller.admin.voices.vo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import java.util.*;
-import javax.validation.constraints.*;
+import jakarta.validation.constraints.*;
 import java.util.*;
 
 @Schema(description = "管理后台 - 声音管理新增/修改 Request VO")

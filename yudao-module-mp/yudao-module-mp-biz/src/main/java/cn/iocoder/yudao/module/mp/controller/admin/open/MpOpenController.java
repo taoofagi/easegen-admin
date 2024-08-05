@@ -2,7 +2,6 @@ package cn.iocoder.yudao.module.mp.controller.admin.open;
 
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.StrUtil;
-import cn.iocoder.yudao.framework.operatelog.core.annotations.OperateLog;
 import cn.iocoder.yudao.framework.tenant.core.util.TenantUtils;
 import cn.iocoder.yudao.module.mp.controller.admin.open.vo.MpOpenCheckSignatureReqVO;
 import cn.iocoder.yudao.module.mp.controller.admin.open.vo.MpOpenHandleMessageReqVO;
@@ -20,7 +19,7 @@ import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.Objects;
 
 @Tag(name = "管理后台 - 公众号回调")
@@ -63,7 +62,6 @@ public class MpOpenController {
      */
     @Operation(summary = "处理消息")
     @PostMapping(value = "/{appId}", produces = "application/xml; charset=UTF-8")
-    @OperateLog(enable = false) // 回调地址，无需记录操作日志
     public String handleMessage(@PathVariable("appId") String appId,
                                 @RequestBody String content,
                                 MpOpenHandleMessageReqVO reqVO) {

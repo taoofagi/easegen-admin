@@ -11,13 +11,12 @@
     <packaging>pom</packaging>
     <modules>
         <module>yudao-common</module>
-        <module>yudao-spring-boot-starter-banner</module>
         <module>yudao-spring-boot-starter-mybatis</module>
         <module>yudao-spring-boot-starter-redis</module>
         <module>yudao-spring-boot-starter-web</module>
         <module>yudao-spring-boot-starter-security</module>
+        <module>yudao-spring-boot-starter-websocket</module>
 
-        <module>yudao-spring-boot-starter-file</module>
         <module>yudao-spring-boot-starter-monitor</module>
         <module>yudao-spring-boot-starter-protection</module>
         <module>yudao-spring-boot-starter-job</module>
@@ -26,20 +25,9 @@
         <module>yudao-spring-boot-starter-excel</module>
         <module>yudao-spring-boot-starter-test</module>
 
-        <module>yudao-spring-boot-starter-biz-operatelog</module>
-        <module>yudao-spring-boot-starter-biz-dict</module>
-        <module>yudao-spring-boot-starter-biz-sms</module>
-
-        <module>yudao-spring-boot-starter-biz-pay</module>
         <module>yudao-spring-boot-starter-biz-tenant</module>
         <module>yudao-spring-boot-starter-biz-data-permission</module>
-        <module>yudao-spring-boot-starter-biz-error-code</module>
         <module>yudao-spring-boot-starter-biz-ip</module>
-
-        <module>yudao-spring-boot-starter-flowable</module>
-        <module>yudao-spring-boot-starter-captcha</module>
-        <module>yudao-spring-boot-starter-websocket</module>
-        <module>yudao-spring-boot-starter-desensitize</module>
     </modules>
 
     <artifactId>yudao-framework</artifactId>
