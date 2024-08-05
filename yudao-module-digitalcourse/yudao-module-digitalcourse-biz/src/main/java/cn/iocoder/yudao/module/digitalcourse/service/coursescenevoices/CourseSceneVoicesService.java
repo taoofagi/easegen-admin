@@ -1,11 +1,11 @@
 package cn.iocoder.yudao.module.digitalcourse.service.coursescenevoices;
 
-import java.util.*;
-import javax.validation.*;
-import cn.iocoder.yudao.module.digitalcourse.controller.app.coursescenevoices.vo.*;
+import jakarta.validation.*;
+
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenevoices.vo.AppCourseSceneVoicesPageReqVO;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenevoices.vo.AppCourseSceneVoicesSaveReqVO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursescenevoices.CourseSceneVoicesDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
-import cn.iocoder.yudao.framework.common.pojo.PageParam;
 
 /**
  * 存储每个场景中的声音信息 Service 接口

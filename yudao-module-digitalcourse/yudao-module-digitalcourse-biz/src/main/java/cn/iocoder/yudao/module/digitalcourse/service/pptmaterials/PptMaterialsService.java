@@ -1,11 +1,11 @@
 package cn.iocoder.yudao.module.digitalcourse.service.pptmaterials;
 
-import java.util.*;
-import javax.validation.*;
-import cn.iocoder.yudao.module.digitalcourse.controller.app.pptmaterials.vo.*;
+
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.pptmaterials.vo.AppPptMaterialsPageReqVO;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.pptmaterials.vo.AppPptMaterialsSaveReqVO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.pptmaterials.PptMaterialsDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
-import cn.iocoder.yudao.framework.common.pojo.PageParam;
+import jakarta.validation.Valid;
 
 /**
  * 存储PPT课件的具体内容信息，包括课件的图片URL、页面索引等 Service 接口

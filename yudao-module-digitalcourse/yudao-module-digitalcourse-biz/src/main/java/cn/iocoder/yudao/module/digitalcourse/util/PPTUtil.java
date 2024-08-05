@@ -2,19 +2,15 @@ package cn.iocoder.yudao.module.digitalcourse.util;
 
 
 
-import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONObject;
 import cn.iocoder.yudao.module.infra.api.file.FileApi;
-import com.github.yulichang.toolkit.SpringContentUtils;
-import lombok.Data;
+import jakarta.annotation.Resource;
 import org.apache.poi.xslf.usermodel.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import javax.imageio.ImageIO;
+import javax.sound.sampled.*;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -53,7 +49,7 @@ public class PPTUtil {
     @Async
     public Boolean analysisPpt(String file,Long pptId){
         try {
-            ArrayList<String> urlList = new ArrayList<>();
+            ArrayList<JSONObject> urlList = new ArrayList<>();
             JSONObject jsonObject = new JSONObject();
 
             String path = file.substring(file.lastIndexOf("/")+1);
@@ -91,7 +87,10 @@ public class PPTUtil {
                 byte[] byteArray = outputStream.toByteArray();
 
                 String s = savePicture(byteArray, getTimeStamp());
-                urlList.add(s);
+                JSONObject fileInfo = new JSONObject();
+                fileInfo.put("url",s);
+                fileInfo.put("text",text);
+                urlList.add(fileInfo);
                 jsonObject.put("url",urlList);
                 jsonObject.put("schedule",(double) (i + 1) /xslfSlideList.size());
                 cache.put(pptId,jsonObject);

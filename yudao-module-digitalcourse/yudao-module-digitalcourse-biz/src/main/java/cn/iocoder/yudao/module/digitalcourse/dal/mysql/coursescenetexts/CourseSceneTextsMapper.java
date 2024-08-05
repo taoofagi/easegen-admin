@@ -1,13 +1,11 @@
 package cn.iocoder.yudao.module.digitalcourse.dal.mysql.coursescenetexts;
 
-import java.util.*;
-
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenetexts.vo.AppCourseSceneTextsPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursescenetexts.CourseSceneTextsDO;
 import org.apache.ibatis.annotations.Mapper;
-import cn.iocoder.yudao.module.digitalcourse.controller.app.coursescenetexts.vo.*;
 
 /**
  * 存储场景中的文本信息，包括文本内容、音调、速度等 Mapper

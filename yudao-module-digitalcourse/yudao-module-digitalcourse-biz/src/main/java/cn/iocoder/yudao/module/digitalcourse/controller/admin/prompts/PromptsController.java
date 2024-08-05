@@ -1,16 +1,15 @@
 package cn.iocoder.yudao.module.digitalcourse.controller.admin.prompts;
 
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
-import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.security.access.prepost.PreAuthorize;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Operation;
 
-import javax.validation.constraints.*;
-import javax.validation.*;
-import javax.servlet.http.*;
 import java.util.*;
 import java.io.IOException;
 
@@ -21,9 +20,6 @@ import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 
 import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
-
-import cn.iocoder.yudao.framework.operatelog.core.annotations.OperateLog;
-import static cn.iocoder.yudao.framework.operatelog.core.enums.OperateTypeEnum.*;
 
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.prompts.vo.*;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.prompts.PromptsDO;
@@ -82,7 +78,6 @@ public class PromptsController {
     @GetMapping("/export-excel")
     @Operation(summary = "导出存储提示词模板的信息，包括提示词的名称、类型、排序等信息 Excel")
     @PreAuthorize("@ss.hasPermission('digitalcourse:prompts:export')")
-    @OperateLog(type = EXPORT)
     public void exportPromptsExcel(@Valid PromptsPageReqVO pageReqVO,
               HttpServletResponse response) throws IOException {
         pageReqVO.setPageSize(PageParam.PAGE_SIZE_NONE);

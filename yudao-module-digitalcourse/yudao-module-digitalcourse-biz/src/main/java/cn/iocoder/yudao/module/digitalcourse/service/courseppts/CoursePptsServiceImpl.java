@@ -2,13 +2,12 @@ package cn.iocoder.yudao.module.digitalcourse.service.courseppts;
 
 import cn.hutool.json.JSONObject;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
-import cn.iocoder.yudao.framework.mq.redis.core.RedisMQTemplate;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courseppts.vo.AppCoursePptsPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courseppts.vo.AppCoursePptsSaveReqVO;
 import cn.iocoder.yudao.module.digitalcourse.util.PPTUtil;
+import jakarta.annotation.Resource;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-import javax.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
 
 
@@ -33,8 +32,8 @@ public class CoursePptsServiceImpl implements CoursePptsService {
     @Resource
     private CoursePptsMapper coursePptsMapper;
 
-    @Resource
-    private RedisMQTemplate redisMQTemplate;
+   /* @Resource
+    private RedisMQTemplate redisMQTemplate;*/
 
     @Resource
     private PPTUtil pptUtil;
@@ -85,10 +84,15 @@ public class CoursePptsServiceImpl implements CoursePptsService {
     @Override
     public CommonResult getSchedule(Long id) {
         JSONObject map = PPTUtil.getMap(id);
+        if (map == null){
+            return CommonResult.success(null);
+            //从数据库中查询
+//            return
+        }
         Double schedule = Double.valueOf(String.valueOf(map.get("schedule")));
         if (schedule.compareTo(1.0)<0) return CommonResult.success(schedule);
         //返回图片
-        return CommonResult.success(map.get("urlList"));
+        return CommonResult.success(map.get("url"));
     }
 
 }

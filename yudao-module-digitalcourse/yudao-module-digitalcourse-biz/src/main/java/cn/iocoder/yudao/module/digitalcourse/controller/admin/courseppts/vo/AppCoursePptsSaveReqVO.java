@@ -1,10 +1,10 @@
 package cn.iocoder.yudao.module.digitalcourse.controller.admin.courseppts.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 
 @Schema(description = "用户 APP - 存储课程的PPT信息，包括文件名、文件大小、类型等新增/修改 Request VO")
 @Data

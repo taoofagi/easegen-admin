@@ -1,11 +1,11 @@
 package cn.iocoder.yudao.module.digitalcourse.service.fonts;
 
 import java.util.*;
-import javax.validation.*;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.fonts.vo.*;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.fonts.FontsDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.pojo.PageParam;
+import jakarta.validation.Valid;
 
 /**
  * 存储字体的信息，包括字体的别名、预览URL、名称等 Service 接口

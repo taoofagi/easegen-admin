@@ -1,11 +1,11 @@
 package cn.iocoder.yudao.module.digitalcourse.service.coursescenecomponents;
 
-import java.util.*;
-import javax.validation.*;
-import cn.iocoder.yudao.module.digitalcourse.controller.app.coursescenecomponents.vo.*;
+
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenecomponents.vo.AppCourseSceneComponentsPageReqVO;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenecomponents.vo.AppCourseSceneComponentsSaveReqVO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursescenecomponents.CourseSceneComponentsDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
-import cn.iocoder.yudao.framework.common.pojo.PageParam;
+import jakarta.validation.Valid;
 
 /**
  * 存储每个场景中的组件信息，包括PPT、数字人等 Service 接口

@@ -1,32 +1,26 @@
 package cn.iocoder.yudao.module.digitalcourse.service.coursescenes;
 
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenes.vo.AppCourseScenesPageReqVO;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenes.vo.AppCourseScenesSaveReqVO;
+import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
-import javax.annotation.Resource;
 
 import cn.iocoder.yudao.framework.test.core.ut.BaseDbUnitTest;
 
-import cn.iocoder.yudao.module.digitalcourse.controller.app.coursescenes.vo.*;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursescenes.CourseScenesDO;
 import cn.iocoder.yudao.module.digitalcourse.dal.mysql.coursescenes.CourseScenesMapper;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 
-import javax.annotation.Resource;
 import org.springframework.context.annotation.Import;
-import java.util.*;
-import java.time.LocalDateTime;
 
-import static cn.hutool.core.util.RandomUtil.*;
 import static cn.iocoder.yudao.module.digitalcourse.enums.ErrorCodeConstants.*;
 import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.*;
 import static cn.iocoder.yudao.framework.test.core.util.RandomUtils.*;
 import static cn.iocoder.yudao.framework.common.util.date.LocalDateTimeUtils.*;
 import static cn.iocoder.yudao.framework.common.util.object.ObjectUtils.*;
-import static cn.iocoder.yudao.framework.common.util.date.DateUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * {@link CourseScenesServiceImpl} 的单元测试类

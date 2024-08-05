@@ -1,11 +1,11 @@
 package cn.iocoder.yudao.module.digitalcourse.service.coursesceneaudios;
 
-import java.util.*;
-import javax.validation.*;
-import cn.iocoder.yudao.module.digitalcourse.controller.app.coursesceneaudios.vo.*;
+
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursesceneaudios.vo.AppCourseSceneAudiosPageReqVO;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursesceneaudios.vo.AppCourseSceneAudiosSaveReqVO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursesceneaudios.CourseSceneAudiosDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
-import cn.iocoder.yudao.framework.common.pojo.PageParam;
+import jakarta.validation.Valid;
 
 /**
  * 存储场景中的音频信息，包括音频ID和使用视频背景音频的标志等 Service 接口

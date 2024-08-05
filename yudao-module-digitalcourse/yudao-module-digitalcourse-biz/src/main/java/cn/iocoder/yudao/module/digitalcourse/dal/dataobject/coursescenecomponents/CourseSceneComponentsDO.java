@@ -76,7 +76,7 @@ public class CourseSceneComponentsDO extends BaseDO {
     /**
      * 左边距
      */
-    private Integer left;
+    private Integer marginLeft;
     /**
      * 实体ID
      */

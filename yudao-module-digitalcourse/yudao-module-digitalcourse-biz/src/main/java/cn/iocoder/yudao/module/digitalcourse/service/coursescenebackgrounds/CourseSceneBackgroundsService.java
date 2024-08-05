@@ -1,11 +1,11 @@
 package cn.iocoder.yudao.module.digitalcourse.service.coursescenebackgrounds;
 
-import java.util.*;
-import javax.validation.*;
-import cn.iocoder.yudao.module.digitalcourse.controller.app.coursescenebackgrounds.vo.*;
+
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenebackgrounds.vo.AppCourseSceneBackgroundsPageReqVO;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenebackgrounds.vo.AppCourseSceneBackgroundsSaveReqVO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursescenebackgrounds.CourseSceneBackgroundsDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
-import cn.iocoder.yudao.framework.common.pojo.PageParam;
+import jakarta.validation.Valid;
 
 /**
  * 存储每个场景的背景信息 Service 接口

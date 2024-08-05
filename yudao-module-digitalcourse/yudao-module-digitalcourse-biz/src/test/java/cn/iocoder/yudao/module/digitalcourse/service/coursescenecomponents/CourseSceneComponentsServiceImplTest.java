@@ -1,32 +1,26 @@
 package cn.iocoder.yudao.module.digitalcourse.service.coursescenecomponents;
 
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenecomponents.vo.AppCourseSceneComponentsPageReqVO;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenecomponents.vo.AppCourseSceneComponentsSaveReqVO;
+import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
-import javax.annotation.Resource;
 
 import cn.iocoder.yudao.framework.test.core.ut.BaseDbUnitTest;
 
-import cn.iocoder.yudao.module.digitalcourse.controller.app.coursescenecomponents.vo.*;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursescenecomponents.CourseSceneComponentsDO;
 import cn.iocoder.yudao.module.digitalcourse.dal.mysql.coursescenecomponents.CourseSceneComponentsMapper;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 
-import javax.annotation.Resource;
 import org.springframework.context.annotation.Import;
-import java.util.*;
-import java.time.LocalDateTime;
 
-import static cn.hutool.core.util.RandomUtil.*;
 import static cn.iocoder.yudao.module.digitalcourse.enums.ErrorCodeConstants.*;
 import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.*;
 import static cn.iocoder.yudao.framework.test.core.util.RandomUtils.*;
 import static cn.iocoder.yudao.framework.common.util.date.LocalDateTimeUtils.*;
 import static cn.iocoder.yudao.framework.common.util.object.ObjectUtils.*;
-import static cn.iocoder.yudao.framework.common.util.date.DateUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 /**
  * {@link CourseSceneComponentsServiceImpl} 的单元测试类
@@ -120,7 +114,7 @@ public class CourseSceneComponentsServiceImplTest extends BaseDbUnitTest {
            o.setCategory(null);
            o.setDepth(null);
            o.setTop(null);
-           o.setLeft(null);
+           o.setMarginLeft(null);
            o.setEntityId(null);
            o.setEntityType(null);
            o.setBusinessId(null);
@@ -149,7 +143,7 @@ public class CourseSceneComponentsServiceImplTest extends BaseDbUnitTest {
        // 测试 top 不匹配
        courseSceneComponentsMapper.insert(cloneIgnoreId(dbCourseSceneComponents, o -> o.setTop(null)));
        // 测试 left 不匹配
-       courseSceneComponentsMapper.insert(cloneIgnoreId(dbCourseSceneComponents, o -> o.setLeft(null)));
+       courseSceneComponentsMapper.insert(cloneIgnoreId(dbCourseSceneComponents, o -> o.setMarginLeft(null)));
        // 测试 entityId 不匹配
        courseSceneComponentsMapper.insert(cloneIgnoreId(dbCourseSceneComponents, o -> o.setEntityId(null)));
        // 测试 entityType 不匹配
@@ -172,7 +166,7 @@ public class CourseSceneComponentsServiceImplTest extends BaseDbUnitTest {
        reqVO.setCategory(null);
        reqVO.setDepth(null);
        reqVO.setTop(null);
-       reqVO.setLeft(null);
+       reqVO.setMarginLeft(null);
        reqVO.setEntityId(null);
        reqVO.setEntityType(null);
        reqVO.setBusinessId(null);

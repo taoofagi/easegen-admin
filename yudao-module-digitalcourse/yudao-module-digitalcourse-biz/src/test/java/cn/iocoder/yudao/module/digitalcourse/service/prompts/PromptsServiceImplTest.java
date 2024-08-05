@@ -1,10 +1,10 @@
 package cn.iocoder.yudao.module.digitalcourse.service.prompts;
 
+import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import javax.annotation.Resource;
 
 import cn.iocoder.yudao.framework.test.core.ut.BaseDbUnitTest;
 
@@ -13,7 +13,6 @@ import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.prompts.PromptsDO;
 import cn.iocoder.yudao.module.digitalcourse.dal.mysql.prompts.PromptsMapper;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 
-import javax.annotation.Resource;
 import org.springframework.context.annotation.Import;
 import java.util.*;
 import java.time.LocalDateTime;

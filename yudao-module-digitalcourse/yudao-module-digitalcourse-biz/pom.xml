@@ -52,11 +52,6 @@
             <version>3.17</version>
         </dependency>
 
-        <dependency>
-            <groupId>cn.iocoder.boot</groupId>
-            <artifactId>yudao-module-infra-api</artifactId>
-            <version>1.9.0-snapshot</version>
-        </dependency>
 
         <!-- DB 相关 -->
         <dependency>
@@ -72,10 +67,6 @@
         <dependency>
             <groupId>cn.iocoder.boot</groupId>
             <artifactId>yudao-spring-boot-starter-excel</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>cn.iocoder.boot</groupId>
-            <artifactId>yudao-spring-boot-starter-biz-operatelog</artifactId>
         </dependency>
     </dependencies>
 
