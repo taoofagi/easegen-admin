@@ -16,11 +16,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 
@@ -83,6 +86,18 @@ public class AppCoursePptsController {
     @GetMapping("/getSchedule")
     public CommonResult getSchedule(@Valid Long id){
        return coursePptsService.getSchedule(id);
+    }
+
+    @PostMapping("/merge")
+    @Operation(summary = "合并ppt")
+    public ResponseEntity<Object> mergePPTs(@RequestParam("files") MultipartFile[] files) {
+        return coursePptsService.mergePPTs(files);
+    }
+
+    @PostMapping("/convert")
+    @Operation(summary = "解析PPT内容")
+    public ResponseEntity<Map<String, Object>> convertPptToImages(@RequestParam("file") MultipartFile file) {
+        return coursePptsService.convertPptToImages(file);
     }
 
 }

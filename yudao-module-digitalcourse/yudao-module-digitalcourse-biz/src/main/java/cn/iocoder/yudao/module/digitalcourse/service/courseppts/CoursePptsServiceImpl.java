@@ -5,8 +5,16 @@ import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courseppts.vo.AppCoursePptsPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courseppts.vo.AppCoursePptsSaveReqVO;
 import cn.iocoder.yudao.module.digitalcourse.util.PPTUtil;
+import cn.iocoder.yudao.module.infra.api.file.FileApi;
 import jakarta.annotation.Resource;
+import org.apache.poi.common.usermodel.fonts.FontInfo;
+import org.apache.poi.sl.draw.DrawFontManagerDefault;
+import org.apache.poi.sl.draw.Drawable;
+import org.apache.poi.sl.usermodel.Placeholder;
+import org.apache.poi.xslf.usermodel.*;
 import org.springframework.context.ApplicationContext;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -16,6 +24,19 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 
 import cn.iocoder.yudao.module.digitalcourse.dal.mysql.courseppts.CoursePptsMapper;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.digitalcourse.enums.ErrorCodeConstants.*;
@@ -37,6 +58,9 @@ public class CoursePptsServiceImpl implements CoursePptsService {
 
     @Resource
     private PPTUtil pptUtil;
+
+    @Resource
+    private FileApi fileApi;
 
     @Override
     public Long createCoursePpts(AppCoursePptsSaveReqVO createReqVO) {
@@ -93,6 +117,114 @@ public class CoursePptsServiceImpl implements CoursePptsService {
         if (schedule.compareTo(1.0)<0) return CommonResult.success(schedule);
         //返回图片
         return CommonResult.success(map.get("url"));
+    }
+
+    @Override
+    public ResponseEntity<Object> mergePPTs(MultipartFile[] files) {
+        if (files.length < 2) {
+            return ResponseEntity.badRequest().body("At least two PPT files are required.".getBytes());
+        }
+
+        try (XMLSlideShow mergedShow = new XMLSlideShow()) {
+            for (MultipartFile file : files) {
+                XMLSlideShow ppt = new XMLSlideShow(file.getInputStream());
+                for (XSLFSlide slide : ppt.getSlides()) {
+                    mergedShow.createSlide().importContent(slide);
+                }
+            }
+
+            try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+                mergedShow.write(out);
+                String path = fileApi.createFile("PPT黑板模板合并.pptx", null, out.toByteArray());
+                return ResponseEntity.ok().body(path);
+            }
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(("Error merging PPT files: " + e.getMessage()).getBytes());
+        }
+    }
+
+    @Override
+    public ResponseEntity<Map<String, Object>> convertPptToImages(MultipartFile file) {
+        Map<String, Object> map = new HashMap<>();
+        if (file.isEmpty()) {
+            map.put("error", "No file provided");
+            return ResponseEntity.badRequest().body(map);
+        }
+
+        try {
+            // Save the uploaded file
+            File pptFile = File.createTempFile("ppt_", ".pptx");
+            file.transferTo(pptFile);
+
+            // Convert PPT to images and extract notes
+            Map<String, Object> result = convertPptToImagesAndNotes(pptFile);
+
+            // Delete the temporary file
+            pptFile.delete();
+
+            return ResponseEntity.ok(result);
+        } catch (IOException e) {
+            map.put("error", e.getMessage());
+            return ResponseEntity.status(500).body(map);
+        }
+    }
+
+    private Map<String, Object> convertPptToImagesAndNotes(File pptFile) throws IOException {
+        Map<String, Object> result = new HashMap<>();
+        List<Map<String, String>> slidesData = new ArrayList<>();
+
+        try (FileInputStream fis = new FileInputStream(pptFile);
+             XMLSlideShow ppt = new XMLSlideShow(fis)) {
+
+            Dimension pgsize = ppt.getPageSize();
+            for (XSLFSlide slide : ppt.getSlides()) {
+                BufferedImage img = new BufferedImage(pgsize.width, pgsize.height, BufferedImage.TYPE_INT_RGB);
+                Graphics2D graphics = img.createGraphics();
+
+                // 有些字体乱码识别不了，采用字体映射功能，将其映射为宋体
+                graphics.setRenderingHint(Drawable.FONT_HANDLER, new DrawFontManagerDefault() {
+                    public FontInfo getMappedFont(Graphics2D graphics, FontInfo fontInfo) {
+                        try {
+                            //把所有字体都映射成 宋体
+                            fontInfo.setTypeface("宋体");
+                        } catch (Exception e) {
+                            //有一些字体是只读属性，会抛异常，忽略掉
+                        }
+                        return super.getMappedFont(graphics, fontInfo);
+                    }
+                });
+
+                slide.draw(graphics);
+
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                ImageIO.write(img, "png", out);
+                String path = fileApi.createFile(out.toByteArray());
+
+                // 获取ppt的备注信息
+                XSLFNotes notes = slide.getNotes();
+                String remark = "";
+                if (notes != null) {
+                    for (XSLFShape shape : notes) {
+                        if (shape instanceof XSLFTextShape && Placeholder.BODY == ((XSLFTextShape) shape).getTextType()) {
+                            XSLFTextShape txShape = (XSLFTextShape) shape;
+                            remark = txShape.getText();
+                            break;
+                        }
+                    }
+                }
+
+                // Store image path and notes
+                Map<String, String> slideData = new HashMap<>();
+                slideData.put("imagePath", path);
+                slideData.put("remark", remark);
+
+                slidesData.add(slideData);
+            }
+        }
+
+        result.put("slides", slidesData);
+        return result;
     }
 
 }
