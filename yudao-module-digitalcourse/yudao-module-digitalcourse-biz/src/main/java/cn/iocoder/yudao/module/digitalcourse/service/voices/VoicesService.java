@@ -52,4 +52,5 @@ public interface VoicesService {
      */
     PageResult<VoicesDO> getVoicesPage(VoicesPageReqVO pageReqVO);
 
+    String audition();
 }

@@ -71,4 +71,9 @@ public class VoicesServiceImpl implements VoicesService {
         return voicesMapper.selectPage(pageReqVO);
     }
 
+    @Override
+    public String audition() {
+        return "http://127.0.0.1:48080/admin-api/infra/file/4/get/397d33344f469e4d251cd39d4eb1c9047fa2b087270f0b8b8f161d8c4ab6221f.wav";
+    }
+
 }

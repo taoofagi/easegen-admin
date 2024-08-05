@@ -88,4 +88,11 @@ public class VoicesController {
                         BeanUtils.toBean(list, VoicesRespVO.class));
     }
 
+    @PostMapping("/audition")
+    @Operation(summary = "试听")
+    @PreAuthorize("@ss.hasPermission('digitalcourse:voices:query')")
+    public CommonResult<String> audition() {
+        return success(voicesService.audition());
+    }
+
 }

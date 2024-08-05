@@ -32,6 +32,10 @@ public class VoicesRespVO {
     @NotEmpty(message = "试听URL不能为空")
     private String auditionUrl;
 
+    @Schema(description = "头像URL", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotEmpty(message = "头像URL不能为空")
+    private String avatarUrl;
+
     @Schema(description = "语言类型", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty(value = "语言类型", converter = DictConvert.class)
     @DictFormat("digitalcourse_voices_language") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
