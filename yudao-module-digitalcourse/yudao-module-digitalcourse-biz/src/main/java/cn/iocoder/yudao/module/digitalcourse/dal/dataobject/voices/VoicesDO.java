@@ -40,6 +40,10 @@ public class VoicesDO extends BaseDO {
      */
     private String auditionUrl;
     /**
+     * 头像URL
+     */
+    private String avatarUrl;
+    /**
      * 语言类型
      *
      * 枚举 {@link TODO digitalcourse_voices_language 对应的类}
