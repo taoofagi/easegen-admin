@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.crm.enums.permission;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjUtil;
 import cn.iocoder.yudao.framework.common.core.IntArrayValuable;
 import lombok.AllArgsConstructor;
@@ -10,6 +11,8 @@ import java.util.Arrays;
 /**
  * CRM 数据权限级别枚举
  *
+ * OWNER > WRITE > READ
+ *
  * @author HUIHUI
  */
 @Getter
@@ -17,8 +20,8 @@ import java.util.Arrays;
 public enum CrmPermissionLevelEnum implements IntArrayValuable {
 
     OWNER(1, "负责人"),
-    READ(2, "读"),
-    WRITE(3, "写");
+    READ(2, "只读"),
+    WRITE(3, "读写");
 
     public static final int[] ARRAYS = Arrays.stream(values()).mapToInt(CrmPermissionLevelEnum::getLevel).toArray();
 
@@ -46,6 +49,12 @@ public enum CrmPermissionLevelEnum implements IntArrayValuable {
 
     public static boolean isWrite(Integer level) {
         return ObjUtil.equal(WRITE.level, level);
+    }
+
+    public static String getNameByLevel(Integer level) {
+        CrmPermissionLevelEnum typeEnum = CollUtil.findOne(CollUtil.newArrayList(CrmPermissionLevelEnum.values()),
+                item -> ObjUtil.equal(item.level, level));
+        return typeEnum == null ? null : typeEnum.getName();
     }
 
 }

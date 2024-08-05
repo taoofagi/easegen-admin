@@ -3,7 +3,7 @@ package cn.iocoder.yudao.module.infra.controller.admin.codegen.vo.column;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "管理后台 - 代码生成字段定义创建/修改 Request VO")
 @Data
@@ -35,10 +35,6 @@ public class CodegenColumnSaveReqVO {
     @Schema(description = "是否主键", requiredMode = Schema.RequiredMode.REQUIRED, example = "false")
     @NotNull(message = "是否主键不能为空")
     private Boolean primaryKey;
-
-    @Schema(description = "是否自增", requiredMode = Schema.RequiredMode.REQUIRED, example = "true")
-    @NotNull(message = "是否自增不能为空")
-    private Boolean autoIncrement;
 
     @Schema(description = "排序", requiredMode = Schema.RequiredMode.REQUIRED, example = "10")
     @NotNull(message = "排序不能为空")

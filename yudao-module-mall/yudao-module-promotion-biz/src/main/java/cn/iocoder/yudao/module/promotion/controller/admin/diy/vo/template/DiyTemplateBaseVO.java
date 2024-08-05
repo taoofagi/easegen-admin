@@ -3,7 +3,7 @@ package cn.iocoder.yudao.module.promotion.controller.admin.diy.vo.template;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 
 /**
@@ -21,6 +21,6 @@ public class DiyTemplateBaseVO {
     private String remark;
 
     @Schema(description = "预览图", example = "[https://www.iocoder.cn/1.jpg]")
-    private List<String> previewImageUrls;
+    private List<String> previewPicUrls;
 
 }

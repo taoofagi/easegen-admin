@@ -1,16 +1,16 @@
 package cn.iocoder.yudao.module.digitalcourse.controller.admin.voices;
 
 import org.springframework.web.bind.annotation.*;
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.security.access.prepost.PreAuthorize;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Operation;
 
-import javax.validation.constraints.*;
-import javax.validation.*;
-import javax.servlet.http.*;
+import jakarta.validation.constraints.*;
+import jakarta.validation.*;
+import jakarta.servlet.http.*;
 import java.util.*;
 import java.io.IOException;
 
@@ -21,9 +21,6 @@ import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 
 import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
-
-import cn.iocoder.yudao.framework.operatelog.core.annotations.OperateLog;
-import static cn.iocoder.yudao.framework.operatelog.core.enums.OperateTypeEnum.*;
 
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.voices.vo.*;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.voices.VoicesDO;
@@ -82,7 +79,6 @@ public class VoicesController {
     @GetMapping("/export-excel")
     @Operation(summary = "导出声音管理 Excel")
     @PreAuthorize("@ss.hasPermission('digitalcourse:voices:export')")
-    @OperateLog(type = EXPORT)
     public void exportVoicesExcel(@Valid VoicesPageReqVO pageReqVO,
               HttpServletResponse response) throws IOException {
         pageReqVO.setPageSize(PageParam.PAGE_SIZE_NONE);

@@ -12,10 +12,17 @@
     <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
-    <description>服务保证，提供分布式锁、幂等、限流、熔断等等功能</description>
+    <description>服务保证，提供分布式锁、幂等、限流、熔断、API 签名等等功能</description>
     <url>https://github.com/YunaiV/ruoyi-vue-pro</url>
 
     <dependencies>
+        <!-- Web 相关 -->
+        <dependency>
+            <groupId>cn.iocoder.boot</groupId>
+            <artifactId>yudao-spring-boot-starter-web</artifactId>
+            <scope>provided</scope> <!-- 设置为 provided，只有限流、幂等使用到 -->
+        </dependency>
+
         <!-- DB 相关 -->
         <dependency>
             <groupId>cn.iocoder.boot</groupId>
@@ -29,10 +36,11 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- Test 测试相关 -->
         <dependency>
-            <groupId>io.github.resilience4j</groupId>
-            <artifactId>resilience4j-spring-boot2</artifactId>
-            <optional>true</optional>
+            <groupId>cn.iocoder.boot</groupId>
+            <artifactId>yudao-spring-boot-starter-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

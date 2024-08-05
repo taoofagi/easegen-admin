@@ -60,7 +60,6 @@ public interface CombinationActivityConvert {
 
     List<CombinationActivityRespVO> convertList(List<CombinationActivityDO> list);
 
-
     default PageResult<CombinationActivityPageItemRespVO> convertPage(PageResult<CombinationActivityDO> page,
                                                                       List<CombinationProductDO> productList,
                                                                       Map<Long, Integer> groupCountMap,
@@ -69,10 +68,11 @@ public interface CombinationActivityConvert {
                                                                       List<ProductSpuRespDTO> spuList) {
         PageResult<CombinationActivityPageItemRespVO> pageResult = convertPage(page);
         Map<Long, ProductSpuRespDTO> spuMap = convertMap(spuList, ProductSpuRespDTO::getId);
+        Map<Long, List<CombinationProductDO>> productMap = convertMultiMap(productList, CombinationProductDO::getActivityId);
         pageResult.getList().forEach(item -> {
             MapUtils.findAndThen(spuMap, item.getSpuId(), spu -> item.setSpuName(spu.getName()).setPicUrl(spu.getPicUrl())
                     .setMarketPrice(spu.getMarketPrice()));
-            item.setProducts(convertList2(productList));
+            item.setProducts(convertList2(productMap.get(item.getId())));
             // 设置统计字段
             item.setGroupCount(groupCountMap.getOrDefault(item.getId(), 0))
                     .setGroupSuccessCount(groupSuccessCountMap.getOrDefault(item.getId(), 0))
@@ -125,7 +125,6 @@ public interface CombinationActivityConvert {
                 .setNickname(user.getNickname()).setAvatar(user.getAvatar())
                 // 商品信息
                 .setSpuName(spu.getName()).setPicUrl(sku.getPicUrl());
-
     }
 
     List<AppCombinationActivityRespVO> convertAppList(List<CombinationActivityDO> list);

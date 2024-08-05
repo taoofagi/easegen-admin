@@ -3,7 +3,7 @@ package cn.iocoder.yudao.module.promotion.controller.admin.diy.vo.page;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -24,6 +24,6 @@ public class DiyPageBaseVO {
     private String remark;
 
     @Schema(description = "预览图")
-    private List<String> previewImageUrls;
+    private List<String> previewPicUrls;
 
 }

@@ -50,10 +50,9 @@ public interface BrokerageRecordMapper extends BaseMapperX<BrokerageRecordDO> {
                 .eq(BrokerageRecordDO::getStatus, status));
     }
 
-    default BrokerageRecordDO selectByBizTypeAndBizIdAndUserId(Integer bizType, String bizId, Long userId) {
-        return selectOne(BrokerageRecordDO::getBizType, bizType,
-                BrokerageRecordDO::getBizId, bizId,
-                BrokerageRecordDO::getUserId, userId);
+    default List<BrokerageRecordDO> selectListByBizTypeAndBizId(Integer bizType, String bizId) {
+        return selectList(BrokerageRecordDO::getBizType, bizType,
+                BrokerageRecordDO::getBizId, bizId);
     }
 
     default List<UserBrokerageSummaryRespBO> selectCountAndSumPriceByUserIdInAndBizTypeAndStatus(Collection<Long> userIds,
@@ -64,7 +63,7 @@ public interface BrokerageRecordMapper extends BaseMapperX<BrokerageRecordDO> {
                 .selectCount(BrokerageRecordDO::getId, UserBrokerageSummaryRespBO::getCount)
                 .selectSum(BrokerageRecordDO::getPrice)
                 .in(BrokerageRecordDO::getUserId, userIds)
-                .eq(BrokerageRecordDO::getBizId, bizType)
+                .eq(BrokerageRecordDO::getBizType, bizType)
                 .eq(BrokerageRecordDO::getStatus, status)
                 .groupBy(BrokerageRecordDO::getUserId)); // 按照 userId 聚合
         return BeanUtil.copyToList(list, UserBrokerageSummaryRespBO.class);
@@ -74,7 +73,7 @@ public interface BrokerageRecordMapper extends BaseMapperX<BrokerageRecordDO> {
 //                    .selectCount(BrokerageRecordDO::getId, UserBrokerageSummaryBO::getCount)
 //                    .selectSum(BrokerageRecordDO::getPrice)
 //                    .in(BrokerageRecordDO::getUserId, userIds)
-//                    .eq(BrokerageRecordDO::getBizId, bizType)
+//                    .eq(BrokerageRecordDO::getBizType, bizType)
 //                    .eq(BrokerageRecordDO::getStatus, status)
 //                    .groupBy(BrokerageRecordDO::getUserId));
     }
@@ -88,6 +87,7 @@ public interface BrokerageRecordMapper extends BaseMapperX<BrokerageRecordDO> {
                                                                      @Param("beginTime") LocalDateTime beginTime,
                                                                      @Param("endTime") LocalDateTime endTime);
 
+    // TODO @芋艿：收敛掉 @Select 注解操作，统一成 MyBatis-Plus 的方式，或者 xml
     @Select("SELECT user_id AS id, SUM(price) AS brokeragePrice FROM trade_brokerage_record " +
             "WHERE biz_type = #{bizType} AND status = #{status} AND deleted = FALSE " +
             "AND unfreeze_time BETWEEN #{beginTime} AND #{endTime} " +

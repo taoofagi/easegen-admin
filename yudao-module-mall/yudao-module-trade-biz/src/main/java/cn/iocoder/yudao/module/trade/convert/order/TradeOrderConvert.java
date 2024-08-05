@@ -5,7 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.collection.CollectionUtils;
 import cn.iocoder.yudao.framework.common.util.string.StrUtils;
-import cn.iocoder.yudao.framework.dict.core.util.DictFrameworkUtils;
+import cn.iocoder.yudao.framework.dict.core.DictFrameworkUtils;
 import cn.iocoder.yudao.framework.ip.core.utils.AreaUtils;
 import cn.iocoder.yudao.module.member.api.address.dto.MemberAddressRespDTO;
 import cn.iocoder.yudao.module.member.api.user.dto.MemberUserRespDTO;
@@ -69,8 +69,7 @@ public interface TradeOrderConvert {
             @Mapping(source = "calculateRespBO.price.vipPrice", target = "vipPrice"),
             @Mapping(source = "calculateRespBO.price.payPrice", target = "payPrice")
     })
-    TradeOrderDO convert(Long userId, String userIp, AppTradeOrderCreateReqVO createReqVO,
-                         TradePriceCalculateRespBO calculateRespBO);
+    TradeOrderDO convert(Long userId, AppTradeOrderCreateReqVO createReqVO, TradePriceCalculateRespBO calculateRespBO);
 
     TradeOrderRespDTO convert(TradeOrderDO orderDO);
 
@@ -177,7 +176,7 @@ public interface TradeOrderConvert {
                                                 TradeOrderProperties tradeOrderProperties,
                                                 DeliveryExpressDO express) {
         AppTradeOrderDetailRespVO orderVO = convert3(order, orderItems);
-        orderVO.setPayExpireTime(addTime(tradeOrderProperties.getPayExpireTime()));
+        orderVO.setPayExpireTime(order.getCreateTime().plus(tradeOrderProperties.getPayExpireTime()));
         if (StrUtil.isNotEmpty(order.getPayChannelCode())) {
             orderVO.setPayChannelName(DictFrameworkUtils.getDictDataLabel(DictTypeConstants.CHANNEL_CODE, order.getPayChannelCode()));
         }

@@ -14,7 +14,7 @@ import cn.iocoder.yudao.module.statistics.service.trade.bo.TradeOrderSummaryResp
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -75,9 +75,9 @@ public class TradeOrderStatisticsServiceImpl implements TradeOrderStatisticsServ
 
     private TradeOrderSummaryRespVO getPayPriceSummary(LocalDateTime date) {
         LocalDateTime beginTime = LocalDateTimeUtil.beginOfDay(date);
-        LocalDateTime endTime = LocalDateTimeUtil.beginOfDay(date);
-        return tradeOrderStatisticsMapper.selectPaySummaryByStatusAndPayTimeBetween(
-                PayOrderStatusEnum.SUCCESS.getStatus(), beginTime, endTime);
+        LocalDateTime endTime = LocalDateTimeUtil.endOfDay(date);
+        return tradeOrderStatisticsMapper.selectPaySummaryByPayStatusAndPayTimeBetween(
+                Boolean.TRUE, beginTime, endTime);
     }
 
     @Override

@@ -3,9 +3,9 @@ package cn.iocoder.yudao.module.system.service.sms;
 import cn.iocoder.yudao.framework.common.enums.CommonStatusEnum;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
-import cn.iocoder.yudao.framework.sms.core.client.SmsClient;
-import cn.iocoder.yudao.framework.sms.core.client.SmsClientFactory;
-import cn.iocoder.yudao.framework.sms.core.property.SmsChannelProperties;
+import cn.iocoder.yudao.module.system.framework.sms.core.client.SmsClient;
+import cn.iocoder.yudao.module.system.framework.sms.core.client.SmsClientFactory;
+import cn.iocoder.yudao.module.system.framework.sms.core.property.SmsChannelProperties;
 import cn.iocoder.yudao.framework.test.core.ut.BaseDbUnitTest;
 import cn.iocoder.yudao.module.system.controller.admin.sms.vo.channel.SmsChannelPageReqVO;
 import cn.iocoder.yudao.module.system.controller.admin.sms.vo.channel.SmsChannelSaveReqVO;
@@ -15,7 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.util.date.LocalDateTimeUtils.buildBetweenTime;

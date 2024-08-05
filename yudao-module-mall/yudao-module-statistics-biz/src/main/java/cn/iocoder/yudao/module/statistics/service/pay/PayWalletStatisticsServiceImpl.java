@@ -9,7 +9,7 @@ import cn.iocoder.yudao.module.statistics.service.trade.bo.WalletSummaryRespBO;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.time.LocalDateTime;
 
 /**
@@ -46,7 +46,7 @@ public class PayWalletStatisticsServiceImpl implements PayWalletStatisticsServic
 
     @Override
     public Integer getRechargePriceSummary() {
-        return payWalletStatisticsMapper.selectRechargePriceSummary(PayOrderStatusEnum.SUCCESS.getStatus());
+        return payWalletStatisticsMapper.selectRechargePriceSummary(Boolean.TRUE);
     }
 
 }

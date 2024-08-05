@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "管理后台 - 公众号粉丝分页 Request VO")
 @Data
@@ -20,6 +20,9 @@ public class MpUserPageReqVO extends PageParam {
 
     @Schema(description = "公众号粉丝标识，模糊匹配", example = "o6_bmjrPTlm6_2sgVt7hMZOPfL2M")
     private String openid;
+
+    @Schema(description = "微信生态唯一标识，模糊匹配", example = "o6_bmjrPTlm6_2sgVt7hMZOPfL2M")
+    private String unionId;
 
     @Schema(description = "公众号粉丝昵称，模糊匹配", example = "芋艿")
     private String nickname;

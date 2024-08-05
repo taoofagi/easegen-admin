@@ -1,16 +1,16 @@
 package cn.iocoder.yudao.module.digitalcourse.controller.admin.backgrounds;
 
 import org.springframework.web.bind.annotation.*;
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.security.access.prepost.PreAuthorize;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Operation;
 
-import javax.validation.constraints.*;
-import javax.validation.*;
-import javax.servlet.http.*;
+import jakarta.validation.constraints.*;
+import jakarta.validation.*;
+import jakarta.servlet.http.*;
 import java.util.*;
 import java.io.IOException;
 
@@ -21,9 +21,6 @@ import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 
 import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
-
-import cn.iocoder.yudao.framework.operatelog.core.annotations.OperateLog;
-import static cn.iocoder.yudao.framework.operatelog.core.enums.OperateTypeEnum.*;
 
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.backgrounds.vo.*;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.backgrounds.BackgroundsDO;
@@ -82,7 +79,6 @@ public class BackgroundsController {
     @GetMapping("/export-excel")
     @Operation(summary = "导出背景信息（PPT背景、板书、插图、字幕等） Excel")
     @PreAuthorize("@ss.hasPermission('digitalcourse:backgrounds:export')")
-    @OperateLog(type = EXPORT)
     public void exportBackgroundsExcel(@Valid BackgroundsPageReqVO pageReqVO,
               HttpServletResponse response) throws IOException {
         pageReqVO.setPageSize(PageParam.PAGE_SIZE_NONE);

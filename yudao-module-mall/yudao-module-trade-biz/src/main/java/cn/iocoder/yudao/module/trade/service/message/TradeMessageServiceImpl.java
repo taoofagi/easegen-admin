@@ -7,7 +7,7 @@ import cn.iocoder.yudao.module.trade.service.message.bo.TradeOrderMessageWhenDel
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,7 +37,7 @@ public class TradeMessageServiceImpl implements TradeMessageService {
         notifyMessageSendApi.sendSingleMessageToMember(
                 new NotifySendSingleToUserReqDTO()
                         .setUserId(reqBO.getUserId())
-                        .setTemplateCode(MessageTemplateConstants.ORDER_DELIVERY)
+                        .setTemplateCode(MessageTemplateConstants.SMS_ORDER_DELIVERY)
                         .setTemplateParams(msgMap));
     }
 

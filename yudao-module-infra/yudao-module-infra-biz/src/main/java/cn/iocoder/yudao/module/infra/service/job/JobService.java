@@ -6,7 +6,7 @@ import cn.iocoder.yudao.module.infra.controller.admin.job.vo.job.JobSaveReqVO;
 import cn.iocoder.yudao.module.infra.dal.dataobject.job.JobDO;
 import org.quartz.SchedulerException;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 /**
  * 定时任务 Service 接口
@@ -44,6 +44,13 @@ public interface JobService {
      * @param id 任务编号
      */
     void triggerJob(Long id) throws SchedulerException;
+
+    /**
+     * 同步定时任务
+     *
+     * 目的：自己存储的 Job 信息，强制同步到 Quartz 中
+     */
+    void syncJob() throws SchedulerException;
 
     /**
      * 删除定时任务

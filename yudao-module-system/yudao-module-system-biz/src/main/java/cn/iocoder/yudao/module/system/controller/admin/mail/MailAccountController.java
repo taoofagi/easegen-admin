@@ -16,8 +16,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
-import javax.validation.Valid;
+import jakarta.annotation.Resource;
+import jakarta.validation.Valid;
 import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
@@ -57,7 +57,7 @@ public class MailAccountController {
     @GetMapping("/get")
     @Operation(summary = "获得邮箱账号")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
-    @PreAuthorize("@ss.hasPermission('system:mail-account:get')")
+    @PreAuthorize("@ss.hasPermission('system:mail-account:query')")
     public CommonResult<MailAccountRespVO> getMailAccount(@RequestParam("id") Long id) {
         MailAccountDO account = mailAccountService.getMailAccount(id);
         return success(BeanUtils.toBean(account, MailAccountRespVO.class));

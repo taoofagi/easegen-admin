@@ -27,8 +27,6 @@ public class DateUtils {
 
     public static final String FORMAT_YEAR_MONTH_DAY_HOUR_MINUTE_SECOND = "yyyy-MM-dd HH:mm:ss";
 
-    public static final String FORMAT_HOUR_MINUTE_SECOND = "HH:mm:ss";
-
     /**
      * 将 LocalDateTime 转换成 Date
      *
@@ -67,17 +65,9 @@ public class DateUtils {
         return new Date(System.currentTimeMillis() + duration.toMillis());
     }
 
-    public static boolean isExpired(Date time) {
-        return System.currentTimeMillis() > time.getTime();
-    }
-
     public static boolean isExpired(LocalDateTime time) {
         LocalDateTime now = LocalDateTime.now();
         return now.isAfter(time);
-    }
-
-    public static long diff(Date endTime, Date startTime) {
-        return endTime.getTime() - startTime.getTime();
     }
 
     /**
@@ -137,37 +127,6 @@ public class DateUtils {
     }
 
     /**
-     * 计算当期时间相差的日期
-     *
-     * @param field  日历字段.<br/>eg:Calendar.MONTH,Calendar.DAY_OF_MONTH,<br/>Calendar.HOUR_OF_DAY等.
-     * @param amount 相差的数值
-     * @return 计算后的日志
-     */
-    public static Date addDate(int field, int amount) {
-        return addDate(null, field, amount);
-    }
-
-    /**
-     * 计算当期时间相差的日期
-     *
-     * @param date   设置时间
-     * @param field  日历字段 例如说，{@link Calendar#DAY_OF_MONTH} 等
-     * @param amount 相差的数值
-     * @return 计算后的日志
-     */
-    public static Date addDate(Date date, int field, int amount) {
-        if (amount == 0) {
-            return date;
-        }
-        Calendar c = Calendar.getInstance();
-        if (date != null) {
-            c.setTime(date);
-        }
-        c.add(field, amount);
-        return c.getTime();
-    }
-
-    /**
      * 是否今天
      *
      * @param date 日期
@@ -175,6 +134,16 @@ public class DateUtils {
      */
     public static boolean isToday(LocalDateTime date) {
         return LocalDateTimeUtil.isSameDay(date, LocalDateTime.now());
+    }
+
+    /**
+     * 是否昨天
+     *
+     * @param date 日期
+     * @return 是否
+     */
+    public static boolean isYesterday(LocalDateTime date) {
+        return LocalDateTimeUtil.isSameDay(date, LocalDateTime.now().minusDays(1));
     }
 
 }

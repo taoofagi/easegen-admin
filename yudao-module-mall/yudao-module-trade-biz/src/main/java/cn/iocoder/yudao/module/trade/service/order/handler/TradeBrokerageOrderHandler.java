@@ -18,7 +18,7 @@ import cn.iocoder.yudao.module.trade.service.brokerage.BrokerageUserService;
 import cn.iocoder.yudao.module.trade.service.brokerage.bo.BrokerageAddReqBO;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertList;
@@ -83,7 +83,7 @@ public class TradeBrokerageOrderHandler implements TradeOrderHandler {
         if (order.getBrokerageUserId() == null) {
             return;
         }
-        cancelBrokerage(order.getId(), orderItem.getOrderId());
+        brokerageRecordService.cancelBrokerage(BrokerageRecordBizTypeEnum.ORDER, String.valueOf(orderItem.getId()));
     }
 
     /**
@@ -109,10 +109,6 @@ public class TradeBrokerageOrderHandler implements TradeOrderHandler {
         List<BrokerageAddReqBO> addList = convertList(orderItems,
                 item -> TradeOrderConvert.INSTANCE.convert(user, item, spu, sku));
         brokerageRecordService.addBrokerage(userId, BrokerageRecordBizTypeEnum.ORDER, addList);
-    }
-
-    protected void cancelBrokerage(Long userId, Long orderItemId) {
-        brokerageRecordService.cancelBrokerage(userId, BrokerageRecordBizTypeEnum.ORDER, String.valueOf(orderItemId));
     }
 
 }

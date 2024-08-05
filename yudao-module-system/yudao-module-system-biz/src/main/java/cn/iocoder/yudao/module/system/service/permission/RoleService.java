@@ -5,7 +5,7 @@ import cn.iocoder.yudao.module.system.controller.admin.permission.vo.role.RolePa
 import cn.iocoder.yudao.module.system.controller.admin.permission.vo.role.RoleSaveReqVO;
 import cn.iocoder.yudao.module.system.dal.dataobject.permission.RoleDO;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -39,14 +39,6 @@ public interface RoleService {
      * @param id 角色编号
      */
     void deleteRole(Long id);
-
-    /**
-     * 更新角色状态
-     *
-     * @param id 角色编号
-     * @param status 状态
-     */
-    void updateRoleStatus(Long id, Integer status);
 
     /**
      * 设置角色的数据权限

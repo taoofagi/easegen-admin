@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.promotion.service.article;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.module.promotion.controller.admin.article.vo.article.ArticleCreateReqVO;
 import cn.iocoder.yudao.module.promotion.controller.admin.article.vo.article.ArticlePageReqVO;
@@ -12,7 +13,7 @@ import cn.iocoder.yudao.module.promotion.dal.mysql.article.ArticleMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -86,6 +87,12 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    public ArticleDO getLastArticleByTitle(String title) {
+        List<ArticleDO> articles = articleMapper.selectListByTitle(title);
+        return CollUtil.getLast(articles);
+    }
+
+    @Override
     public PageResult<ArticleDO> getArticlePage(ArticlePageReqVO pageReqVO) {
         return articleMapper.selectPage(pageReqVO);
     }
@@ -98,11 +105,6 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public PageResult<ArticleDO> getArticlePage(AppArticlePageReqVO pageReqVO) {
         return articleMapper.selectPage(pageReqVO);
-    }
-
-    @Override
-    public List<ArticleDO> getArticleByCategoryId(Long categoryId) {
-        return articleMapper.selectList(ArticleDO::getCategoryId, categoryId);
     }
 
     @Override

@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.util.List;
 
 import static cn.hutool.core.util.RandomUtil.randomEle;
@@ -147,7 +147,7 @@ public class SocialUserServiceImplTest extends BaseDbUnitTest {
         socialUserBindMapper.insert(socialUserBind);
 
         // 调用
-        SocialUserRespDTO socialUser = socialUserService.getSocialUser(userType, type, code, state);
+        SocialUserRespDTO socialUser = socialUserService.getSocialUserByCode(userType, type, code, state);
         // 断言
         assertEquals(userId, socialUser.getUserId());
         assertEquals(socialUserDO.getOpenid(), socialUser.getOpenid());
