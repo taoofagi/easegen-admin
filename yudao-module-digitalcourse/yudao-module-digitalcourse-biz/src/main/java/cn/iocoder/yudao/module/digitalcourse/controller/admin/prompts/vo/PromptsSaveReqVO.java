@@ -1,9 +1,10 @@
 package cn.iocoder.yudao.module.digitalcourse.controller.admin.prompts.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import java.util.*;
-import javax.validation.constraints.*;
 import java.util.*;
 
 @Schema(description = "管理后台 - 存储提示词模板的信息，包括提示词的名称、类型、排序等信息新增/修改 Request VO")

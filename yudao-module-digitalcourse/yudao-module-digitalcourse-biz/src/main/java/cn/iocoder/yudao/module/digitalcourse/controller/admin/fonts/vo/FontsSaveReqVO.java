@@ -1,9 +1,10 @@
 package cn.iocoder.yudao.module.digitalcourse.controller.admin.fonts.vo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import java.util.*;
-import javax.validation.constraints.*;
 import java.util.*;
 
 @Schema(description = "管理后台 - 存储字体的信息，包括字体的别名、预览URL、名称等新增/修改 Request VO")

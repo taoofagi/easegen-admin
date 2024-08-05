@@ -5,7 +5,6 @@ import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
-import cn.iocoder.yudao.framework.operatelog.core.annotations.OperateLog;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courseppts.vo.AppCoursePptsPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courseppts.vo.AppCoursePptsRespVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courseppts.vo.AppCoursePptsSaveReqVO;
@@ -14,17 +13,16 @@ import cn.iocoder.yudao.module.digitalcourse.service.courseppts.CoursePptsServic
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
-import static cn.iocoder.yudao.framework.operatelog.core.enums.OperateTypeEnum.EXPORT;
 
 @Tag(name = "用户 APP - 存储课程的PPT信息，包括文件名、文件大小、类型等")
 @RestController
@@ -73,7 +71,6 @@ public class AppCoursePptsController {
 
     @GetMapping("/export-excel")
     @Operation(summary = "导出存储课程的PPT信息，包括文件名、文件大小、类型等 Excel")
-    @OperateLog(type = EXPORT)
     public void exportCoursePptsExcel(@Valid AppCoursePptsPageReqVO pageReqVO,
               HttpServletResponse response) throws IOException {
         pageReqVO.setPageSize(PageParam.PAGE_SIZE_NONE);

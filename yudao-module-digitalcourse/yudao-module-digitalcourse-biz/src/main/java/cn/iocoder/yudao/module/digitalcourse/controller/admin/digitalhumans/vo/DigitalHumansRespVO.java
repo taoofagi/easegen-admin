@@ -72,6 +72,10 @@ public class DigitalHumansRespVO {
     @ExcelProperty("使用模型类型")
     private String useModel;
 
+    @Schema(description = "图片URL", requiredMode = Schema.RequiredMode.REQUIRED)
+    @ExcelProperty("图片URL")
+    private String pictureUrl;
+
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;

@@ -1,13 +1,11 @@
 package cn.iocoder.yudao.module.digitalcourse.dal.mysql.coursesceneaudios;
 
-import java.util.*;
-
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursesceneaudios.vo.AppCourseSceneAudiosPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursesceneaudios.CourseSceneAudiosDO;
 import org.apache.ibatis.annotations.Mapper;
-import cn.iocoder.yudao.module.digitalcourse.controller.app.coursesceneaudios.vo.*;
 
 /**
  * 存储场景中的音频信息，包括音频ID和使用视频背景音频的标志等 Mapper

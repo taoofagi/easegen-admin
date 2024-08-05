@@ -1,13 +1,11 @@
 package cn.iocoder.yudao.module.digitalcourse.dal.mysql.coursescenevoices;
 
-import java.util.*;
-
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenevoices.vo.AppCourseSceneVoicesPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursescenevoices.CourseSceneVoicesDO;
 import org.apache.ibatis.annotations.Mapper;
-import cn.iocoder.yudao.module.digitalcourse.controller.app.coursescenevoices.vo.*;
 
 /**
  * 存储每个场景中的声音信息 Mapper

@@ -1,13 +1,13 @@
 package cn.iocoder.yudao.module.digitalcourse.service.courseppts;
 
 import java.util.*;
-import javax.validation.*;
 
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courseppts.vo.AppCoursePptsPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courseppts.vo.AppCoursePptsSaveReqVO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.courseppts.CoursePptsDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import jakarta.validation.Valid;
 
 /**
  * 存储课程的PPT信息，包括文件名、文件大小、类型等 Service 接口

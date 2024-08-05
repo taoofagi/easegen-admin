@@ -1,13 +1,11 @@
 package cn.iocoder.yudao.module.digitalcourse.dal.mysql.coursescenecomponents;
 
-import java.util.*;
-
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenecomponents.vo.AppCourseSceneComponentsPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursescenecomponents.CourseSceneComponentsDO;
 import org.apache.ibatis.annotations.Mapper;
-import cn.iocoder.yudao.module.digitalcourse.controller.app.coursescenecomponents.vo.*;
 
 /**
  * 存储每个场景中的组件信息，包括PPT、数字人等 Mapper
@@ -29,7 +27,7 @@ public interface CourseSceneComponentsMapper extends BaseMapperX<CourseSceneComp
                 .eqIfPresent(CourseSceneComponentsDO::getCategory, reqVO.getCategory())
                 .eqIfPresent(CourseSceneComponentsDO::getDepth, reqVO.getDepth())
                 .eqIfPresent(CourseSceneComponentsDO::getTop, reqVO.getTop())
-                .eqIfPresent(CourseSceneComponentsDO::getLeft, reqVO.getLeft())
+                .eqIfPresent(CourseSceneComponentsDO::getMarginLeft, reqVO.getMarginLeft())
                 .eqIfPresent(CourseSceneComponentsDO::getEntityId, reqVO.getEntityId())
                 .eqIfPresent(CourseSceneComponentsDO::getEntityType, reqVO.getEntityType())
                 .eqIfPresent(CourseSceneComponentsDO::getBusinessId, reqVO.getBusinessId())

@@ -1,13 +1,11 @@
 package cn.iocoder.yudao.module.digitalcourse.dal.mysql.pptmaterials;
 
-import java.util.*;
-
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.pptmaterials.vo.AppPptMaterialsPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.pptmaterials.PptMaterialsDO;
 import org.apache.ibatis.annotations.Mapper;
-import cn.iocoder.yudao.module.digitalcourse.controller.app.pptmaterials.vo.*;
 
 /**
  * 存储PPT课件的具体内容信息，包括课件的图片URL、页面索引等 Mapper
