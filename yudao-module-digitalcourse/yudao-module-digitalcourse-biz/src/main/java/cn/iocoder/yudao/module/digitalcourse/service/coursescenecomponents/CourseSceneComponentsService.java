@@ -7,6 +7,9 @@ import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursescenecomponent
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import jakarta.validation.Valid;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * 存储每个场景中的组件信息，包括PPT、数字人等 Service 接口
  *
@@ -22,6 +25,8 @@ public interface CourseSceneComponentsService {
      */
     Long createCourseSceneComponents(@Valid AppCourseSceneComponentsSaveReqVO createReqVO);
 
+    Boolean batchCreateCourseSceneComponents(@Valid List<AppCourseSceneComponentsSaveReqVO> createReqVO);
+
     /**
      * 更新存储每个场景中的组件信息，包括PPT、数字人等
      *
@@ -35,7 +40,8 @@ public interface CourseSceneComponentsService {
      * @param id 编号
      */
     void deleteCourseSceneComponents(Long id);
-
+    void deleteBySceneId(Set<Long> id);
+    List<AppCourseSceneComponentsSaveReqVO> selectComponentByScenesCourseIds(Set<Long> scenesCourseIds);
     /**
      * 获得存储每个场景中的组件信息，包括PPT、数字人等
      *

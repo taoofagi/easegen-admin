@@ -2,6 +2,9 @@ package cn.iocoder.yudao.module.digitalcourse.service.courses;
 
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesSaveReqVO;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesUpdateReqVO;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenes.vo.AppCourseScenesSaveReqVO;
+import cn.iocoder.yudao.module.digitalcourse.service.coursescenes.CourseScenesService;
 import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -12,6 +15,8 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 
 import cn.iocoder.yudao.module.digitalcourse.dal.mysql.courses.CoursesMapper;
+
+import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.digitalcourse.enums.ErrorCodeConstants.*;
@@ -27,6 +32,8 @@ public class CoursesServiceImpl implements CoursesService {
 
     @Resource
     private CoursesMapper coursesMapper;
+    @Resource
+    private CourseScenesService courseScenesService;
 
     @Override
     public Long createCourses(AppCoursesSaveReqVO createReqVO) {
@@ -48,11 +55,18 @@ public class CoursesServiceImpl implements CoursesService {
     }
 
     @Override
-    public void updateCourses(AppCoursesSaveReqVO updateReqVO) {
+    public void updateCourses(AppCoursesUpdateReqVO updateReqVO) {
         // 校验存在
         validateCoursesExists(updateReqVO.getId());
         // 更新
         CoursesDO updateObj = BeanUtils.toBean(updateReqVO, CoursesDO.class);
+
+        //先删除历史数据
+        courseScenesService.batchRemoveCouseScenes(updateReqVO.getId());
+        //重新insert
+        List<AppCourseScenesSaveReqVO> scenes = updateReqVO.getScenes();
+        courseScenesService.batchCreateCourseScenes(scenes);
+
         coursesMapper.updateById(updateObj);
     }
 
@@ -71,9 +85,15 @@ public class CoursesServiceImpl implements CoursesService {
     }
 
     @Override
-    public CoursesDO getCourses(Long id) {
-        return coursesMapper.selectById(id);
+    public AppCoursesUpdateReqVO getCourses(Long id) {
+        CoursesDO coursesDO = coursesMapper.selectById(id);
+        AppCoursesUpdateReqVO bean = BeanUtils.toBean(coursesDO, AppCoursesUpdateReqVO.class);
+        List<AppCourseScenesSaveReqVO> appCourseScenesSaveReqVOS = courseScenesService.selectScenesInfo(id);
+        bean.setScenes(appCourseScenesSaveReqVOS);
+        return bean;
     }
+
+
 
     @Override
     public PageResult<CoursesDO> getCoursesPage(AppCoursesPageReqVO pageReqVO) {

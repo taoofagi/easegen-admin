@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.digitalcourse.service.coursescenes;
 
+import cn.iocoder.yudao.framework.mybatis.core.query.QueryWrapperX;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.backgrounds.vo.BackgroundsSaveReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursesceneaudios.vo.AppCourseSceneAudiosSaveReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenebackgrounds.vo.AppCourseSceneBackgroundsSaveReqVO;
@@ -10,6 +11,7 @@ import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenetexts.v
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenevoices.vo.AppCourseSceneVoicesSaveReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.voices.vo.VoicesSaveReqVO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.backgrounds.BackgroundsDO;
+import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursesceneaudios.CourseSceneAudiosDO;
 import cn.iocoder.yudao.module.digitalcourse.service.backgrounds.BackgroundsService;
 import cn.iocoder.yudao.module.digitalcourse.service.coursesceneaudios.CourseSceneAudiosService;
 import cn.iocoder.yudao.module.digitalcourse.service.coursescenebackgrounds.CourseSceneBackgroundsService;
@@ -28,6 +30,10 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 
 import cn.iocoder.yudao.module.digitalcourse.dal.mysql.coursescenes.CourseScenesMapper;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.digitalcourse.enums.ErrorCodeConstants.*;
@@ -68,9 +74,9 @@ public class CourseScenesServiceImpl implements CourseScenesService {
         sceneBackgrounds.setSceneId(courseScenes.getId());
         backgroundsService.createCourseSceneBackgrounds(sceneBackgrounds);
         //插入组件
-        AppCourseSceneComponentsSaveReqVO sceneComponents = createReqVO.getSceneComponents();
-        sceneComponents.setSceneId(courseScenes.getId());
-        componentsService.createCourseSceneComponents(sceneComponents);
+        List<AppCourseSceneComponentsSaveReqVO> sceneComponents = createReqVO.getSceneComponents();
+        sceneComponents.stream().forEach(e -> e.setSceneId(courseScenes.getId()));
+        componentsService.batchCreateCourseSceneComponents(sceneComponents);
         //声音
         AppCourseSceneVoicesSaveReqVO sceneVoices = createReqVO.getSceneVoices();
         sceneVoices.setSceneId(courseScenes.getId());
@@ -85,6 +91,63 @@ public class CourseScenesServiceImpl implements CourseScenesService {
         audiosService.createCourseSceneAudios(sceneAudios);
         // 返回
         return courseScenes.getId();
+    }
+
+    @Override
+    public Boolean batchCreateCourseScenes(List<AppCourseScenesSaveReqVO> createReqVO) {
+        createReqVO.stream().forEach(e -> {
+            try {
+                createCourseScenes(e);
+            }catch (Exception exception){
+                System.out.println(e.getId()+"场景添加失败");
+                System.out.println(exception);
+            }
+        });
+        return true;
+    }
+
+    @Override
+    public Boolean batchRemoveCouseScenes(Long id) {
+        List<CourseScenesDO> courseScenesDOS = courseScenesMapper.selectList(new QueryWrapperX<CourseScenesDO>().lambda().eq(CourseScenesDO::getCourseId, id));
+        Set<Long> scenesIds = courseScenesDOS.stream().map(e -> e.getId()).collect(Collectors.toSet());
+        if (scenesIds.isEmpty()) return true;
+        audiosService.deleteBySceneId(scenesIds);
+        textsService.deleteBySceneId(scenesIds);
+        voicesService.deleteBySceneId(scenesIds);
+        componentsService.deleteBySceneId(scenesIds);
+        backgroundsService.deleteBySceneId(scenesIds);
+
+        courseScenesMapper.delete(new QueryWrapperX<CourseScenesDO>().lambda().in(CourseScenesDO::getId,scenesIds));
+        return true;
+    }
+
+    @Override
+    public List<AppCourseScenesSaveReqVO> selectScenesInfo(Long courseId) {
+        List<CourseScenesDO> courseScenesDOS = courseScenesMapper.selectList(new QueryWrapperX<CourseScenesDO>().lambda().eq(CourseScenesDO::getCourseId, courseId));
+        List<AppCourseScenesSaveReqVO> bean = BeanUtils.toBean(courseScenesDOS, AppCourseScenesSaveReqVO.class);
+
+        Set<Long> scenesIds = courseScenesDOS.stream().map(e -> e.getId()).collect(Collectors.toSet());
+        if (scenesIds.isEmpty()) return null;
+        List<AppCourseSceneAudiosSaveReqVO> courseSceneAudiosSaveReqVOS = audiosService.selectAudioByScenesCourseIds(scenesIds);
+        List<AppCourseSceneTextsSaveReqVO> appCourseSceneTextsSaveReqVOS = textsService.selectTextByScenesCourseIds(scenesIds);
+        List<AppCourseSceneVoicesSaveReqVO> appCourseSceneVoicesSaveReqVOS = voicesService.selectVoiceByScenesCourseIds(scenesIds);
+        List<AppCourseSceneComponentsSaveReqVO> appCourseSceneComponentsSaveReqVOS = componentsService.selectComponentByScenesCourseIds(scenesIds);
+        List<AppCourseSceneBackgroundsSaveReqVO> appCourseSceneBackgroundsSaveReqVOS = backgroundsService.selectBackgroudByScenesCourseIds(scenesIds);
+
+        bean.stream().forEach(e->{
+            Long id = e.getId();
+            List<AppCourseSceneAudiosSaveReqVO> audioList = courseSceneAudiosSaveReqVOS.stream().filter(item -> item.getSceneId() == id).toList();
+            if (!audioList.isEmpty()) e.setSceneAudios(audioList.stream().findFirst().get());
+            List<AppCourseSceneTextsSaveReqVO> textList = appCourseSceneTextsSaveReqVOS.stream().filter(item -> item.getSceneId() == id).toList();
+            if (!textList.isEmpty()) e.setSceneTexts(textList.stream().findFirst().get());
+            List<AppCourseSceneVoicesSaveReqVO> voiceList = appCourseSceneVoicesSaveReqVOS.stream().filter(item -> item.getSceneId() == id).toList();
+            if (!voiceList.isEmpty()) e.setSceneVoices(voiceList.stream().findFirst().get());
+            List<AppCourseSceneComponentsSaveReqVO> componentsList = appCourseSceneComponentsSaveReqVOS.stream().filter(item -> item.getSceneId() == id).toList();
+            e.setSceneComponents(componentsList);
+            List<AppCourseSceneBackgroundsSaveReqVO> backgroudList = appCourseSceneBackgroundsSaveReqVOS.stream().filter(item -> item.getSceneId() == id).toList();
+            if (!backgroudList.isEmpty()) e.setSceneBackgrounds(backgroudList.stream().findFirst().get());
+        });
+        return bean;
     }
 
     @Override

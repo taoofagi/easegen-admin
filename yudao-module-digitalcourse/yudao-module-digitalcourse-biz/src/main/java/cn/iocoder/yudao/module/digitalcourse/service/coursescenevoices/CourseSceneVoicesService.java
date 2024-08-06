@@ -7,6 +7,9 @@ import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenevoices.
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursescenevoices.CourseSceneVoicesDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * 存储每个场景中的声音信息 Service 接口
  *
@@ -35,7 +38,8 @@ public interface CourseSceneVoicesService {
      * @param id 编号
      */
     void deleteCourseSceneVoices(Long id);
-
+    void deleteBySceneId(Set<Long> id);
+    List<AppCourseSceneVoicesSaveReqVO> selectVoiceByScenesCourseIds(Set<Long> scenesIds);
     /**
      * 获得存储每个场景中的声音信息
      *

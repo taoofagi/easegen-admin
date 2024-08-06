@@ -67,7 +67,7 @@ public class CoursePptsServiceImpl implements CoursePptsService {
         // 插入
         CoursePptsDO coursePpts = BeanUtils.toBean(createReqVO, CoursePptsDO.class);
         coursePptsMapper.insert(coursePpts);
-        pptUtil.analysisPpt(coursePpts.getUrl(),coursePpts.getId());
+        Boolean b = pptUtil.analysisPpt(coursePpts.getUrl(), coursePpts.getId());
         // 返回
         return coursePpts.getId();
     }

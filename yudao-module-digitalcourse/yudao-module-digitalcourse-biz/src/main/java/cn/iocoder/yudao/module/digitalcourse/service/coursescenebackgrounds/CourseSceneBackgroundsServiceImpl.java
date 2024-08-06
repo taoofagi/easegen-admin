@@ -2,6 +2,7 @@ package cn.iocoder.yudao.module.digitalcourse.service.coursescenebackgrounds;
 
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenebackgrounds.vo.AppCourseSceneBackgroundsPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenebackgrounds.vo.AppCourseSceneBackgroundsSaveReqVO;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +12,9 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 
 import cn.iocoder.yudao.module.digitalcourse.dal.mysql.coursescenebackgrounds.CourseSceneBackgroundsMapper;
+
+import java.util.List;
+import java.util.Set;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.digitalcourse.enums.ErrorCodeConstants.*;
@@ -51,6 +55,18 @@ public class CourseSceneBackgroundsServiceImpl implements CourseSceneBackgrounds
         validateCourseSceneBackgroundsExists(id);
         // 删除
         courseSceneBackgroundsMapper.deleteById(id);
+    }
+
+    @Override
+    public void deleteBySceneId(Set<Long> id) {
+        courseSceneBackgroundsMapper.delete(new QueryWrapper<CourseSceneBackgroundsDO>().lambda().in(CourseSceneBackgroundsDO::getSceneId,id));
+    }
+
+    @Override
+    public List<AppCourseSceneBackgroundsSaveReqVO> selectBackgroudByScenesCourseIds(Set<Long> scenesCourseIds) {
+        List<CourseSceneBackgroundsDO> courseSceneBackgroundsDOS = courseSceneBackgroundsMapper.selectList(new QueryWrapper<CourseSceneBackgroundsDO>().lambda().in(CourseSceneBackgroundsDO::getSceneId, scenesCourseIds));
+        List<AppCourseSceneBackgroundsSaveReqVO> bean = BeanUtils.toBean(courseSceneBackgroundsDOS, AppCourseSceneBackgroundsSaveReqVO.class);
+        return bean;
     }
 
     private void validateCourseSceneBackgroundsExists(Long id) {
