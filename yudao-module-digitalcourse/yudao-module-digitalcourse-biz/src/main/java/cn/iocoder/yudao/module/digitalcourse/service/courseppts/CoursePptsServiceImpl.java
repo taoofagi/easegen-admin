@@ -125,17 +125,45 @@ public class CoursePptsServiceImpl implements CoursePptsService {
             return ResponseEntity.badRequest().body("At least two PPT files are required.".getBytes());
         }
 
-        try (XMLSlideShow mergedShow = new XMLSlideShow()) {
-            for (MultipartFile file : files) {
-                XMLSlideShow ppt = new XMLSlideShow(file.getInputStream());
-                for (XSLFSlide slide : ppt.getSlides()) {
-                    mergedShow.createSlide().importContent(slide);
+        try {
+            // 1. 使用第1个PPT作为基础文件（不建议创建空对象，然后从第1个开始合并操作）
+            XMLSlideShow ppt = new XMLSlideShow(files[0].getInputStream());
+            // 2. 从第2个文件开始遍历，合并
+            for (int i = 1; i < files.length; i++) {
+                XMLSlideShow src = new XMLSlideShow(files[i].getInputStream());
+                // 遍历每张幻灯片
+                for (XSLFSlide srcSlide : src.getSlides()) {
+                    XSLFSlideMaster master = srcSlide.getSlideMaster();
+
+                    // 检查目标文件是否已包含相同的母版
+                    XSLFSlideMaster destMaster = null;
+                    for (XSLFSlideMaster destMasterCandidate : ppt.getSlideMasters()) {
+                        if (master.equals(destMasterCandidate)) {
+                            destMaster = destMasterCandidate;
+                            break;
+                        }
+                    }
+
+                    // 如果目标文件中没有对应的母版，则复制源文件中的母版
+                    if (destMaster == null) {
+                        destMaster = master;
+                        ppt.getSlideMasters().add(destMaster);
+                    }
+
+                    // 获取母版的第一个布局，默认使用第一个布局
+                    XSLFSlideLayout destLayout = destMaster.getSlideLayouts()[0];
+                    XSLFBackground bg = destLayout.getBackground();
+                    // 合并
+                    XSLFSlide destSlide = ppt.createSlide(destLayout);
+                    destSlide.importContent(srcSlide);
                 }
             }
 
             try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-                mergedShow.write(out);
+                ppt.write(out);
                 String path = fileApi.createFile("PPT黑板模板合并.pptx", null, out.toByteArray());
+                // 关闭资源
+                out.close();
                 return ResponseEntity.ok().body(path);
             }
         } catch (IOException e) {
