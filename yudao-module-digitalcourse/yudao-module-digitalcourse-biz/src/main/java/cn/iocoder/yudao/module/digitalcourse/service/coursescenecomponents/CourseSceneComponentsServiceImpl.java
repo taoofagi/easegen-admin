@@ -2,6 +2,7 @@ package cn.iocoder.yudao.module.digitalcourse.service.coursescenecomponents;
 
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenecomponents.vo.AppCourseSceneComponentsPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenecomponents.vo.AppCourseSceneComponentsSaveReqVO;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +12,9 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 
 import cn.iocoder.yudao.module.digitalcourse.dal.mysql.coursescenecomponents.CourseSceneComponentsMapper;
+
+import java.util.List;
+import java.util.Set;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.digitalcourse.enums.ErrorCodeConstants.*;
@@ -37,6 +41,12 @@ public class CourseSceneComponentsServiceImpl implements CourseSceneComponentsSe
     }
 
     @Override
+    public Boolean batchCreateCourseSceneComponents(List<AppCourseSceneComponentsSaveReqVO> createReqVO) {
+        List<CourseSceneComponentsDO> bean = BeanUtils.toBean(createReqVO, CourseSceneComponentsDO.class);
+        return courseSceneComponentsMapper.insertBatch(bean);
+    }
+
+    @Override
     public void updateCourseSceneComponents(AppCourseSceneComponentsSaveReqVO updateReqVO) {
         // 校验存在
         validateCourseSceneComponentsExists(updateReqVO.getId());
@@ -51,6 +61,18 @@ public class CourseSceneComponentsServiceImpl implements CourseSceneComponentsSe
         validateCourseSceneComponentsExists(id);
         // 删除
         courseSceneComponentsMapper.deleteById(id);
+    }
+
+    @Override
+    public void deleteBySceneId(Set<Long> id) {
+        courseSceneComponentsMapper.delete(new QueryWrapper<CourseSceneComponentsDO>().lambda().in(CourseSceneComponentsDO::getSceneId,id));
+    }
+
+    @Override
+    public List<AppCourseSceneComponentsSaveReqVO> selectComponentByScenesCourseIds(Set<Long> scenesCourseIds) {
+        List<CourseSceneComponentsDO> courseSceneComponentsDOS = courseSceneComponentsMapper.selectList(new QueryWrapper<CourseSceneComponentsDO>().lambda().in(CourseSceneComponentsDO::getSceneId, scenesCourseIds));
+        List<AppCourseSceneComponentsSaveReqVO> bean = BeanUtils.toBean(courseSceneComponentsDOS, AppCourseSceneComponentsSaveReqVO.class);
+        return bean;
     }
 
     private void validateCourseSceneComponentsExists(Long id) {

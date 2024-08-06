@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.digitalcourse.service.coursesceneaudios;
 
+import cn.iocoder.yudao.framework.mybatis.core.query.QueryWrapperX;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursesceneaudios.vo.AppCourseSceneAudiosPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursesceneaudios.vo.AppCourseSceneAudiosSaveReqVO;
 import jakarta.annotation.Resource;
@@ -11,6 +12,9 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 
 import cn.iocoder.yudao.module.digitalcourse.dal.mysql.coursesceneaudios.CourseSceneAudiosMapper;
+
+import java.util.List;
+import java.util.Set;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.digitalcourse.enums.ErrorCodeConstants.*;
@@ -51,6 +55,18 @@ public class CourseSceneAudiosServiceImpl implements CourseSceneAudiosService {
         validateCourseSceneAudiosExists(id);
         // 删除
         courseSceneAudiosMapper.deleteById(id);
+    }
+
+    @Override
+    public void deleteBySceneId(Set<Long> id) {
+        courseSceneAudiosMapper.delete(new QueryWrapperX<CourseSceneAudiosDO>().lambda().in(CourseSceneAudiosDO::getSceneId, id));
+    }
+
+    @Override
+    public List<AppCourseSceneAudiosSaveReqVO> selectAudioByScenesCourseIds(Set<Long> scenesIds) {
+        List<CourseSceneAudiosDO> courseSceneAudiosDOS = courseSceneAudiosMapper.selectList(new QueryWrapperX<CourseSceneAudiosDO>().lambda().in(CourseSceneAudiosDO::getSceneId, scenesIds));
+        List<AppCourseSceneAudiosSaveReqVO> bean = BeanUtils.toBean(courseSceneAudiosDOS, AppCourseSceneAudiosSaveReqVO.class);
+        return bean;
     }
 
     private void validateCourseSceneAudiosExists(Long id) {

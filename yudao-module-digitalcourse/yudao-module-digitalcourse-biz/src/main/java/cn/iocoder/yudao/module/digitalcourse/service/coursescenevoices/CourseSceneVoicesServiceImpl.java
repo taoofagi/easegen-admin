@@ -2,6 +2,7 @@ package cn.iocoder.yudao.module.digitalcourse.service.coursescenevoices;
 
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenevoices.vo.AppCourseSceneVoicesPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenevoices.vo.AppCourseSceneVoicesSaveReqVO;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +12,9 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 
 import cn.iocoder.yudao.module.digitalcourse.dal.mysql.coursescenevoices.CourseSceneVoicesMapper;
+
+import java.util.List;
+import java.util.Set;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.digitalcourse.enums.ErrorCodeConstants.*;
@@ -51,6 +55,18 @@ public class CourseSceneVoicesServiceImpl implements CourseSceneVoicesService {
         validateCourseSceneVoicesExists(id);
         // 删除
         courseSceneVoicesMapper.deleteById(id);
+    }
+
+    @Override
+    public void deleteBySceneId(Set<Long> id) {
+        courseSceneVoicesMapper.delete(new QueryWrapper<CourseSceneVoicesDO>().lambda().in(CourseSceneVoicesDO::getSceneId,id));
+    }
+
+    @Override
+    public List<AppCourseSceneVoicesSaveReqVO> selectVoiceByScenesCourseIds(Set<Long> scenesIds) {
+        List<CourseSceneVoicesDO> courseSceneVoicesDOS = courseSceneVoicesMapper.selectList(new QueryWrapper<CourseSceneVoicesDO>().lambda().in(CourseSceneVoicesDO::getSceneId, scenesIds));
+        List<AppCourseSceneVoicesSaveReqVO> bean = BeanUtils.toBean(courseSceneVoicesDOS, AppCourseSceneVoicesSaveReqVO.class);
+        return bean;
     }
 
     private void validateCourseSceneVoicesExists(Long id) {

@@ -4,6 +4,7 @@ import java.util.*;
 
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesSaveReqVO;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesUpdateReqVO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.courses.CoursesDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import jakarta.validation.Valid;
@@ -28,7 +29,7 @@ public interface CoursesService {
      *
      * @param updateReqVO 更新信息
      */
-    void updateCourses(@Valid AppCoursesSaveReqVO updateReqVO);
+    void updateCourses(@Valid AppCoursesUpdateReqVO updateReqVO);
 
     /**
      * 删除存储课程的基本信息，包括课程名称、时长、状态等
@@ -43,7 +44,7 @@ public interface CoursesService {
      * @param id 编号
      * @return 存储课程的基本信息，包括课程名称、时长、状态等
      */
-    CoursesDO getCourses(Long id);
+    AppCoursesUpdateReqVO getCourses(Long id);
 
     /**
      * 获得存储课程的基本信息，包括课程名称、时长、状态等分页

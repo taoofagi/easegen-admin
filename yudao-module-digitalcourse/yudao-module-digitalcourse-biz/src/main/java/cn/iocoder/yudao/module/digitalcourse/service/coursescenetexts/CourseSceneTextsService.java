@@ -7,6 +7,9 @@ import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursescenetexts.Cou
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import jakarta.validation.Valid;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * 存储场景中的文本信息，包括文本内容、音调、速度等 Service 接口
  *
@@ -36,6 +39,10 @@ public interface CourseSceneTextsService {
      */
     void deleteCourseSceneTexts(Long id);
 
+
+    void deleteBySceneId(Set<Long> id);
+
+    List<AppCourseSceneTextsSaveReqVO> selectTextByScenesCourseIds(Set<Long> scenesIds);
     /**
      * 获得存储场景中的文本信息，包括文本内容、音调、速度等
      *

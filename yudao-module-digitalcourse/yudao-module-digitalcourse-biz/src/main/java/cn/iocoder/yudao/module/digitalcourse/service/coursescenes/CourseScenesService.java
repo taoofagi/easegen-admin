@@ -7,6 +7,8 @@ import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursescenes.CourseS
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import jakarta.validation.Valid;
 
+import java.util.List;
+
 /**
  * 存储课程的场景信息，包括背景、组件、声音等 Service 接口
  *
@@ -22,6 +24,15 @@ public interface CourseScenesService {
      */
     Long createCourseScenes(@Valid AppCourseScenesSaveReqVO createReqVO);
 
+    Boolean batchCreateCourseScenes(@Valid List<AppCourseScenesSaveReqVO> createReqVO);
+
+    /**
+     * 根据课程id删除场景信息
+     *
+     */
+    Boolean batchRemoveCouseScenes(@Valid Long id);
+
+    List<AppCourseScenesSaveReqVO> selectScenesInfo(Long couseId);
     /**
      * 更新存储课程的场景信息，包括背景、组件、声音等
      *

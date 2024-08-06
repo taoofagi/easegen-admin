@@ -3,6 +3,7 @@ package cn.iocoder.yudao.module.digitalcourse.controller.admin.courses;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesRespVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesSaveReqVO;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesUpdateReqVO;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -42,9 +43,9 @@ public class AppCoursesController {
         return success(coursesService.createCourses(createReqVO));
     }
 
-    @PutMapping("/update")
+    @PostMapping("/update")
     @Operation(summary = "更新存储课程的基本信息，包括课程名称、时长、状态等")
-    public CommonResult<Boolean> updateCourses(@Valid @RequestBody AppCoursesSaveReqVO updateReqVO) {
+    public CommonResult<Boolean> updateCourses(@Valid @RequestBody AppCoursesUpdateReqVO updateReqVO) {
         coursesService.updateCourses(updateReqVO);
         return success(true);
     }
@@ -60,9 +61,9 @@ public class AppCoursesController {
     @GetMapping("/get")
     @Operation(summary = "获得存储课程的基本信息，包括课程名称、时长、状态等")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
-    public CommonResult<AppCoursesRespVO> getCourses(@RequestParam("id") Long id) {
-        CoursesDO courses = coursesService.getCourses(id);
-        return success(BeanUtils.toBean(courses, AppCoursesRespVO.class));
+    public CommonResult<AppCoursesUpdateReqVO> getCourses(@RequestParam("id") Long id) {
+        AppCoursesUpdateReqVO courses = coursesService.getCourses(id);
+        return success(courses);
     }
 
     @GetMapping("/page")

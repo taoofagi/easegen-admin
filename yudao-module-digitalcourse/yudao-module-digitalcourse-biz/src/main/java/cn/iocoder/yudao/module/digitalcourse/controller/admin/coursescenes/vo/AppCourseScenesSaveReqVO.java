@@ -47,7 +47,7 @@ public class AppCourseScenesSaveReqVO {
 
     private AppCourseSceneBackgroundsSaveReqVO sceneBackgrounds;
 
-    private AppCourseSceneComponentsSaveReqVO sceneComponents;
+    private List<AppCourseSceneComponentsSaveReqVO> sceneComponents;
 
     private AppCourseSceneVoicesSaveReqVO sceneVoices;
 

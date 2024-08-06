@@ -7,6 +7,9 @@ import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursesceneaudios.Co
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import jakarta.validation.Valid;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * 存储场景中的音频信息，包括音频ID和使用视频背景音频的标志等 Service 接口
  *
@@ -35,6 +38,9 @@ public interface CourseSceneAudiosService {
      * @param id 编号
      */
     void deleteCourseSceneAudios(Long id);
+    void deleteBySceneId(Set<Long> ids);
+
+    List<AppCourseSceneAudiosSaveReqVO> selectAudioByScenesCourseIds(Set<Long> scenesIds);
 
     /**
      * 获得存储场景中的音频信息，包括音频ID和使用视频背景音频的标志等

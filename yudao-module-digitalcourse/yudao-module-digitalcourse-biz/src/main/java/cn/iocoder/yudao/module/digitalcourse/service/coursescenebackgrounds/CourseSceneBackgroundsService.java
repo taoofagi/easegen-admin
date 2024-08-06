@@ -7,6 +7,9 @@ import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursescenebackgroun
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import jakarta.validation.Valid;
 
+import java.util.List;
+import java.util.Set;
+
 /**
  * 存储每个场景的背景信息 Service 接口
  *
@@ -35,7 +38,8 @@ public interface CourseSceneBackgroundsService {
      * @param id 编号
      */
     void deleteCourseSceneBackgrounds(Long id);
-
+    void deleteBySceneId(Set<Long> id);
+    List<AppCourseSceneBackgroundsSaveReqVO> selectBackgroudByScenesCourseIds(Set<Long> id);
     /**
      * 获得存储每个场景的背景信息
      *
