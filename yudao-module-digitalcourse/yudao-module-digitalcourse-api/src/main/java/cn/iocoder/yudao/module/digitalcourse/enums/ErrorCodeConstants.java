@@ -36,4 +36,5 @@ public interface ErrorCodeConstants {
     // ========== digitalcourse 模块 1-0010-000-014 ==========
     ErrorCode FONTS_NOT_EXISTS = new ErrorCode(1-0010-000-014, "存储字体的信息，包括字体的别名、预览URL、名称等不存在");
     ErrorCode COURSE_PPTS_NOT_EXISTS = new ErrorCode(1-0010-000-003, "存储课程的PPT信息，包括文件名、文件大小、类型等不存在");
+    ErrorCode COURSE_MEDIA_NOT_EXISTS = new ErrorCode(1-0010-000-015, "课程媒体不存在");
 }
