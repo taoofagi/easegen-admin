@@ -1,11 +1,11 @@
 package cn.iocoder.yudao.module.digitalcourse.service.voices;
 
-import java.util.*;
+import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.voices.AuditionDO;
+import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.voices.TTSDTO;
 import jakarta.validation.*;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.voices.vo.*;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.voices.VoicesDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
-import cn.iocoder.yudao.framework.common.pojo.PageParam;
 
 /**
  * 声音管理 Service 接口
@@ -52,5 +52,5 @@ public interface VoicesService {
      */
     PageResult<VoicesDO> getVoicesPage(VoicesPageReqVO pageReqVO);
 
-    String audition();
+    String audition(AuditionDO auditionDO);
 }

@@ -1,25 +1,24 @@
 package cn.iocoder.yudao.module.digitalcourse.service.courses;
 
+import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.framework.test.core.ut.BaseDbUnitTest;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesSaveReqVO;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesUpdateReqVO;
+import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.courses.CoursesDO;
+import cn.iocoder.yudao.module.digitalcourse.dal.mysql.courses.CoursesMapper;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-
-import cn.iocoder.yudao.framework.test.core.ut.BaseDbUnitTest;
-
-import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.courses.CoursesDO;
-import cn.iocoder.yudao.module.digitalcourse.dal.mysql.courses.CoursesMapper;
-import cn.iocoder.yudao.framework.common.pojo.PageResult;
-
 import org.springframework.context.annotation.Import;
 
-import static cn.iocoder.yudao.module.digitalcourse.enums.ErrorCodeConstants.*;
-import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.*;
-import static cn.iocoder.yudao.framework.test.core.util.RandomUtils.*;
-import static cn.iocoder.yudao.framework.common.util.date.LocalDateTimeUtils.*;
-import static cn.iocoder.yudao.framework.common.util.object.ObjectUtils.*;
+import static cn.iocoder.yudao.framework.common.util.date.LocalDateTimeUtils.buildBetweenTime;
+import static cn.iocoder.yudao.framework.common.util.object.ObjectUtils.cloneIgnoreId;
+import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertPojoEquals;
+import static cn.iocoder.yudao.framework.test.core.util.AssertUtils.assertServiceException;
+import static cn.iocoder.yudao.framework.test.core.util.RandomUtils.randomLongId;
+import static cn.iocoder.yudao.framework.test.core.util.RandomUtils.randomPojo;
+import static cn.iocoder.yudao.module.digitalcourse.enums.ErrorCodeConstants.COURSES_NOT_EXISTS;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
@@ -56,7 +55,7 @@ public class CoursesServiceImplTest extends BaseDbUnitTest {
         CoursesDO dbCourses = randomPojo(CoursesDO.class);
         coursesMapper.insert(dbCourses);// @Sql: 先插入出一条存在的数据
         // 准备参数
-        AppCoursesSaveReqVO updateReqVO = randomPojo(AppCoursesSaveReqVO.class, o -> {
+        AppCoursesUpdateReqVO updateReqVO = randomPojo(AppCoursesUpdateReqVO.class, o -> {
             o.setId(dbCourses.getId()); // 设置更新的 ID
         });
 
@@ -70,7 +69,7 @@ public class CoursesServiceImplTest extends BaseDbUnitTest {
     @Test
     public void testUpdateCourses_notExists() {
         // 准备参数
-        AppCoursesSaveReqVO updateReqVO = randomPojo(AppCoursesSaveReqVO.class);
+        AppCoursesUpdateReqVO updateReqVO = randomPojo(AppCoursesUpdateReqVO.class);
 
         // 调用, 并断言异常
         assertServiceException(() -> coursesService.updateCourses(updateReqVO), COURSES_NOT_EXISTS);

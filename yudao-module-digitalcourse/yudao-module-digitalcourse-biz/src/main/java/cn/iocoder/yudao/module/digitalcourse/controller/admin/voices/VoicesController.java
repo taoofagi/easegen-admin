@@ -1,36 +1,43 @@
 package cn.iocoder.yudao.module.digitalcourse.controller.admin.voices;
 
-import org.springframework.web.bind.annotation.*;
-import jakarta.annotation.Resource;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.security.access.prepost.PreAuthorize;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Operation;
-
-import jakarta.validation.constraints.*;
-import jakarta.validation.*;
-import jakarta.servlet.http.*;
-import java.util.*;
-import java.io.IOException;
-
+import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
-import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
-import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
-
 import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
-
-import cn.iocoder.yudao.module.digitalcourse.controller.admin.voices.vo.*;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.voices.vo.VoicesPageReqVO;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.voices.vo.VoicesRespVO;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.voices.vo.VoicesSaveReqVO;
+import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.voices.AuditionDO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.voices.VoicesDO;
 import cn.iocoder.yudao.module.digitalcourse.service.voices.VoicesService;
+import cn.iocoder.yudao.module.infra.api.config.ConfigApi;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.List;
+
+import static cn.iocoder.yudao.framework.common.exception.enums.GlobalErrorCodeConstants.BAD_REQUEST;
+import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 
 @Tag(name = "管理后台 - 声音管理")
 @RestController
 @RequestMapping("/digitalcourse/voices")
 @Validated
 public class VoicesController {
+
+    static final String Limit_AUDITIONWORD = "limit.auditionWord";
+
+    @Resource
+    private ConfigApi configApi;
 
     @Resource
     private VoicesService voicesService;
@@ -90,9 +97,12 @@ public class VoicesController {
 
     @PostMapping("/audition")
     @Operation(summary = "试听")
-    @PreAuthorize("@ss.hasPermission('digitalcourse:voices:query')")
-    public CommonResult<String> audition() {
-        return success(voicesService.audition());
+    public CommonResult<String> audition(@Valid @RequestBody AuditionDO auditionDO) {
+        int limitWord = Integer.parseInt(configApi.getConfigValueByKey(Limit_AUDITIONWORD));
+        if (limitWord<(auditionDO.getText().length())) {
+            return CommonResult.error(BAD_REQUEST.getCode(), "试听文字超出字数限制");
+        }
+        return success(voicesService.audition(auditionDO));
     }
 
 }
