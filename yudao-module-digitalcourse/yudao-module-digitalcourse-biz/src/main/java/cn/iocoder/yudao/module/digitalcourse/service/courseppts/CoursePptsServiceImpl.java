@@ -211,6 +211,11 @@ public class CoursePptsServiceImpl implements CoursePptsService {
         }
     }
 
+    @Override
+    public Boolean cancelAnalysis(Long id) {
+        return redisCache.delete(ANALYSIS_PPT_KEY + id);
+    }
+
     private Map<String, Object> convertPptToImagesAndNotes(File pptFile) throws IOException {
         Map<String, Object> result = new HashMap<>();
         List<Map<String, String>> slidesData = new ArrayList<>();
