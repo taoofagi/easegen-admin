@@ -15,7 +15,6 @@ public class AppCourseSceneTextsSaveReqVO {
     private Long id;
 
     @Schema(description = "场景ID，关联digitalcourse_course_scenes表", requiredMode = Schema.RequiredMode.REQUIRED, example = "26595")
-    @NotNull(message = "场景ID，关联digitalcourse_course_scenes表不能为空")
     private Long sceneId;
 
     @Schema(description = "音调", requiredMode = Schema.RequiredMode.REQUIRED)

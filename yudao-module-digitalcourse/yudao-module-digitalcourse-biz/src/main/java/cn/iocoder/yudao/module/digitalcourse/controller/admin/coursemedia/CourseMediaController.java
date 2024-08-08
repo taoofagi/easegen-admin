@@ -98,7 +98,7 @@ public class CourseMediaController {
      */
     @PostMapping("/megerMedia")
     @Operation(summary = "合成视频")
-    public CommonResult megerMedia(@Valid AppCoursesUpdateReqVO updateReqVO){
+    public CommonResult megerMedia(@Valid @RequestBody AppCoursesUpdateReqVO updateReqVO){
         return courseMediaService.megerMedia(updateReqVO);
     }
 

@@ -45,7 +45,6 @@ public class BackgroundsSaveReqVO {
     private Integer preset;
 
     @Schema(description = "状态", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "状态不能为空")
     private Integer status;
 
 }

@@ -18,8 +18,10 @@ public class AppCourseSceneAudiosSaveReqVO {
     private Long sceneId;
 
     @Schema(description = "音频ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "15881")
-    @NotNull(message = "音频ID不能为空")
     private Integer audioId;
+
+    @Schema(description = "audioUrl")
+    private String audioUrl;
 
     @Schema(description = "是否使用视频背景音频", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "是否使用视频背景音频不能为空")

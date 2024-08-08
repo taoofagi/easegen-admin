@@ -65,6 +65,17 @@ public class AppPptMaterialsController {
         return success(BeanUtils.toBean(pptMaterials, AppPptMaterialsRespVO.class));
     }
 
+    @GetMapping("/copy")
+    @Operation(summary = "复制")
+    @Parameter(name = "id", description = "编号", required = true, example = "1024")
+    public CommonResult<Long> copy(@RequestParam("id") Long id) {
+        PptMaterialsDO pptMaterials = pptMaterialsService.getPptMaterials(id);
+        pptMaterials.setId(null);
+        AppPptMaterialsSaveReqVO bean = BeanUtils.toBean(pptMaterials, AppPptMaterialsSaveReqVO.class);
+        Long copyId = pptMaterialsService.createPptMaterials(bean);
+        return success(copyId);
+    }
+
     @GetMapping("/page")
     @Operation(summary = "获得存储PPT课件的具体内容信息，包括课件的图片URL、页面索引等分页")
     public CommonResult<PageResult<AppPptMaterialsRespVO>> getPptMaterialsPage(@Valid AppPptMaterialsPageReqVO pageReqVO) {

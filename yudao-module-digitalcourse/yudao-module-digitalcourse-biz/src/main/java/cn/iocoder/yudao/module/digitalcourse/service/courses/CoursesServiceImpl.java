@@ -65,6 +65,10 @@ public class CoursesServiceImpl implements CoursesService {
         courseScenesService.batchRemoveCouseScenes(updateReqVO.getId());
         //重新insert
         List<AppCourseScenesSaveReqVO> scenes = updateReqVO.getScenes();
+        scenes.stream().forEach(e -> {
+            e.setCourseId(updateObj.getId());
+            e.setStatus(0);
+        });
         courseScenesService.batchCreateCourseScenes(scenes);
 
         coursesMapper.updateById(updateObj);
