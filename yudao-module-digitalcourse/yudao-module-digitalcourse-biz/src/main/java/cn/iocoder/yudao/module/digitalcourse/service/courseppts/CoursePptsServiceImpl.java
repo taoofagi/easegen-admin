@@ -4,15 +4,19 @@ import cn.hutool.json.JSONObject;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courseppts.vo.AppCoursePptsPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courseppts.vo.AppCoursePptsSaveReqVO;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.pptmaterials.vo.AppPptMaterialsSaveReqVO;
+import cn.iocoder.yudao.module.digitalcourse.service.pptmaterials.PptMaterialsService;
 import cn.iocoder.yudao.module.digitalcourse.util.PPTUtil;
 import cn.iocoder.yudao.module.infra.api.file.FileApi;
 import jakarta.annotation.Resource;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.sl.draw.DrawFontManagerDefault;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.xslf.usermodel.*;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -50,6 +54,8 @@ import static cn.iocoder.yudao.module.digitalcourse.enums.ErrorCodeConstants.*;
 @Validated
 public class CoursePptsServiceImpl implements CoursePptsService {
 
+    private static final String ANALYSIS_PPT_KEY = "analysis_ppt:";
+
     @Resource
     private CoursePptsMapper coursePptsMapper;
 
@@ -61,13 +67,18 @@ public class CoursePptsServiceImpl implements CoursePptsService {
 
     @Resource
     private FileApi fileApi;
+    @Resource
+    private StringRedisTemplate redisCache;
+    @Resource
+    private PptMaterialsService pptMaterialsService;
 
     @Override
     public Long createCoursePpts(AppCoursePptsSaveReqVO createReqVO) {
         // 插入
         CoursePptsDO coursePpts = BeanUtils.toBean(createReqVO, CoursePptsDO.class);
+        coursePpts.setStatus(2);
         coursePptsMapper.insert(coursePpts);
-        Boolean b = pptUtil.analysisPpt(coursePpts.getUrl(), coursePpts.getId());
+        pptUtil.analysisPpt(coursePpts.getUrl(), coursePpts.getId());
         // 返回
         return coursePpts.getId();
     }
@@ -107,16 +118,18 @@ public class CoursePptsServiceImpl implements CoursePptsService {
 
     @Override
     public CommonResult getSchedule(Long id) {
-        JSONObject map = PPTUtil.getMap(id);
-        if (map == null){
-            return CommonResult.success(null);
-            //从数据库中查询
-//            return
+        String value = redisCache.opsForValue().get(ANALYSIS_PPT_KEY + id);
+        if (StringUtils.isBlank(value)) {
+            List<AppPptMaterialsSaveReqVO> appPptMaterialsSaveReqVOS = pptMaterialsService.selectListByPptId(id);
+            if (appPptMaterialsSaveReqVOS.isEmpty()) return CommonResult.success(null);
+            return CommonResult.success(appPptMaterialsSaveReqVOS);
         }
-        Double schedule = Double.valueOf(String.valueOf(map.get("schedule")));
-        if (schedule.compareTo(1.0)<0) return CommonResult.success(schedule);
-        //返回图片
-        return CommonResult.success(map.get("url"));
+        if (Double.valueOf(value) == 1) {
+            List<AppPptMaterialsSaveReqVO> appPptMaterialsSaveReqVOS = pptMaterialsService.selectListByPptId(id);
+            redisCache.delete(ANALYSIS_PPT_KEY + id);
+            return CommonResult.success(appPptMaterialsSaveReqVOS);
+        }
+        return CommonResult.success(value);
     }
 
     @Override

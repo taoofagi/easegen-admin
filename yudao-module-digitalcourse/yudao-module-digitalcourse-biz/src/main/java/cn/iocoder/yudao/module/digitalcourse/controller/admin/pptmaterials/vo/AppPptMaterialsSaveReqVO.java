@@ -50,4 +50,6 @@ public class AppPptMaterialsSaveReqVO {
     @NotNull(message = "状态不能为空")
     private Integer status;
 
+    private String pptRemark;
+
 }
