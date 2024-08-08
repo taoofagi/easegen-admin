@@ -2,6 +2,7 @@ package cn.iocoder.yudao.module.digitalcourse.service.pptmaterials;
 
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.pptmaterials.vo.AppPptMaterialsPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.pptmaterials.vo.AppPptMaterialsSaveReqVO;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -11,6 +12,8 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 
 import cn.iocoder.yudao.module.digitalcourse.dal.mysql.pptmaterials.PptMaterialsMapper;
+
+import java.util.List;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.digitalcourse.enums.ErrorCodeConstants.*;
@@ -67,6 +70,18 @@ public class PptMaterialsServiceImpl implements PptMaterialsService {
     @Override
     public PageResult<PptMaterialsDO> getPptMaterialsPage(AppPptMaterialsPageReqVO pageReqVO) {
         return pptMaterialsMapper.selectPage(pageReqVO);
+    }
+
+    @Override
+    public Boolean batchInsert(List<PptMaterialsDO> list) {
+        return pptMaterialsMapper.insertBatch(list);
+    }
+
+    @Override
+    public List<AppPptMaterialsSaveReqVO> selectListByPptId(Long pptId) {
+        List<PptMaterialsDO> pptMaterialsDOS = pptMaterialsMapper.selectList(new QueryWrapper<PptMaterialsDO>().eq("ppt_id", pptId));
+        List<AppPptMaterialsSaveReqVO> bean = BeanUtils.toBean(pptMaterialsDOS, AppPptMaterialsSaveReqVO.class);
+        return bean;
     }
 
 }

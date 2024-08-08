@@ -7,6 +7,8 @@ import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.pptmaterials.PptMate
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import jakarta.validation.Valid;
 
+import java.util.List;
+
 /**
  * 存储PPT课件的具体内容信息，包括课件的图片URL、页面索引等 Service 接口
  *
@@ -51,5 +53,11 @@ public interface PptMaterialsService {
      * @return 存储PPT课件的具体内容信息，包括课件的图片URL、页面索引等分页
      */
     PageResult<PptMaterialsDO> getPptMaterialsPage(AppPptMaterialsPageReqVO pageReqVO);
+
+
+    Boolean batchInsert(List<PptMaterialsDO> list);
+
+
+    List<AppPptMaterialsSaveReqVO> selectListByPptId(Long pptId);
 
 }

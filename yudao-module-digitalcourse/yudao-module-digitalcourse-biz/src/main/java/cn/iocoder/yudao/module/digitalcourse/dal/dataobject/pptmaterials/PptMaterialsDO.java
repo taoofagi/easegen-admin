@@ -30,7 +30,7 @@ public class PptMaterialsDO extends BaseDO {
     /**
      * 课程PPT ID，关联digitalcourse_course_ppts表
      */
-    private Integer pptId;
+    private Long pptId;
     /**
      * 课件名称
      */
@@ -67,5 +67,7 @@ public class PptMaterialsDO extends BaseDO {
      * 枚举 {@link TODO common_status 对应的类}
      */
     private Integer status;
+
+    private String pptRemark;
 
 }
