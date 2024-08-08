@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursescenecomponents;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import java.util.*;
 import java.time.LocalDateTime;
@@ -97,5 +98,12 @@ public class CourseSceneComponentsDO extends BaseDO {
      * 枚举 {@link TODO common_status 对应的类}
      */
     private Integer status;
+
+
+    private Integer digitbotType;
+
+    private Integer matting;
+
+    private Boolean marker;
 
 }

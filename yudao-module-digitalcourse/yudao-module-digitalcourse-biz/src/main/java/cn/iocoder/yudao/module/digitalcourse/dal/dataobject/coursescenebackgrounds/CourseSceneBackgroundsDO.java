@@ -76,4 +76,6 @@ public class CourseSceneBackgroundsDO extends BaseDO {
      */
     private Integer status;
 
+    private String color;
+
 }

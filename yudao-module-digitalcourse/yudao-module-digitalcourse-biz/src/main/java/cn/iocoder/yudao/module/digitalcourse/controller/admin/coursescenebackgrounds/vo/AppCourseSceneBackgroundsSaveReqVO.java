@@ -15,7 +15,6 @@ public class AppCourseSceneBackgroundsSaveReqVO {
     private Long id;
 
     @Schema(description = "场景ID，关联digitalcourse_course_scenes表", requiredMode = Schema.RequiredMode.REQUIRED, example = "14119")
-    @NotNull(message = "场景ID，关联digitalcourse_course_scenes表不能为空")
     private Long sceneId;
 
     @Schema(description = "背景类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
@@ -23,39 +22,32 @@ public class AppCourseSceneBackgroundsSaveReqVO {
     private Integer backgroundType;
 
     @Schema(description = "背景实体ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "3388")
-    @NotNull(message = "背景实体ID不能为空")
     private Integer entityId;
 
     @Schema(description = "背景资源URL", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "背景资源URL不能为空")
     private String src;
 
     @Schema(description = "背景封面URL", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "背景封面URL不能为空")
     private String cover;
 
     @Schema(description = "背景宽度", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "背景宽度不能为空")
     private Integer width;
 
     @Schema(description = "背景高度", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "背景高度不能为空")
     private Integer height;
 
     @Schema(description = "深度", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "深度不能为空")
     private Integer depth;
 
     @Schema(description = "原始宽度", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "原始宽度不能为空")
     private Integer originWidth;
 
     @Schema(description = "原始高度", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "原始高度不能为空")
     private Integer originHeight;
 
     @Schema(description = "状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
-    @NotNull(message = "状态不能为空")
     private Integer status;
+
+    private String color;
 
 }

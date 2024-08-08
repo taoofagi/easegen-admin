@@ -70,24 +70,31 @@ public class CourseScenesServiceImpl implements CourseScenesService {
         courseScenesMapper.insert(courseScenes);
 
         //插入背景
-        AppCourseSceneBackgroundsSaveReqVO sceneBackgrounds = createReqVO.getSceneBackgrounds();
+        AppCourseSceneBackgroundsSaveReqVO sceneBackgrounds = createReqVO.getBackground();
         sceneBackgrounds.setSceneId(courseScenes.getId());
+        if (sceneBackgrounds.getStatus() == null ) sceneBackgrounds.setStatus(0);
         backgroundsService.createCourseSceneBackgrounds(sceneBackgrounds);
         //插入组件
-        List<AppCourseSceneComponentsSaveReqVO> sceneComponents = createReqVO.getSceneComponents();
-        sceneComponents.stream().forEach(e -> e.setSceneId(courseScenes.getId()));
+        List<AppCourseSceneComponentsSaveReqVO> sceneComponents = createReqVO.getComponents();
+        sceneComponents.stream().forEach(e -> {
+            e.setSceneId(courseScenes.getId());
+            if (e.getStatus() == null ) e.setStatus(0);
+        });
         componentsService.batchCreateCourseSceneComponents(sceneComponents);
         //声音
-        AppCourseSceneVoicesSaveReqVO sceneVoices = createReqVO.getSceneVoices();
+        AppCourseSceneVoicesSaveReqVO sceneVoices = createReqVO.getVoice();
         sceneVoices.setSceneId(courseScenes.getId());
+        if (sceneVoices.getStatus() == null ) sceneVoices.setStatus(0);
         voicesService.createCourseSceneVoices(sceneVoices);
         //文本
-        AppCourseSceneTextsSaveReqVO sceneTexts = createReqVO.getSceneTexts();
+        AppCourseSceneTextsSaveReqVO sceneTexts = createReqVO.getTextDriver();
         sceneTexts.setSceneId(courseScenes.getId());
+        if (sceneTexts.getStatus() == null ) sceneTexts.setStatus(0);
         textsService.createCourseSceneTexts(sceneTexts);
         //场景音频
-        AppCourseSceneAudiosSaveReqVO sceneAudios = createReqVO.getSceneAudios();
+        AppCourseSceneAudiosSaveReqVO sceneAudios = createReqVO.getAudioDriver();
         sceneAudios.setSceneId(courseScenes.getId());
+        if (sceneAudios.getStatus() == null ) sceneAudios.setStatus(0);
         audiosService.createCourseSceneAudios(sceneAudios);
         // 返回
         return courseScenes.getId();
@@ -137,15 +144,15 @@ public class CourseScenesServiceImpl implements CourseScenesService {
         bean.stream().forEach(e->{
             Long id = e.getId();
             List<AppCourseSceneAudiosSaveReqVO> audioList = courseSceneAudiosSaveReqVOS.stream().filter(item -> item.getSceneId() == id).toList();
-            if (!audioList.isEmpty()) e.setSceneAudios(audioList.stream().findFirst().get());
+            if (!audioList.isEmpty()) e.setAudioDriver(audioList.stream().findFirst().get());
             List<AppCourseSceneTextsSaveReqVO> textList = appCourseSceneTextsSaveReqVOS.stream().filter(item -> item.getSceneId() == id).toList();
-            if (!textList.isEmpty()) e.setSceneTexts(textList.stream().findFirst().get());
+            if (!textList.isEmpty()) e.setTextDriver(textList.stream().findFirst().get());
             List<AppCourseSceneVoicesSaveReqVO> voiceList = appCourseSceneVoicesSaveReqVOS.stream().filter(item -> item.getSceneId() == id).toList();
-            if (!voiceList.isEmpty()) e.setSceneVoices(voiceList.stream().findFirst().get());
+            if (!voiceList.isEmpty()) e.setVoice(voiceList.stream().findFirst().get());
             List<AppCourseSceneComponentsSaveReqVO> componentsList = appCourseSceneComponentsSaveReqVOS.stream().filter(item -> item.getSceneId() == id).toList();
-            e.setSceneComponents(componentsList);
+            e.setComponents(componentsList);
             List<AppCourseSceneBackgroundsSaveReqVO> backgroudList = appCourseSceneBackgroundsSaveReqVOS.stream().filter(item -> item.getSceneId() == id).toList();
-            if (!backgroudList.isEmpty()) e.setSceneBackgrounds(backgroudList.stream().findFirst().get());
+            if (!backgroudList.isEmpty()) e.setBackground(backgroudList.stream().findFirst().get());
         });
         return bean;
     }

@@ -84,6 +84,7 @@ public class CourseMediaServiceImpl implements CourseMediaService {
             courseMediaDO.setMediaType(1);
             courseMediaDO.setName(updateReqVO.getName());
             courseMediaDO.setCourseName(updateReqVO.getName());
+            courseMediaMapper.insert(courseMediaDO);
         }else{
             return CommonResult.error(500,"不允许重复合成");
         }

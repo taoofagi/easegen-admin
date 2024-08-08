@@ -27,7 +27,6 @@ public class AppCourseSceneComponentsSaveReqVO {
     private String src;
 
     @Schema(description = "封面URL", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "封面URL不能为空")
     private String cover;
 
     @Schema(description = "组件宽度", requiredMode = Schema.RequiredMode.REQUIRED)
@@ -51,7 +50,6 @@ public class AppCourseSceneComponentsSaveReqVO {
     private Integer category;
 
     @Schema(description = "深度", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "深度不能为空")
     private Integer depth;
 
     @Schema(description = "上边距", requiredMode = Schema.RequiredMode.REQUIRED)
@@ -77,5 +75,14 @@ public class AppCourseSceneComponentsSaveReqVO {
     @Schema(description = "状态 (0: 正常, 1: 异常)", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     @NotNull(message = "状态 (0: 正常, 1: 异常)不能为空")
     private Integer status;
+
+    @Schema(description = "数字人类型 (0: 普通, 1: 专属) 关联digitalcourse_digital_humans表type")
+    private Integer digitbotType;
+
+    @Schema(description = "抠图标识 (0: 否, 1: 是) 默认1")
+    private Integer matting;
+
+    @Schema(description = "预留，是否修改过，默认(0false,1true)")
+    private Boolean marker;
 
 }

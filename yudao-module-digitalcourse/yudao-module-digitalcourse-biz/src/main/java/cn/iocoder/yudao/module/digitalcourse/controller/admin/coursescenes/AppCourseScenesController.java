@@ -48,6 +48,7 @@ public class AppCourseScenesController {
         if (createReqVO.getId() != null){
             createReqVO.setId(null);
         }
+        if (createReqVO.getStatus() == null) createReqVO.setStatus(0);
         return success(courseScenesService.createCourseScenes(createReqVO));
     }
 

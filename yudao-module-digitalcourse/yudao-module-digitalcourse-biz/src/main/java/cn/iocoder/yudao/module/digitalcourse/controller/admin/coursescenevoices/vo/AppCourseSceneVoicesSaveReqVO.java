@@ -14,15 +14,15 @@ public class AppCourseSceneVoicesSaveReqVO {
     private Long id;
 
     @Schema(description = "场景ID，关联digitalcourse_course_scenes表", requiredMode = Schema.RequiredMode.REQUIRED, example = "26726")
-    @NotNull(message = "场景ID，关联digitalcourse_course_scenes表不能为空")
     private Long sceneId;
 
+    @Schema(description = "entityId")
+    private Long entityId;
+
     @Schema(description = "声音ID，关联digitalcourse_voices表", requiredMode = Schema.RequiredMode.REQUIRED, example = "28531")
-    @NotNull(message = "声音ID，关联digitalcourse_voices表不能为空")
     private Integer voiceId;
 
     @Schema(description = "音调（0-100）", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "音调（0-100）不能为空")
     private Integer tonePitch;
 
     @Schema(description = "声音类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
@@ -30,14 +30,12 @@ public class AppCourseSceneVoicesSaveReqVO {
     private Integer voiceType;
 
     @Schema(description = "语速", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "语速不能为空")
     private Double speechRate;
 
     @Schema(description = "自定义名称", example = "芋艿")
     private String name;
 
     @Schema(description = "状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
-    @NotNull(message = "状态不能为空")
     private Integer status;
 
 }

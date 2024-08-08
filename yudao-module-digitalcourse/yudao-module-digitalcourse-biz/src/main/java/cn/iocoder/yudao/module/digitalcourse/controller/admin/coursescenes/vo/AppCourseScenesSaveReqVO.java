@@ -22,16 +22,13 @@ public class AppCourseScenesSaveReqVO {
     private Long id;
 
     @Schema(description = "课程ID，关联digitalcourse_courses表", requiredMode = Schema.RequiredMode.REQUIRED, example = "15012")
-    @NotNull(message = "课程ID，关联digitalcourse_courses表不能为空")
-    private Integer courseId;
+    private Long courseId;
 
     @Schema(description = "场景顺序号", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "场景顺序号不能为空")
-    private Integer orderNo;
+    private Long orderNo;
 
     @Schema(description = "时长（秒）", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "时长（秒）不能为空")
-    private Integer duration;
+    private Long duration;
 
     @Schema(description = "驱动类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     @NotNull(message = "驱动类型不能为空")
@@ -42,17 +39,16 @@ public class AppCourseScenesSaveReqVO {
     private String businessId;
 
     @Schema(description = "状态 (0: 正常, 1: 异常)", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
-    @NotNull(message = "状态 (0: 正常, 1: 异常)不能为空")
     private Integer status;
 
-    private AppCourseSceneBackgroundsSaveReqVO sceneBackgrounds;
+    private AppCourseSceneBackgroundsSaveReqVO background;
 
-    private List<AppCourseSceneComponentsSaveReqVO> sceneComponents;
+    private List<AppCourseSceneComponentsSaveReqVO> components;
 
-    private AppCourseSceneVoicesSaveReqVO sceneVoices;
+    private AppCourseSceneVoicesSaveReqVO voice;
 
-    private AppCourseSceneTextsSaveReqVO sceneTexts;
+    private AppCourseSceneTextsSaveReqVO textDriver;
 
-    private AppCourseSceneAudiosSaveReqVO sceneAudios;
+    private AppCourseSceneAudiosSaveReqVO audioDriver;
 
 }

@@ -35,6 +35,8 @@ public class CourseSceneVoicesDO extends BaseDO {
      * 声音ID，关联digitalcourse_voices表
      */
     private Integer voiceId;
+
+    private Long entityId;
     /**
      * 音调（0-100）
      */

@@ -35,11 +35,9 @@ public class AppPptMaterialsSaveReqVO {
     private String originalUrl;
 
     @Schema(description = "宽度", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "宽度不能为空")
     private Integer width;
 
     @Schema(description = "高度", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "高度不能为空")
     private Integer height;
 
     @Schema(description = "页面索引", requiredMode = Schema.RequiredMode.REQUIRED)

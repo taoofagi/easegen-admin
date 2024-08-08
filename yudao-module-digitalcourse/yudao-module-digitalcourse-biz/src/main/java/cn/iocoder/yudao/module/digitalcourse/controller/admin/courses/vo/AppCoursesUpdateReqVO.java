@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Map;
 
 @Schema(description = "用户 APP - 存储课程的基本信息，包括课程名称、时长、状态等新增/修改 Request VO")
 @Data
@@ -45,6 +46,8 @@ public class AppCoursesUpdateReqVO {
 
     @Schema(description = "字幕样式", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private String subtitlesStyle;
+
+    private List<String> ppt;
 
     //场景
     private List<AppCourseScenesSaveReqVO> scenes;
