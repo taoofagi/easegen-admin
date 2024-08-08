@@ -62,4 +62,6 @@ public interface CoursePptsService {
 
     ResponseEntity<Map<String, Object>> convertPptToImages(MultipartFile file);
 
+    Boolean cancelAnalysis(Long id);
+
 }

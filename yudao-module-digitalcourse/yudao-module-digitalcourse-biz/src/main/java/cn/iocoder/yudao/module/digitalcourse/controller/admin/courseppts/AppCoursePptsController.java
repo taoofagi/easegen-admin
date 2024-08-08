@@ -100,4 +100,14 @@ public class AppCoursePptsController {
         return coursePptsService.convertPptToImages(file);
     }
 
+    /**
+     * 取消解析后删除缓存
+     * @param id
+     * @return
+     */
+    @GetMapping("/cancelAnalysis")
+    public CommonResult cancelAnalysis(@RequestParam("id") Long id) {
+        return success(coursePptsService.cancelAnalysis(id));
+    }
+
 }
