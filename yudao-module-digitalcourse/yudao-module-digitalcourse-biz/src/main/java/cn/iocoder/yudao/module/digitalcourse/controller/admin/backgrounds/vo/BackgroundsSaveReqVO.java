@@ -47,4 +47,7 @@ public class BackgroundsSaveReqVO {
     @Schema(description = "状态", requiredMode = Schema.RequiredMode.REQUIRED)
     private Integer status;
 
+    @Schema(description = "pptRemark", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String pptRemark;
+
 }

@@ -48,6 +48,9 @@ public class AppCourseSceneBackgroundsSaveReqVO {
     @Schema(description = "状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     private Integer status;
 
+    @Schema(description = "ppt口播稿")
+    private String pptRemark;
+
     private String color;
 
 }

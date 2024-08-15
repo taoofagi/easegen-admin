@@ -78,4 +78,9 @@ public class BackgroundsDO extends BaseDO {
      */
     private String failReason;
 
+    /**
+     * 口播稿内容
+     */
+    private String pptRemark;
+
 }

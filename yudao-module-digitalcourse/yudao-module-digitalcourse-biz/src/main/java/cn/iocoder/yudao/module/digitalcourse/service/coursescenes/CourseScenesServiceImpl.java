@@ -143,15 +143,15 @@ public class CourseScenesServiceImpl implements CourseScenesService {
 
         bean.stream().forEach(e->{
             Long id = e.getId();
-            List<AppCourseSceneAudiosSaveReqVO> audioList = courseSceneAudiosSaveReqVOS.stream().filter(item -> item.getSceneId() == id).toList();
+            List<AppCourseSceneAudiosSaveReqVO> audioList = courseSceneAudiosSaveReqVOS.stream().filter(item -> item.getSceneId().longValue() == id.longValue()).toList();
             if (!audioList.isEmpty()) e.setAudioDriver(audioList.stream().findFirst().get());
-            List<AppCourseSceneTextsSaveReqVO> textList = appCourseSceneTextsSaveReqVOS.stream().filter(item -> item.getSceneId() == id).toList();
+            List<AppCourseSceneTextsSaveReqVO> textList = appCourseSceneTextsSaveReqVOS.stream().filter(item -> item.getSceneId().longValue() == id.longValue()).toList();
             if (!textList.isEmpty()) e.setTextDriver(textList.stream().findFirst().get());
-            List<AppCourseSceneVoicesSaveReqVO> voiceList = appCourseSceneVoicesSaveReqVOS.stream().filter(item -> item.getSceneId() == id).toList();
+            List<AppCourseSceneVoicesSaveReqVO> voiceList = appCourseSceneVoicesSaveReqVOS.stream().filter(item -> item.getSceneId().longValue() == id.longValue()).toList();
             if (!voiceList.isEmpty()) e.setVoice(voiceList.stream().findFirst().get());
-            List<AppCourseSceneComponentsSaveReqVO> componentsList = appCourseSceneComponentsSaveReqVOS.stream().filter(item -> item.getSceneId() == id).toList();
+            List<AppCourseSceneComponentsSaveReqVO> componentsList = appCourseSceneComponentsSaveReqVOS.stream().filter(item -> item.getSceneId().longValue() == id.longValue()).toList();
             e.setComponents(componentsList);
-            List<AppCourseSceneBackgroundsSaveReqVO> backgroudList = appCourseSceneBackgroundsSaveReqVOS.stream().filter(item -> item.getSceneId() == id).toList();
+            List<AppCourseSceneBackgroundsSaveReqVO> backgroudList = appCourseSceneBackgroundsSaveReqVOS.stream().filter(item -> item.getSceneId().longValue() == id.longValue()).toList();
             if (!backgroudList.isEmpty()) e.setBackground(backgroudList.stream().findFirst().get());
         });
         return bean;
