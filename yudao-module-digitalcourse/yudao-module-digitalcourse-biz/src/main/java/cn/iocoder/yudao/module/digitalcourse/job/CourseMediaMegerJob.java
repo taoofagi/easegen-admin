@@ -3,7 +3,9 @@ package cn.iocoder.yudao.module.digitalcourse.job;
 import cn.iocoder.yudao.framework.quartz.core.handler.JobHandler;
 import cn.iocoder.yudao.module.digitalcourse.service.coursemedia.CourseMediaService;
 import jakarta.annotation.Resource;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CourseMediaMegerJob implements JobHandler {
 
     @Resource
