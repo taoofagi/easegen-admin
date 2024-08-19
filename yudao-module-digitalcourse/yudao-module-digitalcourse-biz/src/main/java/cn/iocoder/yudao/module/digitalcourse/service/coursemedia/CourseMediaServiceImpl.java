@@ -1,20 +1,27 @@
 package cn.iocoder.yudao.module.digitalcourse.service.coursemedia;
 
+import cn.hutool.http.HttpRequest;
+import cn.hutool.http.HttpResponse;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.framework.mybatis.core.query.QueryWrapperX;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursemedia.vo.CourseMediaMegerVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursemedia.vo.CourseMediaPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursemedia.vo.CourseMediaSaveReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesUpdateReqVO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursemedia.CourseMediaDO;
 import cn.iocoder.yudao.module.digitalcourse.dal.mysql.coursemedia.CourseMediaMapper;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import jakarta.annotation.Resource;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
+
+import java.math.BigInteger;
 import java.util.List;
 
 import static cn.iocoder.yudao.module.digitalcourse.enums.ErrorCodeConstants.COURSE_MEDIA_NOT_EXISTS;
@@ -27,6 +34,8 @@ import static cn.iocoder.yudao.module.digitalcourse.enums.ErrorCodeConstants.COU
 @Service
 @Validated
 public class CourseMediaServiceImpl implements CourseMediaService {
+
+    private static final String REMOTE_BASE_URL = "http://digitalcourse.taoofagi.com:7860";
 
     @Resource
     private CourseMediaMapper courseMediaMapper;
@@ -74,7 +83,7 @@ public class CourseMediaServiceImpl implements CourseMediaService {
     }
 
     @Override
-    public CommonResult megerMedia(AppCoursesUpdateReqVO updateReqVO) {
+    public CommonResult megerMedia(CourseMediaMegerVO updateReqVO) {
         Long id = updateReqVO.getId();
         CourseMediaDO courseMediaDO = courseMediaMapper.selectOne(new QueryWrapperX<CourseMediaDO>().lambda().eq(CourseMediaDO::getCourseId,id).eq(CourseMediaDO::getStatus,1));
         if (courseMediaDO == null){
@@ -88,6 +97,7 @@ public class CourseMediaServiceImpl implements CourseMediaService {
         }else{
             return CommonResult.error(500,"不允许重复合成");
         }
+        updateReqVO.setCourseMediaId(courseMediaDO.getId());
         remoteMegerMedia(updateReqVO);
         return CommonResult.success(true);
     }
@@ -98,9 +108,9 @@ public class CourseMediaServiceImpl implements CourseMediaService {
      * @return
      */
     @Async
-    public Boolean remoteMegerMedia(AppCoursesUpdateReqVO updateReqVO) {
-
-        return true;
+    public void remoteMegerMedia(CourseMediaMegerVO updateReqVO) {
+        HttpResponse execute = HttpRequest.post(REMOTE_BASE_URL + "/api/mergemedia").header("X-API-Key", "taoofagi").body(JSON.toJSONString(updateReqVO)).execute();
+        String body = execute.body();
     }
 
 
@@ -111,7 +121,22 @@ public class CourseMediaServiceImpl implements CourseMediaService {
     public void queryRemoteMegerResult(){
         List<CourseMediaDO> courseMediaDOS = courseMediaMapper.selectList(new QueryWrapperX<CourseMediaDO>().lambda().eq(CourseMediaDO::getStatus, 1));
         //调用远程接口，回刷数据
-
+        courseMediaDOS.stream().forEach(e -> {
+            String result = HttpRequest.get(REMOTE_BASE_URL + "/api/mergemedia/result").header("X-API-Key", "taoofagi").form("courseMediaIds",e.getId()).execute().body();
+            if (JSON.isValidObject(result)){
+                JSONObject jsonObject = JSON.parseObject(result);
+                BigInteger status = jsonObject.getBigInteger("status");
+                if (status != null){
+//                    合并状态，0：草稿，1：合成中，2：合成成功，3：合成失败
+                    if (status.intValue() == 0) return;
+                    if (status.intValue() == 1) return;
+                    if (status.intValue() == 2 || status.intValue() == 3) {
+                        e.setStatus(status.intValue());
+                    }
+                    courseMediaMapper.updateById(e);
+                }
+            }
+        });
 
     }
 

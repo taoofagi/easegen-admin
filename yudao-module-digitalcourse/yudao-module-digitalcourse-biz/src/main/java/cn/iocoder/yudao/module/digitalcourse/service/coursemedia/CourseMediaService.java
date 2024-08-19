@@ -2,6 +2,7 @@ package cn.iocoder.yudao.module.digitalcourse.service.coursemedia;
 
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursemedia.vo.CourseMediaMegerVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursemedia.vo.CourseMediaPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursemedia.vo.CourseMediaSaveReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesUpdateReqVO;
@@ -54,7 +55,7 @@ public interface CourseMediaService {
     PageResult<CourseMediaDO> getCourseMediaPage(CourseMediaPageReqVO pageReqVO);
 
 
-    CommonResult megerMedia(AppCoursesUpdateReqVO updateReqVO);
+    CommonResult megerMedia(CourseMediaMegerVO updateReqVO);
 
     void queryRemoteMegerResult();
 

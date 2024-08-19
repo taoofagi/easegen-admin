@@ -6,6 +6,7 @@ import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursemedia.vo.CourseMediaMegerVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursemedia.vo.CourseMediaPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursemedia.vo.CourseMediaRespVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursemedia.vo.CourseMediaSaveReqVO;
@@ -98,8 +99,8 @@ public class CourseMediaController {
      */
     @PostMapping("/megerMedia")
     @Operation(summary = "合成视频")
-    public CommonResult megerMedia(@Valid @RequestBody AppCoursesUpdateReqVO updateReqVO){
-        return courseMediaService.megerMedia(updateReqVO);
+    public CommonResult megerMedia(@Valid @RequestBody CourseMediaMegerVO mediaMegerVO){
+        return courseMediaService.megerMedia(mediaMegerVO);
     }
 
 }
