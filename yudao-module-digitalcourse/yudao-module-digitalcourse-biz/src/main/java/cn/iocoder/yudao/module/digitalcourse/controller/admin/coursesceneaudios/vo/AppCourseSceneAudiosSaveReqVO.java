@@ -24,11 +24,14 @@ public class AppCourseSceneAudiosSaveReqVO {
     private String audioUrl;
 
     @Schema(description = "是否使用视频背景音频", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "是否使用视频背景音频不能为空")
     private Integer useVideoBackgroundAudio;
 
     @Schema(description = "状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
-    @NotNull(message = "状态不能为空")
     private Integer status;
+
+    @Schema(description = "文件名称", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
+    private String fileName;
+
+
 
 }
