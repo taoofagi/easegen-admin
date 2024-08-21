@@ -49,5 +49,6 @@ public class CourseSceneAudiosDO extends BaseDO {
     private Integer status;
 
     private String audioUrl;
+    private String fileName;
 
 }

@@ -26,7 +26,6 @@ public class AppCourseSceneVoicesSaveReqVO {
     private Integer tonePitch;
 
     @Schema(description = "声音类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
-    @NotNull(message = "声音类型不能为空")
     private Integer voiceType;
 
     @Schema(description = "语速", requiredMode = Schema.RequiredMode.REQUIRED)

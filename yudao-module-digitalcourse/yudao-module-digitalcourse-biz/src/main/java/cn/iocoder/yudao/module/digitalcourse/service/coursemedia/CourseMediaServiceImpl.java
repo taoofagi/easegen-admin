@@ -13,8 +13,10 @@ import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCour
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursemedia.CourseMediaDO;
 import cn.iocoder.yudao.module.digitalcourse.dal.mysql.coursemedia.CourseMediaMapper;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import jakarta.annotation.Resource;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -123,18 +125,24 @@ public class CourseMediaServiceImpl implements CourseMediaService {
         //调用远程接口，回刷数据
         courseMediaDOS.stream().forEach(e -> {
             String result = HttpRequest.get(REMOTE_BASE_URL + "/api/mergemedia/result").header("X-API-Key", "taoofagi").form("courseMediaIds",e.getId()).execute().body();
-            if (JSON.isValidObject(result)){
-                JSONObject jsonObject = JSON.parseObject(result);
-                BigInteger status = jsonObject.getBigInteger("status");
-                if (status != null){
+            if (JSON.isValidArray(result)){
+                JSONArray jsonArray = JSON.parseArray(result);
+                jsonArray.stream().forEach(obj -> {
+                    if (!JSON.isValidObject(JSON.toJSONString(obj))) return;
+                    JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(obj));
+                    BigInteger status = jsonObject.getBigInteger("status");
+                    if (status != null){
 //                    合并状态，0：草稿，1：合成中，2：合成成功，3：合成失败
-                    if (status.intValue() == 0) return;
-                    if (status.intValue() == 1) return;
-                    if (status.intValue() == 2 || status.intValue() == 3) {
-                        e.setStatus(status.intValue());
+                        if (status.intValue() == 0) return;
+                        if (status.intValue() == 1) return;
+                        if (status.intValue() == 2 || status.intValue() == 3) {
+                            e.setStatus(status.intValue());
+                            if (StringUtils.isNotBlank(jsonObject.getString("merge_video"))) e.setPreviewUrl(jsonObject.getString("merge_video"));
+                            if (jsonObject.getLong("duration") != null) e.setDuration(jsonObject.getLong("duration"));
+                        }
+                        courseMediaMapper.updateById(e);
                     }
-                    courseMediaMapper.updateById(e);
-                }
+                });
             }
         });
 

@@ -18,31 +18,24 @@ public class AppCourseSceneTextsSaveReqVO {
     private Long sceneId;
 
     @Schema(description = "音调", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "音调不能为空")
     private Integer pitch;
 
     @Schema(description = "速度", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "速度不能为空")
     private Double speed;
 
     @Schema(description = "音量", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "音量不能为空")
     private Double volume;
 
     @Schema(description = "智能速度", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "智能速度不能为空")
     private Double smartSpeed;
 
     @Schema(description = "语速", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "语速不能为空")
     private Double speechRate;
 
     @Schema(description = "文本内容（JSON格式）", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "文本内容（JSON格式）不能为空")
     private String textJson;
 
     @Schema(description = "状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
-    @NotNull(message = "状态不能为空")
     private Integer status;
 
 }
