@@ -49,7 +49,7 @@ public class AppCourseSceneComponentsPageReqVO extends PageParam {
     private Integer marginLeft;
 
     @Schema(description = "实体ID", example = "31129")
-    private Integer entityId;
+    private String entityId;
 
     @Schema(description = "实体类型 (0: 其他, 1: 数字人)", example = "2")
     private Integer entityType;

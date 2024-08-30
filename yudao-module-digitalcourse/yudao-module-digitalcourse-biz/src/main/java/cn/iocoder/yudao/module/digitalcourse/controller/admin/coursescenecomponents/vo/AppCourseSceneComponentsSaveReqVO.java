@@ -62,7 +62,7 @@ public class AppCourseSceneComponentsSaveReqVO {
 
     @Schema(description = "实体ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "31129")
     @NotNull(message = "实体ID不能为空")
-    private Integer entityId;
+    private String entityId;
 
     @Schema(description = "实体类型 (0: 其他, 1: 数字人)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
     @NotNull(message = "实体类型 (0: 其他, 1: 数字人)不能为空")
