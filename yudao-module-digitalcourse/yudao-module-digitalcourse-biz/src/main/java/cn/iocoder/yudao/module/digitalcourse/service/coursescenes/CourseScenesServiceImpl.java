@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.digitalcourse.service.coursescenes;
 
+import cn.iocoder.yudao.framework.common.exception.ServiceException;
 import cn.iocoder.yudao.framework.mybatis.core.query.QueryWrapperX;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.backgrounds.vo.BackgroundsSaveReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursesceneaudios.vo.AppCourseSceneAudiosSaveReqVO;
@@ -81,7 +82,7 @@ public class CourseScenesServiceImpl implements CourseScenesService {
             if (e.getStatus() == null ) e.setStatus(0);
         });
         componentsService.batchCreateCourseSceneComponents(sceneComponents);
-        //声音
+        //声音模型
         AppCourseSceneVoicesSaveReqVO sceneVoices = createReqVO.getVoice();
         sceneVoices.setSceneId(courseScenes.getId());
         if (sceneVoices.getStatus() == null ) sceneVoices.setStatus(0);
@@ -108,6 +109,7 @@ public class CourseScenesServiceImpl implements CourseScenesService {
             }catch (Exception exception){
                 System.out.println(e.getId()+"场景添加失败");
                 System.out.println(exception);
+                throw exception(COURSES_UPDATE_ERROR);
             }
         });
         return true;
