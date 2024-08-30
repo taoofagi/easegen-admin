@@ -12,11 +12,13 @@ public interface ErrorCodeConstants {
     // ========== digitalcourse 模块 1-0010-000-000 ==========
     ErrorCode DIGITAL_HUMANS_NOT_EXISTS = new ErrorCode(1-0010-000-000, "数字人模型不存在");
     // ========== digitalcourse 模块 1-0010-000-001 ==========
-    ErrorCode BACKGROUNDS_NOT_EXISTS = new ErrorCode(1-0010-000-001, "背景信息（PPT背景、板书、插图、字幕等）不存在");
+    ErrorCode BACKGROUNDS_NOT_EXISTS = new ErrorCode(1-0010-001-001, "背景信息（PPT背景、板书、插图、字幕等）不存在");
     // ========== digitalcourse 模块 1-0010-000-002 ==========
-    ErrorCode VOICES_NOT_EXISTS = new ErrorCode(1-0010-000-002, "声音模型不存在");
+    ErrorCode VOICES_NOT_EXISTS = new ErrorCode(1-0010-002-002, "声音模型不存在");
     // ========== digitalcourse 模块 1-0010-000-003 ==========
-    ErrorCode COURSES_NOT_EXISTS = new ErrorCode(1-0010-000-003, "存储课程的基本信息，包括课程名称、时长、状态等不存在");
+    ErrorCode COURSES_NOT_EXISTS = new ErrorCode(1-0010-003-000, "存储课程的基本信息，包括课程名称、时长、状态等不存在");
+    // ========== digitalcourse 模块 1-0010-000-003 ==========
+    ErrorCode COURSES_UPDATE_ERROR = new ErrorCode(1-0010-003-001, "数字人课程保存失败");
     // ========== digitalcourse 模块 1-0010-000-004 ==========
     ErrorCode COURSE_SCENES_NOT_EXISTS = new ErrorCode(1-0010-000-004, "存储课程的场景信息，包括背景、组件、声音等不存在");
     // ========== digitalcourse 模块 1-0010-000-005 ==========

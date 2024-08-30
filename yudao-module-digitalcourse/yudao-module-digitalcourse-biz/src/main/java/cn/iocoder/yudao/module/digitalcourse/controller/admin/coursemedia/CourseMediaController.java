@@ -65,7 +65,7 @@ public class CourseMediaController {
     @GetMapping("/get")
     @Operation(summary = "获得课程媒体")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
-    @PreAuthorize("@ss.hasPermission('digitalcourse:course-media:query')")
+//    @PreAuthorize("@ss.hasPermission('digitalcourse:course-media:query')")
     public CommonResult<CourseMediaRespVO> getCourseMedia(@RequestParam("id") Long id) {
         CourseMediaDO courseMedia = courseMediaService.getCourseMedia(id);
         return success(BeanUtils.toBean(courseMedia, CourseMediaRespVO.class));
@@ -73,7 +73,7 @@ public class CourseMediaController {
 
     @GetMapping("/page")
     @Operation(summary = "获得课程媒体分页")
-    @PreAuthorize("@ss.hasPermission('digitalcourse:course-media:query')")
+//    @PreAuthorize("@ss.hasPermission('digitalcourse:course-media:query')")
     public CommonResult<PageResult<CourseMediaRespVO>> getCourseMediaPage(@Valid CourseMediaPageReqVO pageReqVO) {
         PageResult<CourseMediaDO> pageResult = courseMediaService.getCourseMediaPage(pageReqVO);
         return success(BeanUtils.toBean(pageResult, CourseMediaRespVO.class));
