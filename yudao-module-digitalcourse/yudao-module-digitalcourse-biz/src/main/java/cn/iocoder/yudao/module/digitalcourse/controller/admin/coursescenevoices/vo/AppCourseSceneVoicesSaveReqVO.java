@@ -17,7 +17,7 @@ public class AppCourseSceneVoicesSaveReqVO {
     private Long sceneId;
 
     @Schema(description = "entityId")
-    private Long entityId;
+    private String entityId;
 
     @Schema(description = "声音ID，关联digitalcourse_voices表", requiredMode = Schema.RequiredMode.REQUIRED, example = "28531")
     private Integer voiceId;
