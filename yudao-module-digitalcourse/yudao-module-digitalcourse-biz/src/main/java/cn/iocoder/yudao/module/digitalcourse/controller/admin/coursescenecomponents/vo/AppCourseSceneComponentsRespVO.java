@@ -70,7 +70,7 @@ public class AppCourseSceneComponentsRespVO {
 
     @Schema(description = "实体ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "31129")
     @ExcelProperty("实体ID")
-    private Integer entityId;
+    private String entityId;
 
     @Schema(description = "实体类型 (0: 其他, 1: 数字人)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
     @ExcelProperty(value = "实体类型 (0: 其他, 1: 数字人)", converter = DictConvert.class)

@@ -81,7 +81,7 @@ public class CourseSceneComponentsDO extends BaseDO {
     /**
      * 实体ID
      */
-    private Integer entityId;
+    private String entityId;
     /**
      * 实体类型 (0: 其他, 1: 数字人)
      *
