@@ -62,7 +62,7 @@ public class DigitalHumansController {
     @GetMapping("/get")
     @Operation(summary = "数字人模型")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
-    @PreAuthorize("@ss.hasPermission('digitalcourse:digital-humans:query')")
+//    @PreAuthorize("@ss.hasPermission('digitalcourse:digital-humans:query')")
     public CommonResult<DigitalHumansRespVO> getDigitalHumans(@RequestParam("id") Long id) {
         DigitalHumansDO digitalHumans = digitalHumansService.getDigitalHumans(id);
         return success(BeanUtils.toBean(digitalHumans, DigitalHumansRespVO.class));
@@ -70,7 +70,7 @@ public class DigitalHumansController {
 
     @GetMapping("/page")
     @Operation(summary = "数字人模型分页")
-    @PreAuthorize("@ss.hasPermission('digitalcourse:digital-humans:query')")
+//    @PreAuthorize("@ss.hasPermission('digitalcourse:digital-humans:query')")
     public CommonResult<PageResult<DigitalHumansRespVO>> getDigitalHumansPage(@Valid DigitalHumansPageReqVO pageReqVO) {
         PageResult<DigitalHumansDO> pageResult = digitalHumansService.getDigitalHumansPage(pageReqVO);
         return success(BeanUtils.toBean(pageResult, DigitalHumansRespVO.class));

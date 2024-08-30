@@ -62,7 +62,7 @@ public class BackgroundsController {
     @GetMapping("/get")
     @Operation(summary = "获得背景信息（PPT背景、板书、插图、字幕等）")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
-    @PreAuthorize("@ss.hasPermission('digitalcourse:backgrounds:query')")
+//    @PreAuthorize("@ss.hasPermission('digitalcourse:backgrounds:query')")
     public CommonResult<BackgroundsRespVO> getBackgrounds(@RequestParam("id") Long id) {
         BackgroundsDO backgrounds = backgroundsService.getBackgrounds(id);
         return success(BeanUtils.toBean(backgrounds, BackgroundsRespVO.class));
@@ -70,7 +70,7 @@ public class BackgroundsController {
 
     @GetMapping("/page")
     @Operation(summary = "获得背景信息（PPT背景、板书、插图、字幕等）分页")
-    @PreAuthorize("@ss.hasPermission('digitalcourse:backgrounds:query')")
+//    @PreAuthorize("@ss.hasPermission('digitalcourse:backgrounds:query')")
     public CommonResult<PageResult<BackgroundsRespVO>> getBackgroundsPage(@Valid BackgroundsPageReqVO pageReqVO) {
         PageResult<BackgroundsDO> pageResult = backgroundsService.getBackgroundsPage(pageReqVO);
         return success(BeanUtils.toBean(pageResult, BackgroundsRespVO.class));

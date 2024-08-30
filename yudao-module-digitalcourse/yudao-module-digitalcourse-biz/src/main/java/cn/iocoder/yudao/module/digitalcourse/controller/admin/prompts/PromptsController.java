@@ -61,7 +61,7 @@ public class PromptsController {
     @GetMapping("/get")
     @Operation(summary = "获得存储提示词模板的信息，包括提示词的名称、类型、排序等信息")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
-    @PreAuthorize("@ss.hasPermission('digitalcourse:prompts:query')")
+//    @PreAuthorize("@ss.hasPermission('digitalcourse:prompts:query')")
     public CommonResult<PromptsRespVO> getPrompts(@RequestParam("id") Long id) {
         PromptsDO prompts = promptsService.getPrompts(id);
         return success(BeanUtils.toBean(prompts, PromptsRespVO.class));
@@ -69,7 +69,7 @@ public class PromptsController {
 
     @GetMapping("/page")
     @Operation(summary = "获得存储提示词模板的信息，包括提示词的名称、类型、排序等信息分页")
-    @PreAuthorize("@ss.hasPermission('digitalcourse:prompts:query')")
+//    @PreAuthorize("@ss.hasPermission('digitalcourse:prompts:query')")
     public CommonResult<PageResult<PromptsRespVO>> getPromptsPage(@Valid PromptsPageReqVO pageReqVO) {
         PageResult<PromptsDO> pageResult = promptsService.getPromptsPage(pageReqVO);
         return success(BeanUtils.toBean(pageResult, PromptsRespVO.class));

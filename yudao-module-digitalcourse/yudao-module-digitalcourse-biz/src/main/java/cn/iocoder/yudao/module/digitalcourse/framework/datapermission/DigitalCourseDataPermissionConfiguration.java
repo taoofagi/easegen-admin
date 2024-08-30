@@ -11,10 +11,10 @@ import org.springframework.context.annotation.Configuration;
  * @author 芋道源码
  */
 @Configuration(proxyBeanMethods = false)
-public class DataPermissionConfiguration {
+public class DigitalCourseDataPermissionConfiguration {
 
     @Bean
-    public DeptDataPermissionRuleCustomizer sysDeptDataPermissionRuleCustomizer() {
+    public DeptDataPermissionRuleCustomizer digitalCourseDeptDataPermissionRuleCustomizer() {
         return rule -> {
             //courses
             rule.addUserColumn(CoursesDO.class, "creator");

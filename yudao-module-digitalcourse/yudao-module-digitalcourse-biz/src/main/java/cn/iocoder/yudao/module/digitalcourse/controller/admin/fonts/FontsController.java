@@ -61,7 +61,7 @@ public class FontsController {
     @GetMapping("/get")
     @Operation(summary = "获得存储字体的信息，包括字体的别名、预览URL、名称等")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
-    @PreAuthorize("@ss.hasPermission('digitalcourse:fonts:query')")
+//    @PreAuthorize("@ss.hasPermission('digitalcourse:fonts:query')")
     public CommonResult<FontsRespVO> getFonts(@RequestParam("id") Long id) {
         FontsDO fonts = fontsService.getFonts(id);
         return success(BeanUtils.toBean(fonts, FontsRespVO.class));
@@ -69,7 +69,7 @@ public class FontsController {
 
     @GetMapping("/page")
     @Operation(summary = "获得存储字体的信息，包括字体的别名、预览URL、名称等分页")
-    @PreAuthorize("@ss.hasPermission('digitalcourse:fonts:query')")
+//    @PreAuthorize("@ss.hasPermission('digitalcourse:fonts:query')")
     public CommonResult<PageResult<FontsRespVO>> getFontsPage(@Valid FontsPageReqVO pageReqVO) {
         PageResult<FontsDO> pageResult = fontsService.getFontsPage(pageReqVO);
         return success(BeanUtils.toBean(pageResult, FontsRespVO.class));

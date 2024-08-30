@@ -69,7 +69,7 @@ public class VoicesController {
     @GetMapping("/get")
     @Operation(summary = "获得声音管理")
     @Parameter(name = "id", description = "编号", required = true, example = "1024")
-    @PreAuthorize("@ss.hasPermission('digitalcourse:voices:query')")
+//    @PreAuthorize("@ss.hasPermission('digitalcourse:voices:query')")
     public CommonResult<VoicesRespVO> getVoices(@RequestParam("id") Long id) {
         VoicesDO voices = voicesService.getVoices(id);
         return success(BeanUtils.toBean(voices, VoicesRespVO.class));
@@ -77,7 +77,7 @@ public class VoicesController {
 
     @GetMapping("/page")
     @Operation(summary = "获得声音管理分页")
-    @PreAuthorize("@ss.hasPermission('digitalcourse:voices:query')")
+//    @PreAuthorize("@ss.hasPermission('digitalcourse:voices:query')")
     public CommonResult<PageResult<VoicesRespVO>> getVoicesPage(@Valid VoicesPageReqVO pageReqVO) {
         PageResult<VoicesDO> pageResult = voicesService.getVoicesPage(pageReqVO);
         return success(BeanUtils.toBean(pageResult, VoicesRespVO.class));
