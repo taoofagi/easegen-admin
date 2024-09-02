@@ -103,6 +103,8 @@ public class CourseMediaServiceImpl implements CourseMediaService {
             courseMediaDO.setMediaType(1);
             courseMediaDO.setName(updateReqVO.getName());
             courseMediaDO.setCourseName(updateReqVO.getName());
+            //将updateReqVO 转换为json字符串
+            courseMediaDO.setReqJson(JSON.toJSONString(updateReqVO));
             courseMediaMapper.insert(courseMediaDO);
         }else{
             return CommonResult.error(500,"不允许重复合成");
@@ -119,8 +121,54 @@ public class CourseMediaServiceImpl implements CourseMediaService {
      */
     @Async
     public void remoteMegerMedia(CourseMediaMegerVO updateReqVO) {
-        HttpResponse execute = HttpRequest.post(REMOTE_BASE_URL + "/api/mergemedia").header("X-API-Key", "taoofagi").body(JSON.toJSONString(updateReqVO)).execute();
-        String body = execute.body();
+        CourseMediaDO courseMediaDO = courseMediaMapper.selectById(updateReqVO.getCourseMediaId());
+        if (courseMediaDO == null) {
+            // 如果找不到对应的课程媒体记录，直接返回或记录错误日志
+            return;
+        }
+        try {
+            // 发送POST请求
+            HttpResponse execute = HttpRequest.post(REMOTE_BASE_URL + "/api/mergemedia")
+                    .header("X-API-Key", "taoofagi")
+                    .body(JSON.toJSONString(updateReqVO))
+                    .execute();
+            String body = execute.body();
+
+
+            // 检查响应状态码是否成功
+            if (execute.getStatus() != 200) {
+                // 处理HTTP错误，更新状态和错误信息
+                courseMediaDO.setStatus(3); // 3 表示合成失败
+                courseMediaDO.setErrorReason(truncateErrorMsg("HTTP 请求报错: " + execute.getStatus()));
+                courseMediaMapper.updateById(courseMediaDO);
+                return;
+            }
+
+            // 解析响应，检查是否有错误信息
+            JSONObject responseJson = JSON.parseObject(body);
+            if (!responseJson.getBoolean("success")) {
+                // 处理业务逻辑错误，更新状态和错误信息
+                String errorDetail = responseJson.getString("detail");
+                courseMediaDO.setStatus(3); // 3 表示合成失败
+                courseMediaDO.setErrorReason(truncateErrorMsg("API 接口异常: " + errorDetail));
+                courseMediaMapper.updateById(courseMediaDO);
+                return;
+            }
+
+        } catch (Exception e) {
+            // 捕获异常，记录错误原因并更新状态
+            courseMediaDO.setStatus(3); // 3 表示合成失败
+            courseMediaDO.setErrorReason(truncateErrorMsg("Exception: " + e.getMessage()));
+            courseMediaMapper.updateById(courseMediaDO);
+        }
+    }
+
+    /**
+     * 截取错误信息，使其不超过指定的最大长度
+     */
+    private String truncateErrorMsg(String errorMsg) {
+        int maxLength = 500;
+        return errorMsg.length() > maxLength ? errorMsg.substring(0, maxLength) : errorMsg;
     }
 
 
@@ -187,6 +235,7 @@ public class CourseMediaServiceImpl implements CourseMediaService {
                     } else {
                         //如果没有匹配的记录，也修改为生成失败
                         e.setStatus(3);
+                        e.setErrorReason("服务端没有查询到视频合成记录，请重新合成");
                         courseMediaMapper.updateById(e);
                         log.error("No matching result found for courseMediaId: " + e.getId());
                     }

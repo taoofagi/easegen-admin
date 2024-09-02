@@ -17,10 +17,12 @@ public class DigitalCourseDataPermissionConfiguration {
     @Bean
     public DeptDataPermissionRuleCustomizer digitalCourseDeptDataPermissionRuleCustomizer() {
         return rule -> {
-            //courses
-            rule.addUserColumn(CoursesDO.class, "creator");
             //coursemedia
             rule.addUserColumn(CourseMediaDO.class, "creator");
+
+            //courses
+            rule.addUserColumn(CoursesDO.class, "creator");
+
         };
     }
 
