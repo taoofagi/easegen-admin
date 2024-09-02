@@ -62,5 +62,13 @@ public class CourseMediaDO extends BaseDO {
      * 课程名称
      */
     private String courseName;
+    /**
+     * 请求报文
+     */
+    private String reqJson;
+    /**
+     * 错误原因
+     */
+    private String errorReason;
 
 }
