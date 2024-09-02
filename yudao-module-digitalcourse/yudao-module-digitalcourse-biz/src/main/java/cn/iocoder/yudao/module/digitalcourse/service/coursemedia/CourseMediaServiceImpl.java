@@ -17,6 +17,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,7 @@ import static cn.iocoder.yudao.module.digitalcourse.enums.ErrorCodeConstants.COU
  */
 @Service
 @Validated
+@Slf4j
 public class CourseMediaServiceImpl implements CourseMediaService {
 
     private static final String REMOTE_BASE_URL = "http://digitalcourse.taoofagi.com:7860";
@@ -127,53 +129,78 @@ public class CourseMediaServiceImpl implements CourseMediaService {
      */
 
     public void queryRemoteMegerResult() {
-        List<CourseMediaDO> courseMediaDOS = courseMediaMapper.selectList(new QueryWrapperX<CourseMediaDO>().lambda().eq(CourseMediaDO::getStatus, 1));
-        // 检查 courseMediaDOS 是否为空
-        if (courseMediaDOS == null || courseMediaDOS.isEmpty()) {
-            return; // 如果为空，直接返回
-        }
-        // 收集所有的ID
-        String courseMediaIds = courseMediaDOS.stream()
-                .map(e -> String.valueOf(e.getId()))
-                .collect(Collectors.joining(","));
+        try {
+            List<CourseMediaDO> courseMediaDOS = courseMediaMapper.selectList(new QueryWrapperX<CourseMediaDO>().lambda().eq(CourseMediaDO::getStatus, 1));
 
-        // 批量调用远程接口
-        String result = HttpRequest.get(REMOTE_BASE_URL + "/api/mergemedia/result")
-                .header("X-API-Key", "taoofagi")
-                .form("courseMediaIds", courseMediaIds)
-                .execute()
-                .body();
+            // 检查 courseMediaDOS 是否为空
+            if (courseMediaDOS == null || courseMediaDOS.isEmpty()) {
+                return; // 如果为空，直接返回
+            }
 
-        if (JSON.isValidArray(result)) {
-            JSONArray jsonArray = JSON.parseArray(result);
-            Map<Long, JSONObject> resultMap = jsonArray.stream()
-                    .filter(obj -> JSON.isValidObject(JSON.toJSONString(obj)))
-                    .map(obj -> JSON.parseObject(JSON.toJSONString(obj)))
-                    .collect(Collectors.toMap(jsonObject -> jsonObject.getLong("id"), jsonObject -> jsonObject));
+            // 收集所有的ID
+            String courseMediaIds = courseMediaDOS.stream()
+                    .map(e -> String.valueOf(e.getId()))
+                    .collect(Collectors.joining(","));
 
-            courseMediaDOS.forEach(e -> {
-                JSONObject jsonObject = resultMap.get(e.getId());
-                if (jsonObject != null) {
-                    BigInteger status = jsonObject.getBigInteger("status");
-                    if (status != null) {
-                        // 合并状态，0：草稿，1：合成中，2：合成成功，3：合成失败
-                        if (status.intValue() == 2) {
-                            e.setStatus(status.intValue());
-                            // 完成时间为当前时间
-                            e.setFinishTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-                            e.setPreviewUrl(jsonObject.getString("merge_video"));
-                            e.setDuration(jsonObject.getLong("duration"));
-                            courseMediaMapper.updateById(e);
-                        } else if (status.intValue() == 3) {
-                            e.setStatus(status.intValue());
-                            courseMediaMapper.updateById(e);
+            // 批量调用远程接口
+            String result = HttpRequest.get(REMOTE_BASE_URL + "/api/mergemedia/result")
+                    .header("X-API-Key", "taoofagi")
+                    .form("courseMediaIds", courseMediaIds)
+                    .timeout(5000)  // 设置超时时间
+                    .execute()
+                    .body();
+
+            // 检查远程接口返回的结果是否有效
+            if (result == null || result.isEmpty()) {
+                System.err.println("Remote API returned empty or null response.");
+                return;
+            }
+            //打印结果
+            log.info("Remote API returned: " + result);
+            if (JSON.isValidArray(result)) {
+                JSONArray jsonArray = JSON.parseArray(result);
+                Map<String, JSONObject> resultMap = jsonArray.stream()
+                        .filter(obj -> JSON.isValidObject(JSON.toJSONString(obj)))
+                        .map(obj -> JSON.parseObject(JSON.toJSONString(obj)))
+                        .collect(Collectors.toMap(jsonObject -> jsonObject.getString("courseMediaId"), jsonObject -> jsonObject));
+
+                courseMediaDOS.forEach(e -> {
+                    JSONObject jsonObject = resultMap.get(String.valueOf(e.getId()));
+                    if (jsonObject != null) {
+                        BigInteger status = jsonObject.getBigInteger("status");
+                        if (status != null) {
+                            // 合并状态，0：草稿，1：合成中，2：合成成功，3：合成失败
+                            if (status.intValue() == 2) {
+                                e.setStatus(status.intValue());
+                                // 完成时间为当前时间
+                                e.setFinishTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                                e.setPreviewUrl(jsonObject.getString("merge_video"));
+                                e.setDuration(jsonObject.getLong("duration"));
+                                courseMediaMapper.updateById(e);
+                            } else if (status.intValue() == 3) {
+                                e.setStatus(status.intValue());
+                                courseMediaMapper.updateById(e);
+                            }
+                        } else {
+                            log.error("Status is null for courseMediaId: " + e.getId());
                         }
-
+                    } else {
+                        //如果没有匹配的记录，也修改为生成失败
+                        e.setStatus(3);
+                        courseMediaMapper.updateById(e);
+                        log.error("No matching result found for courseMediaId: " + e.getId());
                     }
-                }
-            });
+                });
+            } else {
+                log.error("Invalid JSON array received from the remote API.");
+            }
+        } catch (Exception ex) {
+            // 捕获所有异常，防止程序崩溃
+            log.error("An error occurred while querying remote merge result: " + ex.getMessage());
+            ex.printStackTrace();
         }
     }
+
 
 
 }
