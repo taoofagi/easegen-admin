@@ -4,6 +4,7 @@ import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
+import cn.iocoder.yudao.framework.common.util.collection.CollectionUtils;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.framework.mybatis.core.query.QueryWrapperX;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursemedia.vo.CourseMediaMegerVO;
@@ -24,7 +25,12 @@ import org.springframework.validation.annotation.Validated;
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static cn.iocoder.yudao.module.digitalcourse.enums.ErrorCodeConstants.COURSE_MEDIA_NOT_EXISTS;
 
@@ -120,32 +126,54 @@ public class CourseMediaServiceImpl implements CourseMediaService {
      * 远程查询合并结果（定时任务）
      */
 
-    public void queryRemoteMegerResult(){
+    public void queryRemoteMegerResult() {
         List<CourseMediaDO> courseMediaDOS = courseMediaMapper.selectList(new QueryWrapperX<CourseMediaDO>().lambda().eq(CourseMediaDO::getStatus, 1));
-        //调用远程接口，回刷数据
-        courseMediaDOS.stream().forEach(e -> {
-            String result = HttpRequest.get(REMOTE_BASE_URL + "/api/mergemedia/result").header("X-API-Key", "taoofagi").form("courseMediaIds",e.getId()).execute().body();
-            if (JSON.isValidArray(result)){
-                JSONArray jsonArray = JSON.parseArray(result);
-                jsonArray.stream().forEach(obj -> {
-                    if (!JSON.isValidObject(JSON.toJSONString(obj))) return;
-                    JSONObject jsonObject = JSON.parseObject(JSON.toJSONString(obj));
-                    BigInteger status = jsonObject.getBigInteger("status");
-                    if (status != null){
-//                    合并状态，0：草稿，1：合成中，2：合成成功，3：合成失败
-                        if (status.intValue() == 0) return;
-                        if (status.intValue() == 1) return;
-                        if (status.intValue() == 2 || status.intValue() == 3) {
-                            e.setStatus(status.intValue());
-                            if (StringUtils.isNotBlank(jsonObject.getString("merge_video"))) e.setPreviewUrl(jsonObject.getString("merge_video"));
-                            if (jsonObject.getLong("duration") != null) e.setDuration(jsonObject.getLong("duration"));
-                        }
-                        courseMediaMapper.updateById(e);
-                    }
-                });
-            }
-        });
+        // 检查 courseMediaDOS 是否为空
+        if (courseMediaDOS == null || courseMediaDOS.isEmpty()) {
+            return; // 如果为空，直接返回
+        }
+        // 收集所有的ID
+        String courseMediaIds = courseMediaDOS.stream()
+                .map(e -> String.valueOf(e.getId()))
+                .collect(Collectors.joining(","));
 
+        // 批量调用远程接口
+        String result = HttpRequest.get(REMOTE_BASE_URL + "/api/mergemedia/result")
+                .header("X-API-Key", "taoofagi")
+                .form("courseMediaIds", courseMediaIds)
+                .execute()
+                .body();
+
+        if (JSON.isValidArray(result)) {
+            JSONArray jsonArray = JSON.parseArray(result);
+            Map<Long, JSONObject> resultMap = jsonArray.stream()
+                    .filter(obj -> JSON.isValidObject(JSON.toJSONString(obj)))
+                    .map(obj -> JSON.parseObject(JSON.toJSONString(obj)))
+                    .collect(Collectors.toMap(jsonObject -> jsonObject.getLong("id"), jsonObject -> jsonObject));
+
+            courseMediaDOS.forEach(e -> {
+                JSONObject jsonObject = resultMap.get(e.getId());
+                if (jsonObject != null) {
+                    BigInteger status = jsonObject.getBigInteger("status");
+                    if (status != null) {
+                        // 合并状态，0：草稿，1：合成中，2：合成成功，3：合成失败
+                        if (status.intValue() == 2) {
+                            e.setStatus(status.intValue());
+                            // 完成时间为当前时间
+                            e.setFinishTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                            e.setPreviewUrl(jsonObject.getString("merge_video"));
+                            e.setDuration(jsonObject.getLong("duration"));
+                            courseMediaMapper.updateById(e);
+                        } else if (status.intValue() == 3) {
+                            e.setStatus(status.intValue());
+                            courseMediaMapper.updateById(e);
+                        }
+
+                    }
+                }
+            });
+        }
     }
+
 
 }
