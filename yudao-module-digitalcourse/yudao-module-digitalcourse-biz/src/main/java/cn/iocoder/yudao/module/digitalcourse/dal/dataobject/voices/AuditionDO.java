@@ -42,7 +42,7 @@ public class AuditionDO {
     /**
      * 声音Id
      */
-    private Integer voiceId;
+    private String voiceId;
 
     /**
      * 智能语速
