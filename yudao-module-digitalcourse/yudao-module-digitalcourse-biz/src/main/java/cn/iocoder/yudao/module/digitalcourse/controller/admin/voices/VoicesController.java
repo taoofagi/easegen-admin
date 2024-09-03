@@ -100,7 +100,7 @@ public class VoicesController {
     public CommonResult<String> audition(@Valid @RequestBody AuditionDO auditionDO) {
         int limitWord = Integer.parseInt(configApi.getConfigValueByKey(Limit_AUDITIONWORD));
         if (limitWord<(auditionDO.getText().length())) {
-            return CommonResult.error(BAD_REQUEST.getCode(), "试听文字超出字数限制");
+            return CommonResult.error(BAD_REQUEST.getCode(), "试听文字超出字数限制，最多【"+limitWord+"】字");
         }
         return success(voicesService.audition(auditionDO));
     }
