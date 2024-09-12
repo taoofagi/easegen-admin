@@ -13,6 +13,7 @@ import cn.iocoder.yudao.module.digitalcourse.dal.mysql.courseppts.CoursePptsMapp
 import cn.iocoder.yudao.module.digitalcourse.service.pptmaterials.PptMaterialsService;
 import cn.iocoder.yudao.module.infra.api.file.FileApi;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +31,7 @@ import java.util.List;
  */
 
 @Component
+@Slf4j
 public class PPTUtil {
 
 
@@ -51,46 +53,49 @@ public class PPTUtil {
     public void analysisPpt(String file,Long pptId){
         Boolean b = false;
         try {
-            String path = file.substring(file.lastIndexOf("/")+1);
-            byte[] fileContent = fileApi.getFileContent(4L, path);
-            Path tempFilePath = Files.createTempFile(path,".pptx");
-            File tempFile = tempFilePath.toFile();
-            tempFile.deleteOnExit();
-            try (InputStream inputStream = new ByteArrayInputStream(fileContent);
-                 java.io.FileOutputStream outputStream = new java.io.FileOutputStream(tempFile)) {
-                byte[] buffer = new byte[1024];
-                int len;
-                while ((len = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, len);
-                }
-            }
+            log.info("开始解析ppt,pptId:"+pptId+",file:"+file);
+//            String path = file.substring(file.lastIndexOf("/")+1);
+//            byte[] fileContent = fileApi.getFileContent(4L, path);
+//            Path tempFilePath = Files.createTempFile(path,".pptx");
+//            File tempFile = tempFilePath.toFile();
+//            tempFile.deleteOnExit();
+//            try (InputStream inputStream = new ByteArrayInputStream(fileContent);
+//                 java.io.FileOutputStream outputStream = new java.io.FileOutputStream(tempFile)) {
+//                byte[] buffer = new byte[1024];
+//                int len;
+//                while ((len = inputStream.read(buffer)) != -1) {
+//                    outputStream.write(buffer, 0, len);
+//                }
+//            }
+            //直接传文件url
             HashMap<String, Object> param = new HashMap<>();
-            param.put("file",tempFile);
+            param.put("file",file);
             param.put("pptId",pptId);
-            String body = HttpRequest.post("http://localhost:48082/admin-api/digitalcourse/course-ppts/analysisPpt")
-                    .form("file", tempFile)
+            String body = HttpRequest.post("http://10.0.0.74:48082/admin-api/digitalcourse/course-ppts/analysisPpt")
+                    .form("file", file)
                     .form("pptId", pptId)
                     .execute().body();
             JSONObject entries = JSONUtil.parseObj(body);
             JSONArray data = JSONUtil.parseArray(entries.getStr("data"));
             List<PptMaterialsDO> list = new ArrayList<>();
+            log.info("解析ppt数据："+data);
 
             for (int i = 0; i < data.size(); i++) {
                 PptMaterialsDO pptMaterialsDO = new PptMaterialsDO();
                 JSONObject obj = BeanUtils.toBean(data.get(i), JSONObject.class);
                 String picFile = obj.getStr("file");
                 try {
-                    byte[] bytes = Files.readAllBytes(Path.of(picFile));
-                    String picPath = savePicture(bytes, getTimeStamp());
+//                    byte[] bytes = Files.readAllBytes(Path.of(picFile));
+//                    String picPath = savePicture(bytes, getTimeStamp());
                     pptMaterialsDO.setPptId(pptId);
-                    pptMaterialsDO.setName(picPath);
-                    pptMaterialsDO.setPictureUrl(picPath);
-                    pptMaterialsDO.setOriginalUrl(picPath);
+                    pptMaterialsDO.setName(picFile);
+                    pptMaterialsDO.setPictureUrl(picFile);
+                    pptMaterialsDO.setOriginalUrl(picFile);
                     pptMaterialsDO.setIndexNo(i);
                     pptMaterialsDO.setBackgroundType(1);
                     pptMaterialsDO.setPptRemark(String.valueOf(obj.get("text")));
                     list.add(pptMaterialsDO);
-                }catch (IOException exception){
+                }catch (Exception exception){
                     exception.printStackTrace();
                 }
             }
