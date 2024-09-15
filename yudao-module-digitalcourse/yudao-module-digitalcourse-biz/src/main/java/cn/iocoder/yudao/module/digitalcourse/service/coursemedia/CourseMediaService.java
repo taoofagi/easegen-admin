@@ -57,6 +57,5 @@ public interface CourseMediaService {
 
     CommonResult megerMedia(CourseMediaMegerVO updateReqVO);
 
-    void queryRemoteMegerResult();
 
 }
