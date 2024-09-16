@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.digitalcourse.service.coursemedia;
 
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpRequest;
 import cn.hutool.http.HttpResponse;
 import cn.iocoder.yudao.framework.mybatis.core.query.QueryWrapperX;
@@ -167,15 +168,29 @@ public class CourseMediaServiceUtil {
                         BigInteger status = jsonObject.getBigInteger("status");
                         if (status != null) {
                             // 合并状态，0：草稿，1：合成中，2：合成成功，3：合成失败
-                            if (status.intValue() == 2) {
+                            // 状态为合成中，更新进度
+                            if (status.intValue() == 1) { // 合成中
+                                Float completionPercentage = jsonObject.getFloat("completion_percentage");
+                                e.setProgress(completionPercentage); // 更新进度
+                                e.setErrorReason(""); // 清空错误信息
+                                courseMediaMapper.updateById(e);
+                                log.info("合成中，已更新进度：" + completionPercentage + "%，课程ID: " + e.getId());
+                            } else if (status.intValue() == 2) {
                                 e.setStatus(status.intValue());
-                                // 完成时间为当前时间
-                                e.setFinishTime(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                                e.setFinishTime(jsonObject.getString("finish_time")); // 远程返回的完成时间
                                 e.setPreviewUrl(jsonObject.getString("merge_video"));
                                 e.setDuration(jsonObject.getLong("duration"));
+                                e.setProgress(jsonObject.getFloat("completion_percentage")); // 合成进度
+                                e.setErrorReason(""); // 清空错误信息
                                 courseMediaMapper.updateById(e);
                             } else if (status.intValue() == 3) {
                                 e.setStatus(status.intValue());
+                                String failureReasons = jsonObject.getString("failure_reasons");
+                                if (StrUtil.isNotEmpty(failureReasons) && failureReasons.length() > 1000) {
+                                    failureReasons = failureReasons.substring(0, 1000); // 截取字符串，确保不超过1000字符
+                                }
+                                e.setErrorReason(failureReasons); // 获取失败原因
+                                e.setProgress(jsonObject.getFloat("completion_percentage")); // 合成进度
                                 courseMediaMapper.updateById(e);
                             }
                         } else {
