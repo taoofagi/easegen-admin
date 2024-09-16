@@ -46,7 +46,7 @@ public class CourseMediaRespVO {
 
     @Schema(description = "进度（预留）")
     @ExcelProperty("进度（预留）")
-    private Integer progress;
+    private Float progress;
 
     @Schema(description = "课程id", example = "9112")
     @ExcelProperty("课程id")

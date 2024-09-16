@@ -53,7 +53,7 @@ public class CourseMediaDO extends BaseDO {
     /**
      * 进度（预留）
      */
-    private Integer progress;
+    private Float progress;
     /**
      * 课程id
      */
