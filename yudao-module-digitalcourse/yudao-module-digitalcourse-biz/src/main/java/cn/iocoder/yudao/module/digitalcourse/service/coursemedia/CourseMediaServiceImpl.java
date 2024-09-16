@@ -23,6 +23,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import static cn.iocoder.yudao.framework.common.exception.enums.GlobalErrorCodeConstants.BAD_REQUEST;
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 
 import java.math.BigInteger;
@@ -109,7 +110,7 @@ public class CourseMediaServiceImpl implements CourseMediaService {
             courseMediaDO.setReqJson(JSON.toJSONString(updateReqVO));
             courseMediaMapper.insert(courseMediaDO);
         }else{
-            return CommonResult.error(500,"不允许重复合成");
+            return CommonResult.error(BAD_REQUEST.getCode(),"已存在合成中视频，不允许重复合成");
         }
         updateReqVO.setCourseMediaId(courseMediaDO.getId());
         //异步调用数字人视频渲染接口，开始合并
