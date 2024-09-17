@@ -49,4 +49,7 @@ public class CourseMediaPageReqVO extends PageParam {
     @Schema(description = "课程名称", example = "李四")
     private String courseName;
 
+    @Schema(description = "错误原因", example = "")
+    private String errorReason;
+
 }
