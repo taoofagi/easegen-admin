@@ -56,4 +56,8 @@ public class CourseMediaRespVO {
     @ExcelProperty("课程名称")
     private String courseName;
 
+    @Schema(description = "错误原因", example = "")
+    @ExcelProperty("错误原因")
+    private String errorReason;
+
 }
