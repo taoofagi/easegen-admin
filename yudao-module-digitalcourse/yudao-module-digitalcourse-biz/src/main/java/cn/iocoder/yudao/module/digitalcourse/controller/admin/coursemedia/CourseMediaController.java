@@ -103,4 +103,15 @@ public class CourseMediaController {
         return courseMediaService.megerMedia(mediaMegerVO);
     }
 
+    /**
+     * 重新生成
+     * @param updateReqVO
+     * @return
+     */
+    @PostMapping("/reMegerMedia")
+    @Operation(summary = "重新生成")
+    public CommonResult reMegerMedia(@RequestBody CourseMediaMegerVO mediaMegerVO){
+        return courseMediaService.reMegerMedia(mediaMegerVO);
+    }
+
 }

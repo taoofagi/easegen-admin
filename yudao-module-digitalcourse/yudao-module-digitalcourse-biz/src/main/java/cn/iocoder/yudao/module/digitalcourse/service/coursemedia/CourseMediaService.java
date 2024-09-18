@@ -57,5 +57,7 @@ public interface CourseMediaService {
 
     CommonResult megerMedia(CourseMediaMegerVO updateReqVO);
 
+    CommonResult reMegerMedia(CourseMediaMegerVO updateReqVO);
+
 
 }
