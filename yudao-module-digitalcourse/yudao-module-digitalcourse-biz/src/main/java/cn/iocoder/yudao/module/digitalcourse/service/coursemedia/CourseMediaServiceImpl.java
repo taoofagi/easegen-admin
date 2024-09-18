@@ -118,6 +118,26 @@ public class CourseMediaServiceImpl implements CourseMediaService {
         return CommonResult.success(true);
     }
 
+    @Override
+    public CommonResult reMegerMedia(CourseMediaMegerVO updateReqVO) {
+        Long id = updateReqVO.getId();
+        CourseMediaDO courseMediaDO = courseMediaMapper.selectById(updateReqVO.getId());
+        if (courseMediaDO == null){
+            return CommonResult.error(BAD_REQUEST.getCode(),"未查询到合成视频记录");
+        }
+        if (3!=courseMediaDO.getStatus()){
+            return CommonResult.error(BAD_REQUEST.getCode(),"只有失败状态视频允许重新合成视频");
+        }
+        //异步调用数字人视频渲染接口，开始合并
+        Boolean success = courseMediaServiceUtil.reMegerMedia(courseMediaDO);
+        if(success) {
+            return CommonResult.success(true);
+        } else {
+            return CommonResult.error(BAD_REQUEST.getCode(),"视频重新合成失败");
+        }
+
+    }
+
 
 
 }

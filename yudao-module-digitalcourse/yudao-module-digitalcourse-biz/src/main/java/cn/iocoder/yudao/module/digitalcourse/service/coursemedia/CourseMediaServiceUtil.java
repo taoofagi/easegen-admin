@@ -114,6 +114,82 @@ public class CourseMediaServiceUtil {
         }
     }
 
+    public Boolean reMegerMedia(CourseMediaDO courseMediaDO) {
+        if (courseMediaDO == null) {
+            // 如果找不到对应的课程媒体记录，直接返回或记录错误日志
+            return false;
+        }
+        JSONObject reqJson = new JSONObject();
+        reqJson.put("courseMediaId", courseMediaDO.getId());
+
+        int maxRetries = 3; // 最大重试次数
+        int retryCount = 0;  // 当前重试次数
+        boolean success = false;
+
+        while (retryCount < maxRetries && !success) {
+            try {
+                // 发送POST请求
+                HttpResponse execute = HttpRequest.post(REMOTE_BASE_URL + "/api/reMergemedia")
+                        .header("X-API-Key", "taoofagi")
+                        .body(JSON.toJSONString(reqJson))
+                        .execute();
+                String body = execute.body();
+
+                // 检查响应状态码是否成功
+                if (execute.getStatus() != 200) {
+                    retryCount++;
+                    if (retryCount >= maxRetries) {
+                        // 超过重试次数，更新状态和错误信息
+                        courseMediaDO.setStatus(3); // 3 表示合成失败
+                        courseMediaDO.setErrorReason(truncateErrorMsg("HTTP 请求报错: " + execute.getStatus()+", 报错内容: " + body));
+                        courseMediaMapper.updateById(courseMediaDO);
+                        return false;
+                    }
+                    continue; // 重新尝试
+                }
+
+                // 解析响应，检查是否有错误信息
+                JSONObject responseJson = JSON.parseObject(body);
+                if (!responseJson.getBoolean("success")) {
+                    // 处理业务逻辑错误，更新状态和错误信息
+                    String errorDetail = responseJson.getString("detail");
+                    retryCount++;
+                    if (retryCount >= maxRetries) {
+                        courseMediaDO.setStatus(3); // 3 表示合成失败
+                        courseMediaDO.setErrorReason(truncateErrorMsg("API 接口异常: " + errorDetail));
+                        courseMediaMapper.updateById(courseMediaDO);
+                        return false;
+                    }
+                    continue; // 重新尝试
+                }
+
+                // 如果成功，更新状态为1（成功）
+                courseMediaDO.setStatus(1); // 1 表示合成成功
+                courseMediaMapper.updateById(courseMediaDO);
+                success = true;
+
+            } catch (Exception e) {
+                retryCount++;
+                if (retryCount >= maxRetries) {
+                    // 捕获异常，记录错误原因并更新状态
+                    courseMediaDO.setStatus(3); // 3 表示合成失败
+                    courseMediaDO.setErrorReason(truncateErrorMsg("视频合成任务失败，请联系管理员，错误信息: " + e.getMessage()));
+                    courseMediaMapper.updateById(courseMediaDO);
+                    return false;
+                }
+
+                try {
+                    // 重试前等待一段时间，避免频繁请求
+                    TimeUnit.SECONDS.sleep(2);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt(); // 处理中断异常
+                    break;
+                }
+            }
+        }
+        return success;
+    }
+
     /**
      * 截取错误信息，使其不超过指定的最大长度
      */
