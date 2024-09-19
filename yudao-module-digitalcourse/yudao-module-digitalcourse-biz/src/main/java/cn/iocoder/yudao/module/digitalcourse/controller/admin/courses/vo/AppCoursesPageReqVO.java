@@ -42,6 +42,9 @@ public class AppCoursesPageReqVO extends PageParam {
     @Schema(description = "页面信息")
     private String pageInfo;
 
+    @Schema(description = "缩略图")
+    private String thumbnail;
+
     @Schema(description = "字幕样式")
     private String subtitlesStyle;
 

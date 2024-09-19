@@ -70,6 +70,10 @@ public class CoursesDO extends BaseDO {
      */
     private String pageInfo;
     /**
+     * 缩略图
+     */
+    private String thumbnail;
+    /**
      * 字幕样式
      */
     private String subtitlesStyle;
