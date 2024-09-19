@@ -60,6 +60,10 @@ public class AppCoursesRespVO {
     @ExcelProperty("页面信息")
     private String pageInfo;
 
+    @Schema(description = "缩略图", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @ExcelProperty("页面信息")
+    private String thumbnail;
+
     @Schema(description = "字幕样式", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("字幕样式")
     private String subtitlesStyle;

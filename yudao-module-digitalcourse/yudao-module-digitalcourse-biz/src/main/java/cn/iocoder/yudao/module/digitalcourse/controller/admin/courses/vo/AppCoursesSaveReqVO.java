@@ -42,6 +42,11 @@ public class AppCoursesSaveReqVO {
     @Schema(description = "页面信息", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private String pageInfo;
 
+    @Schema(description = "缩略图", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private String thumbnail;
+
+
+
     @Schema(description = "字幕样式", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private String subtitlesStyle;
 
