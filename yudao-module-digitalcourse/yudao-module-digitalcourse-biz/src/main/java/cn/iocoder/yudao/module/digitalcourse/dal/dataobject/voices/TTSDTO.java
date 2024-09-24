@@ -22,8 +22,13 @@ public class TTSDTO {
      */
     private String model_code;
     /**
-     * 需要转为语音的文本，不可超过50个字
+     * 需要转为语音的文本
      */
     private String sentence;
+    /**
+     * 声音类型 (0: 标准, 1: 定制)
+     */
+    private String voice_type;
+
 
 }
