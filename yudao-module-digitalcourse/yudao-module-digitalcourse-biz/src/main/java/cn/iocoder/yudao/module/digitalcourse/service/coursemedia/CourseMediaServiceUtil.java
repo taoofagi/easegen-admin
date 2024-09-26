@@ -7,6 +7,7 @@ import cn.iocoder.yudao.framework.mybatis.core.query.QueryWrapperX;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursemedia.vo.CourseMediaMegerVO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursemedia.CourseMediaDO;
 import cn.iocoder.yudao.module.digitalcourse.dal.mysql.coursemedia.CourseMediaMapper;
+import cn.iocoder.yudao.module.infra.api.config.ConfigApi;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -29,10 +30,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CourseMediaServiceUtil {
 
-    private static final String REMOTE_BASE_URL = "http://digitalcourse.taoofagi.com:7860";
+    private static final String EASEGEN_CORE_URL = "easegen.core.url";
+
+    static final String EASEGEN_CORE_KEY = "easegen.core.key";
 
     @Resource
     private CourseMediaMapper courseMediaMapper;
+
+    @Resource
+    private ConfigApi configApi;
 
     /**
      * 远程合并视频
@@ -54,8 +60,8 @@ public class CourseMediaServiceUtil {
         while (retryCount < maxRetries && !success) {
             try {
                 // 发送POST请求
-                HttpResponse execute = HttpRequest.post(REMOTE_BASE_URL + "/api/mergemedia")
-                        .header("X-API-Key", "taoofagi")
+                HttpResponse execute = HttpRequest.post(configApi.getConfigValueByKey(EASEGEN_CORE_URL) + "/api/mergemedia")
+                        .header("X-API-Key", configApi.getConfigValueByKey(EASEGEN_CORE_KEY))
                         .body(JSON.toJSONString(updateReqVO))
                         .execute();
                 String body = execute.body();
@@ -129,8 +135,8 @@ public class CourseMediaServiceUtil {
         while (retryCount < maxRetries && !success) {
             try {
                 // 发送POST请求
-                HttpResponse execute = HttpRequest.post(REMOTE_BASE_URL + "/api/reMergemedia")
-                        .header("X-API-Key", "taoofagi")
+                HttpResponse execute = HttpRequest.post(configApi.getConfigValueByKey(EASEGEN_CORE_URL) + "/api/reMergemedia")
+                        .header("X-API-Key", configApi.getConfigValueByKey(EASEGEN_CORE_KEY))
                         .body(JSON.toJSONString(reqJson))
                         .execute();
                 String body = execute.body();
@@ -164,7 +170,8 @@ public class CourseMediaServiceUtil {
                 }
 
                 // 如果成功，更新状态为1（成功）
-                courseMediaDO.setStatus(1); // 1 表示合成成功
+                courseMediaDO.setErrorReason("");
+                courseMediaDO.setStatus(1); // 1 表示请求成功，状态变为合成中
                 courseMediaMapper.updateById(courseMediaDO);
                 success = true;
 
@@ -217,8 +224,8 @@ public class CourseMediaServiceUtil {
                     .collect(Collectors.joining(","));
 
             // 批量调用远程接口
-            String result = HttpRequest.get(REMOTE_BASE_URL + "/api/mergemedia/result")
-                    .header("X-API-Key", "taoofagi")
+            String result = HttpRequest.get(configApi.getConfigValueByKey(EASEGEN_CORE_URL) + "/api/mergemedia/result")
+                    .header("X-API-Key", configApi.getConfigValueByKey(EASEGEN_CORE_KEY))
                     .form("courseMediaIds", courseMediaIds)
                     .timeout(5000)  // 设置超时时间
                     .execute()
@@ -257,6 +264,7 @@ public class CourseMediaServiceUtil {
                                 e.setPreviewUrl(jsonObject.getString("merge_video"));
                                 e.setDuration(jsonObject.getLong("duration"));
                                 e.setProgress(jsonObject.getFloat("completion_percentage")); // 合成进度
+                                e.setSubtitlesUrl(jsonObject.getString("subtitles_url"));
                                 e.setErrorReason(""); // 清空错误信息
                                 courseMediaMapper.updateById(e);
                             } else if (status.intValue() == 3) {

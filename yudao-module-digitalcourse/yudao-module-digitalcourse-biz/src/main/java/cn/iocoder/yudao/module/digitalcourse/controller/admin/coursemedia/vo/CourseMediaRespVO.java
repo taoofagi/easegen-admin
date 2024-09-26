@@ -60,4 +60,12 @@ public class CourseMediaRespVO {
     @ExcelProperty("错误原因")
     private String errorReason;
 
+    @Schema(description = "宇幕文件", example = "")
+    @ExcelProperty("宇幕文件")
+    private String subtitlesUrl;
+
+    @Schema(description = "宇幕样式", example = "")
+    @ExcelProperty("宇幕样式")
+    private String subtitlesStyle;
+
 }

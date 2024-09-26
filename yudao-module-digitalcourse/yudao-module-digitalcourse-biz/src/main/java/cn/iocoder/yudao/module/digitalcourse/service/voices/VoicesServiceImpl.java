@@ -43,8 +43,8 @@ import static cn.iocoder.yudao.module.digitalcourse.enums.ErrorCodeConstants.VOI
 @Validated
 public class VoicesServiceImpl implements VoicesService {
 
-    static final String URL_AUDITION = "url.audition";
-    static final String KEY_AUDITION_KEY = "key.auditionKey";
+    private static final String EASEGEN_CORE_URL = "easegen.core.url";
+    static final String EASEGEN_CORE_KEY = "easegen.core.key";
 
     @Resource
     private VoicesMapper voicesMapper;
@@ -111,8 +111,8 @@ public class VoicesServiceImpl implements VoicesService {
             throw exception(VOICES_NOT_EXISTS);
         }
 
-        String apiUrl = configApi.getConfigValueByKey(URL_AUDITION);
-        String apiKey = configApi.getConfigValueByKey(KEY_AUDITION_KEY);
+        String apiUrl = configApi.getConfigValueByKey(EASEGEN_CORE_URL)+"/api/tts";
+        String apiKey = configApi.getConfigValueByKey(EASEGEN_CORE_KEY);
         // 创建HTTP客户端
         try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
             // 创建POST请求

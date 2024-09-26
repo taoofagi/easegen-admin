@@ -52,4 +52,10 @@ public class CourseMediaPageReqVO extends PageParam {
     @Schema(description = "错误原因", example = "")
     private String errorReason;
 
+    @Schema(description = "宇幕文件", example = "")
+    private String subtitlesUrl;;
+
+    @Schema(description = "宇幕样式", example = "")
+    private String subtitlesStyle;
+
 }
