@@ -70,5 +70,13 @@ public class CourseMediaDO extends BaseDO {
      * 错误原因
      */
     private String errorReason;
+    /**
+     * 字幕文件
+     */
+    private String subtitlesUrl;
+    /**
+     * 字幕样式
+     */
+    private String subtitlesStyle;
 
 }
