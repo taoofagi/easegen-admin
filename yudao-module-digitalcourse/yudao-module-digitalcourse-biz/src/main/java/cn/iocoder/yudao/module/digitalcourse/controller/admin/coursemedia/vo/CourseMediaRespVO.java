@@ -64,6 +64,10 @@ public class CourseMediaRespVO {
     @ExcelProperty("宇幕文件")
     private String subtitlesUrl;
 
+    @Schema(description = "vtt宇幕文件", example = "")
+    @ExcelProperty("vtt宇幕文件")
+    private String subtitlesVttUrl;
+
     @Schema(description = "宇幕样式", example = "")
     @ExcelProperty("宇幕样式")
     private String subtitlesStyle;
