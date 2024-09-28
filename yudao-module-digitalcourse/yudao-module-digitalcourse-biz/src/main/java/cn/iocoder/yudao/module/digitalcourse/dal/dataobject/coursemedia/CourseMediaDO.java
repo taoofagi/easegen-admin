@@ -74,6 +74,11 @@ public class CourseMediaDO extends BaseDO {
      * 字幕文件
      */
     private String subtitlesUrl;
+
+    /**
+     * vtt字幕文件
+     */
+    private String subtitlesVttUrl;
     /**
      * 字幕样式
      */

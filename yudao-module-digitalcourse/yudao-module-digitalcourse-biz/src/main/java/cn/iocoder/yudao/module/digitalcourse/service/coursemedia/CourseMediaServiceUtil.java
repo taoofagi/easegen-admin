@@ -7,6 +7,7 @@ import cn.iocoder.yudao.framework.mybatis.core.query.QueryWrapperX;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursemedia.vo.CourseMediaMegerVO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursemedia.CourseMediaDO;
 import cn.iocoder.yudao.module.digitalcourse.dal.mysql.coursemedia.CourseMediaMapper;
+import cn.iocoder.yudao.module.digitalcourse.util.SrtToVttUtil;
 import cn.iocoder.yudao.module.infra.api.config.ConfigApi;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -17,6 +18,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -39,6 +41,9 @@ public class CourseMediaServiceUtil {
 
     @Resource
     private ConfigApi configApi;
+
+    @Resource
+    private SrtToVttUtil srtToVttUtil;
 
     /**
      * 远程合并视频
@@ -265,6 +270,13 @@ public class CourseMediaServiceUtil {
                                 e.setDuration(jsonObject.getLong("duration"));
                                 e.setProgress(jsonObject.getFloat("completion_percentage")); // 合成进度
                                 e.setSubtitlesUrl(jsonObject.getString("subtitles_url"));
+                                try {
+                                    String vtturl = srtToVttUtil.convertAndUploadSrtToVtt(jsonObject.getString("subtitles_url"));
+                                    e.setSubtitlesVttUrl(vtturl);
+                                } catch (IOException ex) {
+                                    log.info("Failed to convert and upload SRT to VTT: " + ex.getMessage());
+                                    throw new RuntimeException(ex);
+                                }
                                 e.setErrorReason(""); // 清空错误信息
                                 courseMediaMapper.updateById(e);
                             } else if (status.intValue() == 3) {
