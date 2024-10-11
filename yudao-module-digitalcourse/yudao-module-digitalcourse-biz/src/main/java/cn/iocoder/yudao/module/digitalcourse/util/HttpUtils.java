@@ -140,6 +140,17 @@ public class HttpUtils {
         return request(request);
     }
 
+    public static HttpResponse postForm(String url, Map<String, Object> params, Map<String, String> header) {
+        String urlLinks = getUrlLinks(params);
+        HttpRequest request = HttpRequest.build(url, "POST").setBody(urlLinks != null ? urlLinks : "").setHeaders(header);
+        if (request.getHeaders() == null) {
+            request.setHeaders(Collections.singletonMap(CONTENT_TYPE, CONTENT_TYPE_FORM_DATA));
+        } else {
+            request.getHeaders().put(CONTENT_TYPE, CONTENT_TYPE_FORM_DATA);
+        }
+        return request(request);
+    }
+
     public static HttpResponse requestWithEventStream(ExecutorService executorService, long firstReadTimeout, HttpRequest request, Consumer<String> dataConsumer) throws ExecutionException, InterruptedException, TimeoutException {
         return requestWithEventStream(executorService, firstReadTimeout, request, dataConsumer, null);
     }

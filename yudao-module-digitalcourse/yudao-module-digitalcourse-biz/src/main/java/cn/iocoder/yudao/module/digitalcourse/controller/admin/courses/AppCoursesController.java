@@ -4,6 +4,8 @@ import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCour
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesRespVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesSaveReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesUpdateReqVO;
+import cn.iocoder.yudao.module.digitalcourse.util.GenQuestionUtil;
+import cn.iocoder.yudao.module.digitalcourse.util.Pdf2MdUtil;
 import cn.iocoder.yudao.module.infra.api.config.ConfigApi;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -62,6 +64,12 @@ public class AppCoursesController {
 
     @Resource
     private ConfigApi configApi;
+
+    @Resource
+    private GenQuestionUtil genQuestionUtil;
+
+    @Resource
+    private Pdf2MdUtil pdf2MdUtil;
 
 
     @PostMapping("/create")
@@ -148,19 +156,8 @@ public class AppCoursesController {
         JSONArray questionsArray = JSON.parseArray(arrayString);
 
         // Load the template
-        try (InputStream fis = getClass().getClassLoader().getResourceAsStream("template/题目导入模板.xlsx");
-             Workbook workbook = new XSSFWorkbook(fis)) {
-
-            Sheet sheet = workbook.getSheetAt(0);
-            int rowIndex = 2; // Start writing questions from row 1, since row 0 is the header
-
-            CellStyle cellStyle = createCellStyle(workbook);
-
-            for (int i = 0; i < questionsArray.size(); i++) {
-                JSONObject questionObject = questionsArray.getJSONObject(i);
-                Row row = sheet.createRow(rowIndex++);
-                fillRowWithQuestionData(row, questionObject, cellStyle);
-            }
+        try {
+            Workbook workbook = genQuestionUtil.genExcelByJson(questionsArray);
 
             // Set the content type for Excel file
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
@@ -176,82 +173,20 @@ public class AppCoursesController {
         }
     }
 
-    private void fillRowWithQuestionData(Row row, JSONObject questionObject, CellStyle cellStyle) {
-        // Question Type
-        String type = questionObject.getString("type");
-        Cell cell = row.createCell(0);
-        cell.setCellValue(getQuestionTypeLabel(type));
-        cell.setCellStyle(cellStyle);
-
-        // Question Text
-        cell = row.createCell(1);
-        cell.setCellValue(questionObject.getString("question"));
-        cell.setCellStyle(cellStyle);
-
-        // Options
-        List<String> items = questionObject.getJSONArray("items").toJavaList(String.class);
-        for (int j = 0; j < items.size(); j++) {
-            cell = row.createCell(2 + j);
-            cell.setCellValue(items.get(j));
-            cell.setCellStyle(cellStyle);
+    @PostMapping("/docparse")
+    public CommonResult<String> docparse(@RequestBody Map<String, Object> requestParams) {
+        String type = (String) requestParams.get("type");
+        String fileUrl = (String) requestParams.get("fileUrl");
+        try {
+            String responseString = pdf2MdUtil.recognizeMarkdown(fileUrl, type);
+            return CommonResult.success(responseString);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return CommonResult.error(500, "Internal Server Error: " + e.getMessage());
         }
 
-        // Set empty cells with style for remaining options
-        for (int j = items.size(); j < 8; j++) { // Assuming a maximum of 8 options
-            cell = row.createCell(2 + j);
-            cell.setCellValue("");
-            cell.setCellStyle(cellStyle);
-        }
-
-        // Correct Answer
-        cell = row.createCell(10);
-        cell.setCellValue(questionObject.getString("answers"));
-        cell.setCellStyle(cellStyle);
-
-        // Difficulty
-        String difficulty = questionObject.getString("difficulty");
-        if ("普通".equals(difficulty)) {
-            difficulty = "一般";
-        }
-        cell = row.createCell(11);
-        cell.setCellValue(difficulty);
-        cell.setCellStyle(cellStyle);
-
-        // Explanation
-        cell = row.createCell(12);
-        cell.setCellValue(questionObject.getString("explan"));
-        cell.setCellStyle(cellStyle);
     }
 
-    private CellStyle createCellStyle(Workbook workbook) {
-        CellStyle cellStyle = workbook.createCellStyle();
-        cellStyle.setAlignment(HorizontalAlignment.CENTER);
-        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-        cellStyle.setBorderTop(BorderStyle.THIN);
-        cellStyle.setBorderBottom(BorderStyle.THIN);
-        cellStyle.setBorderLeft(BorderStyle.THIN);
-        cellStyle.setBorderRight(BorderStyle.THIN);
-        Font font = workbook.createFont();
-        font.setFontName("微软雅黑");
-        cellStyle.setFont(font);
-        return cellStyle;
-    }
 
-    private String getQuestionTypeLabel(String type) {
-        switch (type) {
-            case "single_choice":
-                return "\u5355\u9009\u9898"; // "单选题"
-            case "multiple_choice":
-                return "\u591a\u9009\u9898"; // "多选题"
-            case "true_false":
-                return "\u5224\u65ad\u9898"; // "判断题"
-            case "fill_in_the_blank":
-                return "\u586b\u7a7a\u9898"; // "填空题"
-            case "short_answer":
-                return "\u95ee\u7b54\u9898"; // "问答题"
-            default:
-                return "\u672a\u77e5\u9898\u578b"; // "未知题型"
-        }
-    }
 
 }
