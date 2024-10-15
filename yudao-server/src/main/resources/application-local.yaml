@@ -45,7 +45,7 @@ spring:
       primary: master
       datasource:
         master:
-          url: jdbc:mysql://36.103.251.108:23309/easegen?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&nullCatalogMeansCurrent=true # MySQL Connector/J 8.X 连接的示例
+          url: jdbc:mysql://101.89.115.183:3306/easegen?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&nullCatalogMeansCurrent=true # MySQL Connector/J 8.X 连接的示例
           #          url: jdbc:mysql://127.0.0.1:3306/ruoyi-vue-pro?useSSL=true&allowPublicKeyRetrieval=true&useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai # MySQL Connector/J 5.X 连接的示例
           #          url: jdbc:postgresql://127.0.0.1:5432/ruoyi-vue-pro # PostgreSQL 连接的示例
           #          url: jdbc:oracle:thin:@127.0.0.1:1521:xe # Oracle 连接的示例
@@ -70,8 +70,8 @@ spring:
   # Redis 配置。Redisson 默认的配置足够使用，一般不需要进行调优
   data:
     redis:
-      host: 36.103.251.108 # 地址
-      port: 26379 # 端口
+      host: 101.89.115.183 # 地址
+      port: 6379 # 端口
       database: 0 # 数据库索引
       password: 5dLZ7NxW2jkSZcyL # 密码，建议生产环境开启
 
