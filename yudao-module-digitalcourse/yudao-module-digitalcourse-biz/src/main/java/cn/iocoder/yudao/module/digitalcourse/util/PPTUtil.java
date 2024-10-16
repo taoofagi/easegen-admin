@@ -11,6 +11,7 @@ import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.courseppts.CoursePpt
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.pptmaterials.PptMaterialsDO;
 import cn.iocoder.yudao.module.digitalcourse.dal.mysql.courseppts.CoursePptsMapper;
 import cn.iocoder.yudao.module.digitalcourse.service.pptmaterials.PptMaterialsService;
+import cn.iocoder.yudao.module.infra.api.config.ConfigApi;
 import cn.iocoder.yudao.module.infra.api.file.FileApi;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -35,9 +36,11 @@ import java.util.List;
 public class PPTUtil {
 
 
-
+    private static final String EASEGEN_CORE_PPT_ANALYSIS_URL = "easegen.core.ppt.analysis.url";
      @Resource
     private FileApi fileApi;
+    @Resource
+    private ConfigApi configApi;
      @Resource
      private PptMaterialsService pptMaterialsService;
     @Resource
@@ -71,7 +74,8 @@ public class PPTUtil {
             HashMap<String, Object> param = new HashMap<>();
             param.put("file",file);
             param.put("pptId",pptId);
-            String body = HttpRequest.post("http://10.0.0.74:48082/admin-api/digitalcourse/course-ppts/analysisPpt")
+            String apiUrl = configApi.getConfigValueByKey(EASEGEN_CORE_PPT_ANALYSIS_URL) + "/admin-api/digitalcourse/course-ppts/analysisPpt";
+            String body = HttpRequest.post(apiUrl)
                     .form("file", file)
                     .form("pptId", pptId)
                     .execute().body();

@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.module.digitalcourse.util;
 
 
+import cn.iocoder.yudao.module.infra.api.config.ConfigApi;
 import cn.iocoder.yudao.module.infra.api.file.FileApi;
 import com.alibaba.fastjson.JSONObject;
 
@@ -30,11 +31,13 @@ import org.springframework.stereotype.Component;
 @Component
 @Slf4j
 public class Pdf2MdUtil {
-    private static final String BASE_URL = "https://api.doc2x.noedgeai.com";
-    private static final String API_KEY = "sk-dqeu0tw9mzp8fqiiq4zm5it4p6r2hw5f";
+    private static final String BASE_URL = "doc2x.url";
+    private static final String API_KEY = "doc2x.key";
 
     @Resource
     private FileApi fileApi;
+    @Resource
+    private static ConfigApi configApi;
 
     public String recognizeMarkdown(String fileUrl, String type) throws IOException, InterruptedException {
         if (fileUrl.endsWith(".txt")) {
@@ -67,14 +70,14 @@ public class Pdf2MdUtil {
 
     private static String submitRecognitionTask(String fileUrl) throws IOException {
         String endpoint = fileUrl.endsWith(".pdf") ? "/api/v1/async/pdf" : "/api/v1/async/img";
-        String url = BASE_URL + endpoint;
+        String url = configApi.getConfigValueByKey(BASE_URL) + endpoint;
 
         Map<String, Object> param = new HashMap<String, Object>();
         param.put("pdf_url", fileUrl);
         param.put("ocr", "true");
         Map<String, String> header = new HashMap<>();
 
-        header.put("Authorization", "Bearer " + API_KEY);
+        header.put("Authorization", "Bearer " + configApi.getConfigValueByKey(API_KEY));
 
         HttpUtils.HttpResponse response = HttpUtils.postForm(url, param, header);
         if (response.getStatus() != 200) {
