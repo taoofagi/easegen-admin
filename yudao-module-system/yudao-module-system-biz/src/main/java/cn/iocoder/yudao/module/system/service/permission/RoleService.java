@@ -66,6 +66,14 @@ public interface RoleService {
     RoleDO getRoleFromCache(Long id);
 
     /**
+     * 获得角色
+     *
+     * @param code 角色编码
+     * @return 角色
+     */
+    RoleDO getRoleByCode(String code);
+
+    /**
      * 获得角色列表
      *
      * @param ids 角色编号数组
@@ -120,5 +128,7 @@ public interface RoleService {
      * @param ids 角色编号数组
      */
     void validateRoleList(Collection<Long> ids);
+
+
 
 }

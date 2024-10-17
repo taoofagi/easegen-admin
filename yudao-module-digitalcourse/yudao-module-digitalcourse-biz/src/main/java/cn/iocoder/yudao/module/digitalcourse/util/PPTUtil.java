@@ -37,19 +37,19 @@ public class PPTUtil {
 
 
     private static final String EASEGEN_CORE_PPT_ANALYSIS_URL = "easegen.core.ppt.analysis.url";
-    @Resource
+     @Resource
     private FileApi fileApi;
     @Resource
     private ConfigApi configApi;
-    @Resource
-    private PptMaterialsService pptMaterialsService;
+     @Resource
+     private PptMaterialsService pptMaterialsService;
     @Resource
     private CoursePptsMapper coursePptsMapper;
 
 
 
     private static String getTimeStamp(){
-        return String.valueOf(System.currentTimeMillis());
+            return String.valueOf(System.currentTimeMillis());
     }
 
     @Async
