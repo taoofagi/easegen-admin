@@ -37,7 +37,7 @@ public class Pdf2MdUtil {
     @Resource
     private FileApi fileApi;
     @Resource
-    private static ConfigApi configApi;
+    private ConfigApi configApi;
 
     public String recognizeMarkdown(String fileUrl, String type) throws IOException, InterruptedException {
         if (fileUrl.endsWith(".txt")) {
@@ -68,7 +68,7 @@ public class Pdf2MdUtil {
         return content;
     }
 
-    private static String submitRecognitionTask(String fileUrl) throws IOException {
+    private String submitRecognitionTask(String fileUrl) throws IOException {
         String endpoint = fileUrl.endsWith(".pdf") ? "/api/v1/async/pdf" : "/api/v1/async/img";
         String url = configApi.getConfigValueByKey(BASE_URL) + endpoint;
 
@@ -88,7 +88,7 @@ public class Pdf2MdUtil {
         return jsonResponse.getJSONObject("data").getString("uuid");
     }
 
-    private static String pollTaskStatus(String uuid, String type) throws IOException, InterruptedException {
+    private String pollTaskStatus(String uuid, String type) throws IOException, InterruptedException {
         String status;
         StringBuilder content = new StringBuilder();
         long startTime = System.currentTimeMillis();
@@ -106,10 +106,10 @@ public class Pdf2MdUtil {
                 throw new InterruptedException("轮询被中断。");
             }
 
-            String url = BASE_URL + "/api/v1/async/status?uuid=" + uuid;
+            String url = configApi.getConfigValueByKey(BASE_URL) + "/api/v1/async/status?uuid=" + uuid;
 
             HttpUtils.HttpRequest httpRequest = HttpUtils.HttpRequest.get(url);
-            httpRequest.addHeaders("Authorization", "Bearer " + API_KEY);
+            httpRequest.addHeaders("Authorization", "Bearer " + configApi.getConfigValueByKey(API_KEY));
 
             HttpUtils.HttpResponse response = HttpUtils.request(httpRequest);
             if (response.getStatus() != 200) {
