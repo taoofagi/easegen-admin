@@ -45,4 +45,7 @@ public class AppCoursePptsPageReqVO extends PageParam {
     @Schema(description = "状态 (0: 正常, 1: 异常)", example = "1")
     private Integer status;
 
+    @Schema(description = "ppt总页数", example = "1")
+    private Integer pageSize;
+
 }

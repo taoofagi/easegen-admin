@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.digitalcourse.controller.admin.courseppts.vo;
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -48,5 +49,9 @@ public class AppCoursePptsSaveReqVO {
     @Schema(description = "状态 (0: 正常, 1: 异常)", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
     @NotNull(message = "状态 (0: 正常, 1: 异常)不能为空")
     private Integer status;
+
+    @Schema(description = "ppt总页数", example = "1")
+    @ExcelProperty("ppt总页数")
+    private Integer pageSize;
 
 }

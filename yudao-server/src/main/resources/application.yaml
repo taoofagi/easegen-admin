@@ -3,7 +3,7 @@ spring:
     name: yudao-server
 
   profiles:
-    active: local
+    active: dev
 
   main:
     allow-circular-references: true # 允许循环依赖，因为项目是三层架构，无法避免这个情况。
@@ -249,7 +249,7 @@ yudao:
     front-type: 20 # 前端模版的类型，参见 CodegenFrontTypeEnum 枚举类
     unit-test-enable: false # 是否生成单元测试
   tenant: # 多租户相关配置项
-    enable: true
+    enable: false
     ignore-urls:
       - /admin-api/system/tenant/get-id-by-name # 基于名字获取租户，不许带租户编号
       - /admin-api/system/tenant/get-by-website # 基于域名获取租户，不许带租户编号
