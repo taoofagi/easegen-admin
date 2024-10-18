@@ -63,5 +63,9 @@ public class CoursePptsDO extends BaseDO {
      * 状态 (0: 正常, 1: 异常)
      */
     private Integer status;
+    /**
+     * PPT总页数
+     */
+    private Integer pageSize;
 
 }

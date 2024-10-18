@@ -9,6 +9,7 @@ import cn.iocoder.yudao.module.digitalcourse.service.pptmaterials.PptMaterialsSe
 import cn.iocoder.yudao.module.digitalcourse.util.PPTUtil;
 import cn.iocoder.yudao.module.infra.api.file.FileApi;
 import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.sl.draw.DrawFontManagerDefault;
@@ -52,9 +53,11 @@ import static cn.iocoder.yudao.module.digitalcourse.enums.ErrorCodeConstants.*;
  */
 @Service
 @Validated
+@Slf4j
 public class CoursePptsServiceImpl implements CoursePptsService {
 
     private static final String ANALYSIS_PPT_KEY = "analysis_ppt:";
+    private static final String ANALYSIS_PPT_COUNT_KEY = "analysis_ppt_count:";
 
     @Resource
     private CoursePptsMapper coursePptsMapper;
@@ -119,16 +122,40 @@ public class CoursePptsServiceImpl implements CoursePptsService {
     @Override
     public CommonResult getSchedule(Long id) {
         String value = redisCache.opsForValue().get(ANALYSIS_PPT_KEY + id);
+        String count = redisCache.opsForValue().get(ANALYSIS_PPT_COUNT_KEY + id);
+        log.info("PPT解析进度查询 - ID: {}, 进度: {}，总数：{}", id, value, count);
+        
         if (StringUtils.isBlank(value)) {
+            CoursePptsDO coursePptsDO = coursePptsMapper.selectById(id);
             List<AppPptMaterialsSaveReqVO> appPptMaterialsSaveReqVOS = pptMaterialsService.selectListByPptId(id);
-            if (appPptMaterialsSaveReqVOS.isEmpty()) return CommonResult.success(null);
+            log.info("PPT解析完成 - ID: {}, 解析数量: {}，总数：{}", id, appPptMaterialsSaveReqVOS.size(), coursePptsDO.getPageSize());
+            if (appPptMaterialsSaveReqVOS.isEmpty()) {
+                log.warn("PPT解析结果为空 - ID: {}", id);
+                return CommonResult.success(null);
+            }
+            if(appPptMaterialsSaveReqVOS.size() != coursePptsDO.getPageSize()) {
+                //如果页数比较多，插入数据库可能要一定时间，所以这里先返回一个9999，前端再根据这个值判断是否需要继续请求
+                return CommonResult.success("0.9999");
+            }
             return CommonResult.success(appPptMaterialsSaveReqVOS);
         }
+        
         if (Double.valueOf(value) == 1) {
-            List<AppPptMaterialsSaveReqVO> appPptMaterialsSaveReqVOS = pptMaterialsService.selectListByPptId(id);
             redisCache.delete(ANALYSIS_PPT_KEY + id);
+            redisCache.delete(ANALYSIS_PPT_COUNT_KEY + id);
+            if(StringUtils.isBlank(count)) {
+                return CommonResult.success("0.9999");
+            }
+            List<AppPptMaterialsSaveReqVO> appPptMaterialsSaveReqVOS = pptMaterialsService.selectListByPptId(id);
+            log.info("PPT解析完成并清除缓存 - ID: {}, 解析数量: {}", id, appPptMaterialsSaveReqVOS.size());
+            if(StringUtils.isNotBlank(count) && appPptMaterialsSaveReqVOS.size() != Integer.valueOf(count)) {
+                //如果页数比较多，插入数据库可能要一定时间，所以这里先返回一个9999，前端再根据这个值判断是否需要继续请求
+                return CommonResult.success("0.9999");
+            }
             return CommonResult.success(appPptMaterialsSaveReqVOS);
         }
+        
+        log.info("PPT解析进行中 - ID: {}, 进度: {}", id, value);
         return CommonResult.success(value);
     }
 
