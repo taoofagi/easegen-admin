@@ -52,4 +52,8 @@ public class AppCoursePptsRespVO {
     @ExcelProperty("状态 (0: 正常, 1: 异常)")
     private Integer status;
 
+    @Schema(description = "ppt总页数", example = "1")
+    @ExcelProperty("ppt总页数")
+    private Integer pageSize;
+
 }
