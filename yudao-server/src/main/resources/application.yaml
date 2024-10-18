@@ -3,7 +3,7 @@ spring:
     name: yudao-server
 
   profiles:
-    active: local
+    active: dev
 
   main:
     allow-circular-references: true # 允许循环依赖，因为项目是三层架构，无法避免这个情况。
@@ -108,7 +108,7 @@ aj:
     cache-number: 1000 # local 缓存的阈值,达到这个值，清除缓存
     timing-clear: 180 # local定时清除过期缓存(单位秒),设置为0代表不执行
     type: blockPuzzle # 验证码类型 default两种都实例化。 blockPuzzle 滑块拼图 clickWord 文字点选
-    water-mark: 宁夏通信学会 # 右下角水印文字(我的水印)，可使用 https://tool.chinaz.com/tools/unicode.aspx 中文转 Unicode，Linux 可能需要转 unicode
+    water-mark: easegen # 右下角水印文字(我的水印)，可使用 https://tool.chinaz.com/tools/unicode.aspx 中文转 Unicode，Linux 可能需要转 unicode
     interference-options: 0 # 滑动干扰项(0/1/2)
     req-frequency-limit-enable: false # 接口请求次数一分钟限制是否开启 true|false
     req-get-lock-limit: 5 # 验证失败 5 次，get接口锁定
@@ -249,7 +249,7 @@ yudao:
     front-type: 20 # 前端模版的类型，参见 CodegenFrontTypeEnum 枚举类
     unit-test-enable: false # 是否生成单元测试
   tenant: # 多租户相关配置项
-    enable: true
+    enable: false
     ignore-urls:
       - /admin-api/system/tenant/get-id-by-name # 基于名字获取租户，不许带租户编号
       - /admin-api/system/tenant/get-by-website # 基于域名获取租户，不许带租户编号
