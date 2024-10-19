@@ -86,4 +86,6 @@ public interface AdminUserApi {
      */
     void validateUserList(Collection<Long> ids);
 
+    AdminUserRespDTO getUserByName(String username);
+
 }

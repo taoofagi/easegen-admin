@@ -16,7 +16,7 @@ public interface ErrorCodeConstants {
     // ========== digitalcourse 模块 1-0010-000-002 ==========
     ErrorCode VOICES_NOT_EXISTS = new ErrorCode(1-0010-002-002, "声音模型不存在");
     // ========== digitalcourse 模块 1-0010-000-003 ==========
-    ErrorCode COURSES_NOT_EXISTS = new ErrorCode(1-0010-003-000, "存储课程的基本信息，包括课程名称、时长、状态等不存在");
+    ErrorCode COURSES_NOT_EXISTS = new ErrorCode(1-0010-003-000, "课程信息不存在");
     // ========== digitalcourse 模块 1-0010-000-003 ==========
     ErrorCode COURSES_UPDATE_ERROR = new ErrorCode(1-0010-003-001, "数字人课程保存失败");
     // ========== digitalcourse 模块 1-0010-000-004 ==========
@@ -39,4 +39,5 @@ public interface ErrorCodeConstants {
     ErrorCode FONTS_NOT_EXISTS = new ErrorCode(1-0010-000-014, "存储字体的信息，包括字体的别名、预览URL、名称等不存在");
     ErrorCode COURSE_PPTS_NOT_EXISTS = new ErrorCode(1-0010-000-003, "存储课程的PPT信息，包括文件名、文件大小、类型等不存在");
     ErrorCode COURSE_MEDIA_NOT_EXISTS = new ErrorCode(1-0010-000-015, "课程媒体不存在");
+    ErrorCode COURSES_TEXT_NOT_EXISTS = new ErrorCode(1-0010-000-016, "课程文本信息不存在");
 }
