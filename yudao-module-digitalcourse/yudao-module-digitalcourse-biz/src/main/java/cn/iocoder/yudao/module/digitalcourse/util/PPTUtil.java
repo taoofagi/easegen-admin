@@ -141,9 +141,11 @@ public class PPTUtil {
 
     public ArrayList<JSONObject> analysisPptLocal(String fileUrl, Long pptId) {
         ArrayList<JSONObject> picList = new ArrayList<>();
-        ExecutorService executorService = Executors.newFixedThreadPool(5);  // 降低并发量，减轻负载
+        ExecutorService executorService = Executors.newFixedThreadPool(1);  // 降低并发量，减轻负载
 
         try {
+            // 更新进度为开始
+            redisCache.opsForValue().set(ANALYSIS_PPT_KEY + pptId, "0");
             // 下载PPT文件
             URL url = new URL(fileUrl);
             InputStream inputStream = url.openStream();
@@ -263,17 +265,22 @@ public class PPTUtil {
         try {
             XSLFSlide slide = getSlideByIndex(pageIndex, ppt);
             if (slide != null) {
-                if (slide.getNotes() != null) {
-                    XSLFNotes notes = slide.getNotes();
-                    List<List<XSLFTextParagraph>> paragraphsList = notes.getTextParagraphs();
-                    if (paragraphsList != null) {
-                        StringBuilder notesText = new StringBuilder();
-                        for (List<XSLFTextParagraph> paragraphs : paragraphsList) {
-                            for (XSLFTextParagraph paragraph : paragraphs) {
-                                notesText.append(paragraph.getText()).append("\n");
-                            }
+
+                // 检查是否存在 NotesSlide，并避免重复创建
+                XSLFNotes notesSlide = null;
+                try {
+                    notesSlide = slide.getSlideShow().getNotesSlide(slide);
+                } catch (Exception e) {
+                    // NotesSlide 不存在或无法获取，可能是个合法情况
+                }
+
+                if (notesSlide != null) {
+                    XSLFTextShape[] placeholders = notesSlide.getPlaceholders();
+                    if (placeholders != null && placeholders.length > 1) {
+                        String notesText = placeholders[1].getText().trim();
+                        if (!isPlaceholderText(notesText)) {
+                            text = notesText;
                         }
-                        text = notesText.toString().trim();
                     }
                 }
             }
