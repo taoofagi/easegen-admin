@@ -3,6 +3,7 @@ package cn.iocoder.yudao.module.digitalcourse.service.courses;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.test.core.ut.BaseDbUnitTest;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesPageReqVO;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesRespVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesSaveReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesUpdateReqVO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.courses.CoursesDO;
@@ -153,7 +154,7 @@ public class CoursesServiceImplTest extends BaseDbUnitTest {
        reqVO.setCreateTime(buildBetweenTime(2023, 2, 1, 2023, 2, 28));
 
        // 调用
-       PageResult<CoursesDO> pageResult = coursesService.getCoursesPage(reqVO);
+       PageResult<AppCoursesRespVO> pageResult = coursesService.getCoursesPage(reqVO);
        // 断言
        assertEquals(1, pageResult.getTotal());
        assertEquals(1, pageResult.getList().size());

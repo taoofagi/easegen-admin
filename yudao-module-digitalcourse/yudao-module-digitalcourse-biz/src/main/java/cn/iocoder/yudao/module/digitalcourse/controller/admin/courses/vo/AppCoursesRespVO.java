@@ -72,4 +72,7 @@ public class AppCoursesRespVO {
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;
 
+    @Schema(description = "课程进度")
+    private String progress;
+
 }

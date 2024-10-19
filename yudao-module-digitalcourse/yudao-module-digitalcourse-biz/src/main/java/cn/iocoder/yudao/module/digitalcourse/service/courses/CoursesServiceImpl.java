@@ -3,10 +3,7 @@ package cn.iocoder.yudao.module.digitalcourse.service.courses;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.iocoder.yudao.framework.common.exception.ErrorCode;
 import cn.iocoder.yudao.framework.common.util.collection.CollectionUtils;
-import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesPageReqVO;
-import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesSaveReqVO;
-import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesUpdateReqVO;
-import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.CourseTextRespVO;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.*;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenes.vo.AppCourseScenesSaveReqVO;
 import cn.iocoder.yudao.module.digitalcourse.service.coursescenes.CourseScenesService;
 import cn.iocoder.yudao.module.system.api.user.AdminUserApi;
@@ -30,6 +27,7 @@ import cn.iocoder.yudao.module.digitalcourse.dal.mysql.courses.CoursesMapper;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.module.digitalcourse.enums.ErrorCodeConstants.*;
@@ -47,6 +45,8 @@ public class CoursesServiceImpl implements CoursesService {
 
     private static final String COURSE_SCENE_TEXT_KEY = "COURSE_SCENE_TEXT_KEY:";
     private static final String COURSE_SEGMENT_TEXT_KEY = "COURSE_SEGMENT_TEXT_KEY:";
+
+    private static final String COURSE_PROGRESS_KEY = "COURSE_PROCESS_KEY:";
 
     @Resource
     private CoursesMapper coursesMapper;
@@ -150,8 +150,23 @@ public class CoursesServiceImpl implements CoursesService {
 
 
     @Override
-    public PageResult<CoursesDO> getCoursesPage(AppCoursesPageReqVO pageReqVO) {
-        return coursesMapper.selectPage(pageReqVO);
+    public PageResult<AppCoursesRespVO> getCoursesPage(AppCoursesPageReqVO pageReqVO) {
+        // 获取分页的课程列表
+        PageResult<CoursesDO> pageResult = coursesMapper.selectPage(pageReqVO);
+
+        // 将 CoursesDO 转换为 AppCoursesRespVO，并设置进度信息
+        List<AppCoursesRespVO> respVOList = pageResult.getList().stream().map(course -> {
+            AppCoursesRespVO respVO = new AppCoursesRespVO();
+            // 复制课程的基本信息
+            BeanUtils.copyProperties(course, respVO);
+            // 获取并设置课程进度
+            String progress = getCourseProgress(String.valueOf(course.getId()));
+            respVO.setProgress(progress);
+            return respVO;
+        }).collect(Collectors.toList());
+
+        // 构建返回的分页结果
+        return new PageResult<>(respVOList, pageResult.getTotal());
     }
 
     /**
@@ -215,6 +230,15 @@ public class CoursesServiceImpl implements CoursesService {
         long step5EndTime = System.currentTimeMillis();
         log.info("步骤 5 耗时: " + (step5EndTime - step5StartTime)/1000.0 + " 秒");
 
+        //记录上课进度
+        if(requestedSegment.getNo() != segments.size()) {
+            redisCache.opsForValue().set(COURSE_PROGRESS_KEY + courseId , String.valueOf(requestedSegment.getNo() +"/"+segments.size()), 1, TimeUnit.HOURS);
+        } else {
+            //播放完成，则删掉redis中缓存
+            redisCache.delete(COURSE_PROGRESS_KEY + courseId);
+        }
+
+
         return new CourseTextRespVO(
                 "",
                 requestedSegment.getText(),
@@ -223,6 +247,14 @@ public class CoursesServiceImpl implements CoursesService {
                 requestedSegment.getNo(),
                 segments.size()
         );
+    }
+
+    @Override
+    public String getCourseProgress(String courseId) {
+        if(redisCache.opsForValue().get(COURSE_PROGRESS_KEY + courseId)==null) {
+            return "";
+        }
+        return redisCache.opsForValue().get(COURSE_PROGRESS_KEY + courseId);
     }
 
     /**

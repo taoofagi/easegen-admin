@@ -98,7 +98,7 @@ public class AppCoursesController {
     @GetMapping("/page")
     @Operation(summary = "获得存储课程的基本信息，包括课程名称、时长、状态等分页")
     public CommonResult<PageResult<AppCoursesRespVO>> getCoursesPage(@Valid AppCoursesPageReqVO pageReqVO) {
-        PageResult<CoursesDO> pageResult = coursesService.getCoursesPage(pageReqVO);
+        PageResult<AppCoursesRespVO> pageResult = coursesService.getCoursesPage(pageReqVO);
         return success(BeanUtils.toBean(pageResult, AppCoursesRespVO.class));
     }
 
@@ -107,7 +107,7 @@ public class AppCoursesController {
     public void exportCoursesExcel(@Valid AppCoursesPageReqVO pageReqVO,
               HttpServletResponse response) throws IOException {
         pageReqVO.setPageSize(PageParam.PAGE_SIZE_NONE);
-        List<CoursesDO> list = coursesService.getCoursesPage(pageReqVO).getList();
+        List<AppCoursesRespVO> list = coursesService.getCoursesPage(pageReqVO).getList();
         // 导出 Excel
         ExcelUtils.write(response, "存储课程的基本信息，包括课程名称、时长、状态等.xls", "数据", AppCoursesRespVO.class,
                         BeanUtils.toBean(list, AppCoursesRespVO.class));
@@ -183,7 +183,7 @@ public class AppCoursesController {
 
 
     @GetMapping("/getCourseText")
-    @Operation(summary = "获得存储课程的基本信息，包括文本、音频、图片等")
+    @Operation(summary = "获得存储课程的基本信息，包括文本、音频、图片等，拆分返回，支持fay实时数字人")
     @Parameter(name = "course_id", description = "课程编号", required = true, example = "1024")
     @Parameter(name = "username", description = "用户名", required = true, example = "user123")
     @Parameter(name = "no", description = "item序号，非必须，默认是1或用户当前上课进度", required = false, example = "1")
@@ -191,6 +191,15 @@ public class AppCoursesController {
                                                         @RequestParam String username,
                                                         @RequestParam(required = false, defaultValue = "1") int no) {
         CourseTextRespVO response = coursesService.getCourseText(course_id, username, no);
+        return success(response);
+    }
+
+
+    @GetMapping("/getCourseProgress")
+    @Operation(summary = "获得上课进度")
+    @Parameter(name = "course_id", description = "课程编号", required = true, example = "1024")
+    public CommonResult<String> getCourseProgress(@RequestParam String course_id) {
+        String response = coursesService.getCourseProgress(course_id);
         return success(response);
     }
 

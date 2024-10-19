@@ -1,9 +1,6 @@
 package cn.iocoder.yudao.module.digitalcourse.service.courses;
 
-import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesPageReqVO;
-import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesSaveReqVO;
-import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesUpdateReqVO;
-import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.CourseTextRespVO;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.*;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.courses.CoursesDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import jakarta.validation.Valid;
@@ -51,8 +48,10 @@ public interface CoursesService {
      * @param pageReqVO 分页查询
      * @return 存储课程的基本信息，包括课程名称、时长、状态等分页
      */
-    PageResult<CoursesDO> getCoursesPage(AppCoursesPageReqVO pageReqVO);
+    PageResult<AppCoursesRespVO> getCoursesPage(AppCoursesPageReqVO pageReqVO);
 
-    public CourseTextRespVO getCourseText(String courseId, String username, int no);
+    CourseTextRespVO getCourseText(String courseId, String username, int no);
+
+    String getCourseProgress(String courseId);
 
 }
