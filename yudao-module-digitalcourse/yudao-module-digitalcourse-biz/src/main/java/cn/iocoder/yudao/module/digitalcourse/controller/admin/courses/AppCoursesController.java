@@ -1,9 +1,6 @@
 package cn.iocoder.yudao.module.digitalcourse.controller.admin.courses;
 
-import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesPageReqVO;
-import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesRespVO;
-import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesSaveReqVO;
-import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.AppCoursesUpdateReqVO;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.*;
 import cn.iocoder.yudao.module.digitalcourse.util.GenQuestionUtil;
 import cn.iocoder.yudao.module.digitalcourse.util.Pdf2MdUtil;
 import cn.iocoder.yudao.module.infra.api.config.ConfigApi;
@@ -22,7 +19,6 @@ import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 
@@ -30,8 +26,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Operation;
 
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.io.IOException;
@@ -185,6 +179,19 @@ public class AppCoursesController {
             return CommonResult.error(500, "Internal Server Error: " + e.getMessage());
         }
 
+    }
+
+
+    @GetMapping("/getCourseText")
+    @Operation(summary = "获得存储课程的基本信息，包括文本、音频、图片等")
+    @Parameter(name = "course_id", description = "课程编号", required = true, example = "1024")
+    @Parameter(name = "username", description = "用户名", required = true, example = "user123")
+    @Parameter(name = "no", description = "item序号，非必须，默认是1或用户当前上课进度", required = false, example = "1")
+    public CommonResult<CourseTextRespVO> getCourseText(@RequestParam String course_id,
+                                                        @RequestParam String username,
+                                                        @RequestParam(required = false, defaultValue = "1") int no) {
+        CourseTextRespVO response = coursesService.getCourseText(course_id, username, no);
+        return success(response);
     }
 
 

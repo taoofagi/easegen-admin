@@ -34,10 +34,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 
 /**
  * @author fmi110
@@ -145,7 +142,7 @@ public class PPTUtil {
 
         try {
             // 更新进度为开始
-            redisCache.opsForValue().set(ANALYSIS_PPT_KEY + pptId, "0");
+            redisCache.opsForValue().set(ANALYSIS_PPT_KEY + pptId, "0", 1, TimeUnit.DAYS);
             // 下载PPT文件
             URL url = new URL(fileUrl);
             InputStream inputStream = url.openStream();
