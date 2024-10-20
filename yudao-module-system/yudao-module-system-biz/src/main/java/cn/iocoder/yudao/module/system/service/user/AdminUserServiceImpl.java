@@ -11,6 +11,7 @@ import cn.iocoder.yudao.framework.common.util.collection.CollectionUtils;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.framework.common.util.validation.ValidationUtils;
 import cn.iocoder.yudao.framework.datapermission.core.util.DataPermissionUtils;
+import cn.iocoder.yudao.framework.security.core.util.SecurityFrameworkUtils;
 import cn.iocoder.yudao.module.infra.api.config.ConfigApi;
 import cn.iocoder.yudao.module.infra.api.file.FileApi;
 import cn.iocoder.yudao.module.system.controller.admin.auth.vo.AuthRegisterReqVO;
@@ -38,7 +39,9 @@ import com.mzt.logapi.starter.annotation.LogRecord;
 import jakarta.annotation.Resource;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,6 +66,7 @@ import static cn.iocoder.yudao.module.system.enums.LogRecordConstants.*;
 public class AdminUserServiceImpl implements AdminUserService {
 
     static final String USER_INIT_PASSWORD_KEY = "system.user.init-password";
+    static final String USER_APIKEY_KEY = "system:user:apikey:";
 
     @Resource
     private AdminUserMapper userMapper;
@@ -89,6 +93,9 @@ public class AdminUserServiceImpl implements AdminUserService {
 
     @Resource
     private RoleService roleService;
+
+    @Resource
+    private StringRedisTemplate redisCache;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -534,6 +541,29 @@ public class AdminUserServiceImpl implements AdminUserService {
      */
     private String encodePassword(String password) {
         return passwordEncoder.encode(password);
+    }
+
+    @Override
+    public String refreshCurrentUserApikey() {
+        // 生成新的apikey
+        String newApikey = generateApikey();
+
+        // 获取当前用户ID
+        Long userId = SecurityFrameworkUtils.getLoginUserId();
+
+        //将apikey写入redis
+        redisCache.opsForValue().set(USER_APIKEY_KEY + userId, newApikey);
+        
+        // 更新用户的apikey
+        userMapper.updateApikey(userId, newApikey);
+        
+        return newApikey;
+    }
+
+    private String generateApikey() {
+        String prefix = "ak_";
+        String randomString = RandomStringUtils.randomAlphanumeric(20);
+        return prefix + randomString;
     }
 
 }

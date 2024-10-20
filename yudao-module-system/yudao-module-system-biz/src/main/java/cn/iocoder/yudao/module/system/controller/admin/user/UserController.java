@@ -169,4 +169,11 @@ public class UserController {
         return success(userService.importUserList(list, updateSupport));
     }
 
+    @PutMapping("/refresh-apikey")
+    @Operation(summary = "刷新当前用户的API密钥")
+    public CommonResult<String> refreshUserApikey() {
+        String newApikey = userService.refreshCurrentUserApikey();
+        return success(newApikey);
+    }
+
 }

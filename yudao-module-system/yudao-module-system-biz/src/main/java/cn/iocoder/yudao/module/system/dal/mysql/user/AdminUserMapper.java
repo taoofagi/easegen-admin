@@ -5,6 +5,7 @@ import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.module.system.controller.admin.user.vo.user.UserPageReqVO;
 import cn.iocoder.yudao.module.system.dal.dataobject.user.AdminUserDO;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Collection;
@@ -45,6 +46,10 @@ public interface AdminUserMapper extends BaseMapperX<AdminUserDO> {
 
     default List<AdminUserDO> selectListByDeptIds(Collection<Long> deptIds) {
         return selectList(AdminUserDO::getDeptId, deptIds);
+    }
+
+    default void updateApikey(Long userId, String apikey) {
+        update(new LambdaUpdateWrapper<AdminUserDO>().eq(AdminUserDO::getId, userId).set(AdminUserDO::getApikey, apikey));
     }
 
 }

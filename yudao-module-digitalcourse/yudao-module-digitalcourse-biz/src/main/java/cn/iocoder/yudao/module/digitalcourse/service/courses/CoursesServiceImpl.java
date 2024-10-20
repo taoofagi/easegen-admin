@@ -208,7 +208,11 @@ public class CoursesServiceImpl implements CoursesService {
         log.info("步骤 2 耗时: " + (step2EndTime - step2StartTime)/1000.0 + " 秒");
         //如果cachedData 为空，则返回课程不存在
         if (CollectionUtil.isEmpty(scenes)) {
-            throw exception(COURSES_TEXT_NOT_EXISTS);
+            refreshCourseCache(courseId);
+            scenes = fetchScenesByCourseId(courseId);
+            if (CollectionUtil.isEmpty(scenes)) {
+                throw exception(COURSES_TEXT_NOT_EXISTS);
+            }
         }
 
         long step3StartTime = System.currentTimeMillis();
@@ -247,6 +251,38 @@ public class CoursesServiceImpl implements CoursesService {
                 requestedSegment.getNo(),
                 segments.size()
         );
+    }
+
+    private void refreshCourseCache(String courseId) {
+        // 获取课程完整信息
+        AppCoursesUpdateReqVO courseInfo = getCourses(Long.parseLong(courseId));
+        
+        if (courseInfo == null || CollectionUtil.isEmpty(courseInfo.getScenes())) {
+            log.error("课程信息不存在或场景为空，courseId: {}", courseId);
+            return;
+        }
+    
+        // 构建场景缓存数据
+        Map<String, Map<String, String>> scenesMap = new HashMap<>();
+        courseInfo.getScenes().forEach(scene -> {
+            Map<String, String> sceneData = new HashMap<>();
+            sceneData.put("text", scene.getTextDriver().getTextJson());
+            sceneData.put("background", scene.getBackground().getSrc());
+            scenesMap.put(String.valueOf(scene.getOrderNo()), sceneData);
+        });
+    
+        // 序列化并存储场景数据
+        String sceneRedisKey = COURSE_SCENE_TEXT_KEY + courseId;
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            redisCache.delete(sceneRedisKey);
+            String serializedScenes = objectMapper.writeValueAsString(scenesMap);
+            log.info("刷新缓存，序列化场景数据为：{}", serializedScenes);
+            redisCache.opsForValue().set(sceneRedisKey, serializedScenes);
+        } catch (JsonProcessingException e) {
+            log.error("刷新缓存时序列化场景数据发生错误，courseId: {}", courseId, e);
+        }
     }
 
     @Override

@@ -69,6 +69,9 @@ public class UserRespVO{
     @ExcelProperty("最后登录时间")
     private LocalDateTime loginDate;
 
+    @Schema(description = "apikey")
+    private String apikey;
+
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED, example = "时间戳格式")
     private LocalDateTime createTime;
 
