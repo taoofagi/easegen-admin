@@ -216,4 +216,11 @@ public interface AdminUserService {
      */
     boolean isPasswordMatch(String rawPassword, String encodedPassword);
 
+    /**
+     * 刷新当前用户的API密钥
+     *
+     * @return 新生成的API密钥
+     */
+    String refreshCurrentUserApikey();
+
 }
