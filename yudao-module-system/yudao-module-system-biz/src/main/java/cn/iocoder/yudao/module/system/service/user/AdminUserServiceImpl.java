@@ -49,6 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.framework.common.util.collection.CollectionUtils.convertList;
@@ -551,8 +552,15 @@ public class AdminUserServiceImpl implements AdminUserService {
         // 获取当前用户ID
         Long userId = SecurityFrameworkUtils.getLoginUserId();
 
-        //将apikey写入redis
+        // 获取已生效的apikey
+        String oldApikey = redisCache.opsForValue().get(USER_APIKEY_KEY + userId);
+        if (oldApikey != null) {
+            // 设置旧apikey的过期时间为1分钟
+            redisCache.expire(USER_APIKEY_KEY + oldApikey, 60, TimeUnit.SECONDS);
+        }
+        // 将新apikey写入redis
         redisCache.opsForValue().set(USER_APIKEY_KEY + userId, newApikey);
+        redisCache.opsForValue().set(USER_APIKEY_KEY + newApikey, String.valueOf(userId));
         
         // 更新用户的apikey
         userMapper.updateApikey(userId, newApikey);
