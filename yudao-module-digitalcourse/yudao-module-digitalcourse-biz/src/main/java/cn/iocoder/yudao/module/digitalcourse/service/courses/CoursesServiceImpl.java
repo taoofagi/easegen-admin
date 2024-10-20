@@ -169,17 +169,41 @@ public class CoursesServiceImpl implements CoursesService {
         return new PageResult<>(respVOList, pageResult.getTotal());
     }
 
+    @Override
+    public PageResult<AppCoursesRespVO> getCoursesPage(AppCoursesPageReqVO pageReqVO, String userid) {
+        // 根据传入的userid创建查询条件
+        LambdaQueryWrapper<CoursesDO> queryWrapper = new LambdaQueryWrapper<CoursesDO>()
+                .eq(CoursesDO::getCreator, Long.valueOf(userid));
+        
+        // 使用带有查询条件的分页查询
+        PageResult<CoursesDO> pageResult = coursesMapper.selectPage(pageReqVO, queryWrapper);
+
+        // 将 CoursesDO 转换为 AppCoursesRespVO，并设置进度信息
+        List<AppCoursesRespVO> respVOList = pageResult.getList().stream().map(course -> {
+            AppCoursesRespVO respVO = new AppCoursesRespVO();
+            // 复制课程的基本信息
+            BeanUtils.copyProperties(course, respVO);
+            // 获取并设置课程进度
+            String progress = getCourseProgress(String.valueOf(course.getId()));
+            respVO.setProgress(progress);
+            return respVO;
+        }).collect(Collectors.toList());
+
+        // 构建返回的分页结果
+        return new PageResult<>(respVOList, pageResult.getTotal());
+    }
+
     /**
      * 根据课程ID、用户名和项目序号获取课程文本、音频和PPT的详细信息。
      *
      * @param courseId 课程ID
-     * @param username 用户名
+     * @param userid 用户id
      * @param no item序号，默认是1或用户进度
      * @return 课程文本响应体
      */
-    public CourseTextRespVO getCourseText(String courseId, String username, int no) {
+    public CourseTextRespVO getCourseText(String courseId, String userid, int no) {
 
-        AdminUserRespDTO adminUserRespDTO = adminUserApi.getUserByName(username);
+        AdminUserRespDTO adminUserRespDTO = adminUserApi.getUser(Long.valueOf(userid));
         if(adminUserRespDTO == null){
             throw exception(USER_NOT_EXISTS);
         }

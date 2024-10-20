@@ -223,6 +223,7 @@ yudao:
       - /admin-api/mp/open/** # 微信公众号开放平台，微信回调接口，不需要登录
       - /admin-api/digitalcourse/course-ppts/merge
       - /admin-api/digitalcourse/courses/getCourseText
+      - /admin-api/digitalcourse/courses/getCoursePage
   websocket:
     enable: true # websocket的开关
     path: /infra/ws # 路径

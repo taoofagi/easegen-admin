@@ -50,6 +50,8 @@ public interface CoursesService {
      */
     PageResult<AppCoursesRespVO> getCoursesPage(AppCoursesPageReqVO pageReqVO);
 
+    PageResult<AppCoursesRespVO> getCoursesPage(AppCoursesPageReqVO pageReqVO,String userid);
+
     CourseTextRespVO getCourseText(String courseId, String username, int no);
 
     String getCourseProgress(String courseId);

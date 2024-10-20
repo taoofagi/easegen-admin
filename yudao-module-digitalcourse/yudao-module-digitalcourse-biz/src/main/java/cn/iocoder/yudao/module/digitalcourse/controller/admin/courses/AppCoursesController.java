@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.digitalcourse.controller.admin.courses;
 
+import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.*;
 import cn.iocoder.yudao.module.digitalcourse.util.GenQuestionUtil;
 import cn.iocoder.yudao.module.digitalcourse.util.Pdf2MdUtil;
@@ -19,6 +20,7 @@ import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.apache.hc.core5.http.ContentType;
 import org.apache.hc.core5.http.io.entity.EntityUtils;
 import org.apache.poi.ss.usermodel.*;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 
@@ -34,6 +36,10 @@ import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
+
+import static cn.iocoder.yudao.framework.common.exception.enums.GlobalErrorCodeConstants.BAD_REQUEST;
+import static cn.iocoder.yudao.framework.common.exception.enums.GlobalErrorCodeConstants.UNAUTHORIZED;
+import static cn.iocoder.yudao.framework.common.pojo.CommonResult.error;
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 
 import cn.iocoder.yudao.framework.excel.core.util.ExcelUtils;
@@ -53,6 +59,8 @@ public class AppCoursesController {
 
     static final String EASEGEN_CORE_KEY = "easegen.core.key";
 
+    static final String USER_APIKEY_KEY = "system:user:apikey:";
+
     @Resource
     private CoursesService coursesService;
 
@@ -64,6 +72,9 @@ public class AppCoursesController {
 
     @Resource
     private Pdf2MdUtil pdf2MdUtil;
+
+    @Resource
+    private StringRedisTemplate redisCache;
 
 
     @PostMapping("/create")
@@ -131,15 +142,15 @@ public class AppCoursesController {
                 if (statusCode == 200) {
                     return CommonResult.success(responseString);
                 } else {
-                    return CommonResult.error(statusCode, responseString);
+                    return error(statusCode, responseString);
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
-                return CommonResult.error(500, "Internal Server Error: " + e.getMessage());
+                return error(500, "Internal Server Error: " + e.getMessage());
             }
         } catch (IOException e) {
             e.printStackTrace();
-            return CommonResult.error(500, "Internal Server Error: " + e.getMessage());
+            return error(500, "Internal Server Error: " + e.getMessage());
         }
     }
 
@@ -176,7 +187,7 @@ public class AppCoursesController {
             return CommonResult.success(responseString);
         } catch (Exception e) {
             e.printStackTrace();
-            return CommonResult.error(500, "Internal Server Error: " + e.getMessage());
+            return error(500, "Internal Server Error: " + e.getMessage());
         }
 
     }
@@ -185,12 +196,20 @@ public class AppCoursesController {
     @GetMapping("/getCourseText")
     @Operation(summary = "获得存储课程的基本信息，包括文本、音频、图片等，拆分返回，支持fay实时数字人")
     @Parameter(name = "course_id", description = "课程编号", required = true, example = "1024")
-    @Parameter(name = "username", description = "用户名", required = true, example = "user123")
     @Parameter(name = "no", description = "item序号，非必须，默认是1或用户当前上课进度", required = false, example = "1")
     public CommonResult<CourseTextRespVO> getCourseText(@RequestParam String course_id,
-                                                        @RequestParam String username,
-                                                        @RequestParam(required = false, defaultValue = "1") int no) {
-        CourseTextRespVO response = coursesService.getCourseText(course_id, username, no);
+                                                        @RequestParam(required = false, defaultValue = "1") int no,
+                                                        @RequestHeader(value = "easegen-api-key", required = false) String apiKey) {
+        if (StrUtil.isBlank(apiKey)) {
+            return error(BAD_REQUEST.getCode(), "缺少 easegen-api-key 请求头或请求头为空");
+        }
+        // 通过apiKey从缓存中获取用户信息
+        String userid = redisCache.opsForValue().get(USER_APIKEY_KEY + apiKey);
+        if (userid == null) {
+            return error(BAD_REQUEST.getCode(), "未找到用户信息，请确认apikey是否正确");
+        }
+        
+        CourseTextRespVO response = coursesService.getCourseText(course_id, userid, no);
         return success(response);
     }
 
@@ -201,6 +220,22 @@ public class AppCoursesController {
     public CommonResult<String> getCourseProgress(@RequestParam String course_id) {
         String response = coursesService.getCourseProgress(course_id);
         return success(response);
+    }
+
+    @GetMapping("/getCoursePage")
+    @Operation(summary = "获得存储课程的基本信息，包括课程名称、时长、状态等分页")
+    public CommonResult<PageResult<AppCoursesRespVO>> getCoursePage(@Valid AppCoursesPageReqVO pageReqVO,
+                                                                    @RequestHeader(value = "easegen-api-key", required = false) String apiKey) {
+        if (StrUtil.isBlank(apiKey)) {
+            return error(BAD_REQUEST.getCode(), "缺少 easegen-api-key 请求头或请求头为空");
+        }
+        // 通过apiKey从缓存中获取用户信息
+        String userid = redisCache.opsForValue().get(USER_APIKEY_KEY + apiKey);
+        if (userid == null) {
+            return error(BAD_REQUEST.getCode(), "未找到用户信息，请确认apikey是否正确");
+        }
+        PageResult<AppCoursesRespVO> pageResult = coursesService.getCoursesPage(pageReqVO, userid);
+        return success(BeanUtils.toBean(pageResult, AppCoursesRespVO.class));
     }
 
 
