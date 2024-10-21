@@ -52,7 +52,7 @@ public interface CoursesService {
 
     PageResult<AppCoursesRespVO> getCoursesPage(AppCoursesPageReqVO pageReqVO,String userid);
 
-    CourseTextRespVO getCourseText(String courseId, String username, int no);
+    CourseTextRespVO getCourseText(String courseId, String username, Integer no);
 
     String getCourseProgress(String courseId);
 

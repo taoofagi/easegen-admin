@@ -7,14 +7,16 @@ public class CourseTextRespVO {
     private String img;
     private int currentNo;
     private int totalNo;
+    private String progress;
 
-    public CourseTextRespVO(String audio, String text, long timestamp, String img, int currentNo, int totalNo) {
+    public CourseTextRespVO(String audio, String text, long timestamp, String img, int currentNo, int totalNo, String progress) {
         this.audio = audio;
         this.text = text;
         this.timestamp = timestamp;
         this.img = img;
         this.currentNo = currentNo;
         this.totalNo = totalNo;
+        this.progress = progress;
     }
 
     public String getAudio() {
@@ -39,5 +41,9 @@ public class CourseTextRespVO {
 
     public int getTotalNo() {
         return totalNo;
+    }
+
+    public String getProgress() {
+        return progress;
     }
 }

@@ -198,7 +198,7 @@ public class AppCoursesController {
     @Parameter(name = "course_id", description = "课程编号", required = true, example = "1024")
     @Parameter(name = "no", description = "item序号，非必须，默认是1或用户当前上课进度", required = false, example = "1")
     public CommonResult<CourseTextRespVO> getCourseText(@RequestParam String course_id,
-                                                        @RequestParam(required = false, defaultValue = "1") int no,
+                                                        @RequestParam(required = false) Integer no,
                                                         @RequestHeader(value = "easegen-api-key", required = false) String apiKey) {
         if (StrUtil.isBlank(apiKey)) {
             return error(BAD_REQUEST.getCode(), "缺少 easegen-api-key 请求头或请求头为空");

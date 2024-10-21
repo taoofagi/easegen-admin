@@ -201,7 +201,7 @@ public class CoursesServiceImpl implements CoursesService {
      * @param no item序号，默认是1或用户进度
      * @return 课程文本响应体
      */
-    public CourseTextRespVO getCourseText(String courseId, String userid, int no) {
+    public CourseTextRespVO getCourseText(String courseId, String userid, Integer no) {
 
         AdminUserRespDTO adminUserRespDTO = adminUserApi.getUser(Long.valueOf(userid));
         if(adminUserRespDTO == null){
@@ -210,6 +210,15 @@ public class CoursesServiceImpl implements CoursesService {
         CoursesDO coursesDO = coursesMapper.selectOne(new LambdaQueryWrapper<CoursesDO>().eq(CoursesDO::getId, courseId).eq(CoursesDO::getCreator, adminUserRespDTO.getId()));
         if(null==coursesDO) {
             throw exception(COURSES_NOT_EXISTS);
+        }
+        //如果no为空，查询进度缓存数据，如果没有进度，说明没有播放，则置为1，如果已经播放了，则置为进度+1
+        if(no == null) {
+            String progress = getCourseProgress(courseId);
+            if(StringUtils.isBlank(progress)) {
+                no = 1;
+            } else {
+                no = Integer.parseInt(progress.split("/")[0]) + 1;
+            }
         }
 //        long step1StartTime = System.currentTimeMillis();
 //        String redisKey = COURSE_SEGMENT_TEXT_KEY + courseId + ":" + no;
@@ -273,7 +282,8 @@ public class CoursesServiceImpl implements CoursesService {
                 System.currentTimeMillis(),
                 requestedSegment.getImageUrl(),
                 requestedSegment.getNo(),
-                segments.size()
+                segments.size(),
+                (requestedSegment.getNo() +"/"+segments.size())
         );
     }
 
@@ -411,7 +421,8 @@ public class CoursesServiceImpl implements CoursesService {
                 System.currentTimeMillis(),
                 parts[1],
                 Integer.parseInt(parts[2]),
-                Integer.parseInt(parts[3]) // Example value
+                Integer.parseInt(parts[3]), // Example value
+                (parts[2] +"/"+parts[3])
         );
     }
 
