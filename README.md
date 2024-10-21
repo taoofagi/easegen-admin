@@ -38,6 +38,9 @@
 参考 [yudao-framework](https://gitee.com/zhijiantianya/ruoyi-vue-pro)
 基于master-jdk17 分支开发
 
+## 部署手册
+https://ozij45g3ts.feishu.cn/docx/EgS3dm1HtoKOPkxReEQcn3MCncg
+
 ## 🔥 前端代码
 
 
