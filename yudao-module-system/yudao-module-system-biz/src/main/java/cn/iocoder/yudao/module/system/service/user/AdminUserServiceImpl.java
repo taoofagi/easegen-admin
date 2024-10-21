@@ -36,6 +36,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.mzt.logapi.context.LogRecordContext;
 import com.mzt.logapi.service.impl.DiffParseFunction;
 import com.mzt.logapi.starter.annotation.LogRecord;
+import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
@@ -572,6 +573,42 @@ public class AdminUserServiceImpl implements AdminUserService {
         String prefix = "ak_";
         String randomString = RandomStringUtils.randomAlphanumeric(20);
         return prefix + randomString;
+    }
+
+    @PostConstruct
+    public void initializeAllUserApiKeys() {
+        log.info("开始初始化所有用户的API密钥缓存...");
+
+        // 1. 获取所有用户信息
+        List<AdminUserDO> allUsers = userMapper.selectList();
+
+        // 2. 获取用户id和apikey的对应关系
+        Map<Long, String> userApiKeyMap = new HashMap<>();
+        for (AdminUserDO user : allUsers) {
+            userApiKeyMap.put(user.getId(), user.getApikey());
+        }
+
+        // 3. 将旧的apikey失效
+        Set<String> keys = redisCache.keys(USER_APIKEY_KEY + "*");
+        if (keys != null) {
+            redisCache.delete(keys);
+        }
+
+        // 4. 将新的apikey存入缓存
+        for (Map.Entry<Long, String> entry : userApiKeyMap.entrySet()) {
+            Long userId = entry.getKey();
+            String apiKey = entry.getValue();
+
+            if (apiKey == null || apiKey.isEmpty()) {
+                apiKey = generateApikey();
+                userMapper.updateApikey(userId, apiKey);
+            }
+
+            redisCache.opsForValue().set(USER_APIKEY_KEY + userId, apiKey);
+            redisCache.opsForValue().set(USER_APIKEY_KEY + apiKey, String.valueOf(userId));
+        }
+
+        log.info("所有用户的API密钥缓存初始化完成，共初始化 {} 个用户", allUsers.size());
     }
 
 }
