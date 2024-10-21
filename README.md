@@ -4,11 +4,9 @@
 
 ## 🐶 新手必读
 
-* 演示地址【Vue3 + element-plus】：<http://36.103.251.108:48083> 演示账号请加入飞书群获取
-* 启动文档：请加入飞书群
+* 演示地址【Vue3 + element-plus】：<http://36.103.251.108:48083> 请自行注册试用
+* 启动文档、操作手册：请加入飞书群获取
 ![飞书](.image%2Fdigitalcourse%2Ffeishu.png)
-* 教程：TODO
-* 操作手册：TODO
 
 ## 🐯 平台简介
 
@@ -18,21 +16,20 @@
 * 后端基于 [ruoyi-vue-pro](https://gitee.com/zhijiantianya/ruoyi-vue-pro) 实现
 * 智能课件基于[文多多](https://docmee.cn?source=u3199)实现
 
-* 课程制作页面
+* 课程制作页
 
-![digitalhuman_course.png](.image%2Fdigitalcourse%2Fdigitalhuman_course.png)
+![digitalhuman_course.png](.image%2Fdigitalcourse%2Fdigitalhuman_course.gif)
 
-* 我的视频页面
+* 智能课件
 
-![my_video.png](.image%2Fdigitalcourse%2Fmy_video.png)
-* 智能课件页面
+![aippt.png](.image%2Fdigitalcourse%2Faippt.gif)
+* 智能出题
 
-![aippt.png](.image%2Fdigitalcourse%2Faippt.png)
-* 智能出题页面
-
-![ai_gen_test.png](.image%2Fdigitalcourse%2Fai_gen_test.png)
+![ai_gen_test.png](.image%2Fdigitalcourse%2Fai_gen_test.gif)
 
 *  [样课展示](https://www.bilibili.com/video/av113088116297160/)
+
+[![B站视频](.image%2Fdigitalcourse%2Fdemo_course.png)](https://www.bilibili.com/video/av113088116297160/)
 
 
 
@@ -49,5 +46,14 @@
 
 ### 若依其他系统功能
 请参考[ruoyi-vue-pro](https://gitee.com/zhijiantianya/ruoyi-vue-pro#-%E5%86%85%E7%BD%AE%E5%8A%9F%E8%83%BD)
+
+## 🌟 Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=taoofagi/easegen-admin&type=Date)](https://star-history.com/#taoofagi/easegen-admin&Date)
+
+## 🧾 免责声明/许可
+
+1. `代码`：`easegen-admin` 的代码采用 `Apache` 许可证发布，学术用途和商业用途都可以。
+2. `AIGC`：本项目旨在积极影响基于人工智能的文字、语音、视频生成领域。用户被授予使用此工具创建文字、语音、视频的自由，但他们应该遵守当地法律，并负责任地使用。开发人员不对用户可能的不当使用承担任何责任。
 
 
