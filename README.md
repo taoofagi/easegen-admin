@@ -14,7 +14,7 @@
 
 * 前端基于 [yudao-ui-admin-vue3](https://gitee.com/yudaocode/yudao-ui-admin-vue3) 实现
 * 后端基于 [ruoyi-vue-pro](https://gitee.com/zhijiantianya/ruoyi-vue-pro) 实现
-* 智能课件基于[文多多](https://docmee.cn?source=u3199)实现
+* 智能课件基于[文多多AIPPT](https://easegen.docmee.cn)实现
 
 * 课程制作页
 
