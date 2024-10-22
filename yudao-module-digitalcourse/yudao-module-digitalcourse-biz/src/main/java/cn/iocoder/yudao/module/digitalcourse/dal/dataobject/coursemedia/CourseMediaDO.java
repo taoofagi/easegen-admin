@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursemedia;
 
 import cn.iocoder.yudao.framework.mybatis.core.dataobject.BaseDO;
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.KeySequence;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -24,7 +25,7 @@ public class CourseMediaDO extends BaseDO {
     /**
      * 编号
      */
-    @TableId
+    @TableId(type = IdType.ASSIGN_ID)
     private Long id;
     /**
      * 状态 (1、合成中，2、成功，3、失败)
