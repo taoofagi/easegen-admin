@@ -1,4 +1,4 @@
-芋道源码 http://www.iocoder.cn
+easegen数字人课程制作平台
 Application Version: ${yudao.info.version}
 Spring Boot Version: ${spring-boot.version}
 
