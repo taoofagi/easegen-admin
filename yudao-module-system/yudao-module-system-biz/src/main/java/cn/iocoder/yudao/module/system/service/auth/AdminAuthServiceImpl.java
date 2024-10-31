@@ -112,9 +112,15 @@ public class AdminAuthServiceImpl implements AdminAuthService {
     @Override
     public void sendSmsCode(AuthSmsSendReqVO reqVO) {
         // 登录场景，验证是否存在
-        if (userService.getUserByMobile(reqVO.getMobile()) == null) {
-            throw exception(AUTH_MOBILE_NOT_EXISTS);
-        }
+       if (SmsSceneEnum.MEMBER_REGISTER.getScene() != reqVO.getScene()) {
+           if (userService.getUserByMobile(reqVO.getMobile()) == null) {
+               throw exception(AUTH_MOBILE_NOT_EXISTS);
+           }
+       } else {
+           if (userService.getUserByMobile(reqVO.getMobile()) != null) {
+               throw exception(AUTH_MOBILE_EXISTS_REGISTER);
+           }
+       }
         // 发送验证码
         smsCodeApi.sendSmsCode(AuthConvert.INSTANCE.convert(reqVO).setCreateIp(getClientIP()));
     }
@@ -251,6 +257,9 @@ public class AdminAuthServiceImpl implements AdminAuthService {
     public AuthLoginRespVO register(AuthRegisterReqVO registerReqVO) {
         // 1. 校验验证码
         validateCaptcha(registerReqVO);
+
+        // 校验验证码
+        smsCodeApi.useSmsCode(AuthConvert.INSTANCE.convert(registerReqVO, SmsSceneEnum.MEMBER_REGISTER.getScene(), getClientIP()));
 
         // 2. 校验用户名是否已存在
         Long userId = userService.registerUser(registerReqVO);
