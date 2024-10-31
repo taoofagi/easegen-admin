@@ -1,6 +1,7 @@
 package cn.iocoder.yudao.module.system.controller.admin.auth.vo;
 
 
+import cn.iocoder.yudao.framework.common.validation.Mobile;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -16,6 +17,16 @@ public class AuthRegisterReqVO {
     @Pattern(regexp = "^[a-zA-Z0-9]{4,30}$", message = "用户账号由 数字、字母 组成")
     @Size(min = 4, max = 30, message = "用户账号长度为 4-30 个字符")
     private String username;
+
+    @Schema(description = "手机号", requiredMode = Schema.RequiredMode.REQUIRED, example = "yudaoyuanma")
+    @NotEmpty(message = "手机号不能为空")
+    @Mobile
+    private String mobile;
+
+    @Schema(description = "短信验证码", requiredMode = Schema.RequiredMode.REQUIRED, example = "1024")
+    @NotEmpty(message = "验证码不能为空")
+    private String code;
+
 
     @Schema(description = "用户昵称", requiredMode = Schema.RequiredMode.REQUIRED, example = "芋艿")
     @NotBlank(message = "用户昵称不能为空")
