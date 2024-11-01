@@ -1,5 +1,7 @@
 package cn.iocoder.yudao.module.member.controller.app.auth;
 
+import cn.hutool.captcha.CaptchaUtil;
+import cn.hutool.captcha.LineCaptcha;
 import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.enums.UserTypeEnum;
 import cn.iocoder.yudao.framework.common.pojo.CommonResult;
@@ -10,10 +12,12 @@ import cn.iocoder.yudao.module.member.convert.auth.AuthConvert;
 import cn.iocoder.yudao.module.member.service.auth.MemberAuthService;
 import cn.iocoder.yudao.module.system.api.social.SocialClientApi;
 import cn.iocoder.yudao.module.system.api.social.dto.SocialWxJsapiSignatureRespDTO;
+import cn.iocoder.yudao.module.system.framework.captcha.core.RedisCaptchaServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +26,9 @@ import jakarta.annotation.Resource;
 import jakarta.annotation.security.PermitAll;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+
+import java.io.IOException;
+import java.util.UUID;
 
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 import static cn.iocoder.yudao.framework.security.core.util.SecurityFrameworkUtils.getLoginUserId;
@@ -42,6 +49,7 @@ public class AppAuthController {
     @Resource
     private SecurityProperties securityProperties;
 
+//    private static RedisCaptchaServiceImpl captchaService = new RedisCaptchaServiceImpl();
     @PostMapping("/login")
     @Operation(summary = "使用手机 + 密码登录")
     @PermitAll
@@ -130,6 +138,21 @@ public class AppAuthController {
         SocialWxJsapiSignatureRespDTO signature = socialClientApi.createWxMpJsapiSignature(
                 UserTypeEnum.MEMBER.getValue(), url);
         return success(AuthConvert.INSTANCE.convert(signature));
+    }
+
+
+    @PostMapping({"/createCaptcha"})
+    @Operation(summary = "获得验证码")
+    @PermitAll
+    public void createCaptcha(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        LineCaptcha lineCaptcha = CaptchaUtil.createLineCaptcha(200, 100);
+        String code = lineCaptcha.getCode();
+        String key = UUID.randomUUID().toString();
+//        captchaService.set(key, code, 60);
+        lineCaptcha.write(response.getOutputStream());
+        // 关闭流
+        response.setHeader("key", key);
+        response.getOutputStream().close();
     }
 
 }

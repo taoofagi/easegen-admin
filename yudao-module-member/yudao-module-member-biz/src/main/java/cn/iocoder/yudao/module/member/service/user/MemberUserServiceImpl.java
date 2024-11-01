@@ -10,6 +10,7 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.member.controller.admin.user.vo.MemberUserPageReqVO;
 import cn.iocoder.yudao.module.member.controller.admin.user.vo.MemberUserUpdateReqVO;
+import cn.iocoder.yudao.module.member.controller.app.auth.vo.AppAuthRegisterReqVO;
 import cn.iocoder.yudao.module.member.controller.app.user.vo.*;
 import cn.iocoder.yudao.module.member.convert.auth.AuthConvert;
 import cn.iocoder.yudao.module.member.convert.user.MemberUserConvert;
@@ -63,6 +64,15 @@ public class MemberUserServiceImpl implements MemberUserService {
 
     @Resource
     private MemberUserProducer memberUserProducer;
+
+    @Override
+    public MemberUserDO registerUser(AppAuthRegisterReqVO registerReqVO) {
+        MemberUserDO user = BeanUtils.toBean(registerReqVO, MemberUserDO.class);
+        user.setStatus(CommonStatusEnum.ENABLE.getStatus()); // 默认开启
+        user.setPassword(ObjectUtil.isNull(registerReqVO.getPassword())?"":encodePassword(registerReqVO.getPassword())); // 加密密码
+        memberUserMapper.insert(user);
+        return user;
+    }
 
     @Override
     public MemberUserDO getUserByMobile(String mobile) {

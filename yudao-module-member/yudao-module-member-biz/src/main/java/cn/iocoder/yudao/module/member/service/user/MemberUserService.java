@@ -5,6 +5,7 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.validation.Mobile;
 import cn.iocoder.yudao.module.member.controller.admin.user.vo.MemberUserPageReqVO;
 import cn.iocoder.yudao.module.member.controller.admin.user.vo.MemberUserUpdateReqVO;
+import cn.iocoder.yudao.module.member.controller.app.auth.vo.AppAuthRegisterReqVO;
 import cn.iocoder.yudao.module.member.controller.app.user.vo.*;
 import cn.iocoder.yudao.module.member.dal.dataobject.user.MemberUserDO;
 
@@ -19,6 +20,14 @@ import java.util.List;
  */
 public interface MemberUserService {
 
+
+    /**
+     * 注册用户
+     *
+     * @param registerReqVO 用户信息
+     * @return 用户编号
+     */
+    MemberUserDO registerUser(@Valid AppAuthRegisterReqVO registerReqVO);
     /**
      * 通过手机查询用户
      *
