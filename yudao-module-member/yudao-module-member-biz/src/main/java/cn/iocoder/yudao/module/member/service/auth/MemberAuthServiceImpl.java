@@ -77,9 +77,42 @@ public class MemberAuthServiceImpl implements MemberAuthService {
         return createTokenAfterLoginSuccess(user, reqVO.getMobile(), LoginLogTypeEnum.LOGIN_MOBILE, openid);
     }
 
+
+    public AppAuthLoginRespVO register(AppAuthRegisterReqVO reqVO) {
+        // 1. 校验验证码
+        //拉取redis验证码
+
+        if (Objects.isNull(reqVO.getRegisterIp())) reqVO.setRegisterIp(getClientIP());
+
+        // 校验验证码
+        smsCodeApi.useSmsCode(AuthConvert.INSTANCE.convert(reqVO, SmsSceneEnum.MEMBER_REGISTER.getScene(), getClientIP()));
+
+        // 2. 校验用户名是否已存在
+
+        MemberUserDO user = userService.registerUser(reqVO);
+        String openid = null;
+        if (reqVO.getSocialType() != null) {
+            openid = socialUserApi.bindSocialUser(new SocialUserBindReqDTO(user.getId(), getUserType().getValue(),
+                    reqVO.getSocialType(), reqVO.getSocialCode(), reqVO.getSocialState()));
+        }
+        // 3. 创建 Token 令牌，记录登录日志
+        return createTokenAfterLoginSuccess(user, reqVO.getMobile(), LoginLogTypeEnum.LOGIN_USERNAME, openid);
+    }
+
     @Override
     @Transactional
     public AppAuthLoginRespVO smsLogin(AppAuthSmsLoginReqVO reqVO) {
+        //判断是登录还是注册
+        MemberUserDO userByMobile = userService.getUserByMobile(reqVO.getMobile());
+        if (userByMobile == null) {    //注册
+            AppAuthRegisterReqVO appAuthRegisterReqVO = new AppAuthRegisterReqVO();
+            appAuthRegisterReqVO.setMobile(reqVO.getMobile());
+            appAuthRegisterReqVO.setCode(reqVO.getCode());
+            appAuthRegisterReqVO.setRegisterIp(getClientIP());
+            appAuthRegisterReqVO.setUsername(reqVO.getMobile());
+            AppAuthLoginRespVO register = register(appAuthRegisterReqVO);
+            return register;
+        }
         // 校验验证码
         String userIp = getClientIP();
         smsCodeApi.useSmsCode(AuthConvert.INSTANCE.convert(reqVO, SmsSceneEnum.MEMBER_LOGIN.getScene(), userIp));
@@ -240,6 +273,11 @@ public class MemberAuthServiceImpl implements MemberAuthService {
             MemberUserDO user = userService.getUser(userId);
             // TODO 芋艿：后续 member user 手机非强绑定，这块需要做下调整；
             reqVO.setMobile(user.getMobile());
+        }
+        //情况4：手机号登录接口，如果手机号不存在，则发送注册验证码
+        if (Objects.equals(reqVO.getScene(), SmsSceneEnum.MEMBER_LOGIN.getScene())) {
+            MemberUserDO user = userService.getUserByMobile(reqVO.getMobile());
+            if (user == null) reqVO.setScene(SmsSceneEnum.MEMBER_REGISTER.getScene());
         }
 
         // 执行发送
