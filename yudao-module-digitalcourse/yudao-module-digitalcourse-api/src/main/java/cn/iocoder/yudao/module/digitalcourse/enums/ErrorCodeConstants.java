@@ -40,4 +40,5 @@ public interface ErrorCodeConstants {
     ErrorCode COURSE_PPTS_NOT_EXISTS = new ErrorCode(1-0010-000-003, "存储课程的PPT信息，包括文件名、文件大小、类型等不存在");
     ErrorCode COURSE_MEDIA_NOT_EXISTS = new ErrorCode(1-0010-000-015, "课程媒体不存在");
     ErrorCode COURSES_TEXT_NOT_EXISTS = new ErrorCode(1-0010-000-016, "课程文本信息不存在");
+    ErrorCode TEMPLATE_NOT_EXISTS = new ErrorCode(1-0010-000-017, "模板不存在");
 }
