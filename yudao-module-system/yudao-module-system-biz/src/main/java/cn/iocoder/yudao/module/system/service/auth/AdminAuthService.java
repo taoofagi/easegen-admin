@@ -78,4 +78,6 @@ public interface AdminAuthService {
      */
     AuthLoginRespVO register(AuthRegisterReqVO createReqVO);
 
+    Boolean bindMobile(AuthBindMobileRespVO reqVO);
+
 }
