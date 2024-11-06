@@ -39,6 +39,12 @@ public class CourseSceneBackgroundsServiceImpl implements CourseSceneBackgrounds
         // 返回
         return courseSceneBackgrounds.getId();
     }
+    @Override
+    public Boolean createCourseSceneBackgrounds(List<AppCourseSceneBackgroundsSaveReqVO> createReqVO) {
+        // 插入
+        List<CourseSceneBackgroundsDO> courseSceneBackgrounds = BeanUtils.toBean(createReqVO, CourseSceneBackgroundsDO.class);
+        return courseSceneBackgroundsMapper.insertBatch(courseSceneBackgrounds);
+    }
 
     @Override
     public void updateCourseSceneBackgrounds(AppCourseSceneBackgroundsSaveReqVO updateReqVO) {

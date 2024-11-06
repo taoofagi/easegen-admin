@@ -24,6 +24,7 @@ public interface CourseSceneBackgroundsService {
      * @return 编号
      */
     Long createCourseSceneBackgrounds(@Valid AppCourseSceneBackgroundsSaveReqVO createReqVO);
+    Boolean createCourseSceneBackgrounds(@Valid List<AppCourseSceneBackgroundsSaveReqVO> createReqVO);
 
     /**
      * 更新存储每个场景的背景信息

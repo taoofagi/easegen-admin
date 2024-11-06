@@ -30,7 +30,7 @@ public interface CourseScenesService {
      * 根据课程id删除场景信息
      *
      */
-    Boolean batchRemoveCouseScenes(@Valid Long id);
+    void batchRemoveCouseScenes(@Valid Long id);
 
     List<AppCourseScenesSaveReqVO> selectScenesInfo(Long couseId);
     /**

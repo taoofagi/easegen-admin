@@ -24,6 +24,7 @@ public interface CourseSceneVoicesService {
      * @return 编号
      */
     Long createCourseSceneVoices(@Valid AppCourseSceneVoicesSaveReqVO createReqVO);
+    Boolean createCourseSceneVoices(@Valid List<AppCourseSceneVoicesSaveReqVO> createReqVO);
 
     /**
      * 更新存储每个场景中的声音信息

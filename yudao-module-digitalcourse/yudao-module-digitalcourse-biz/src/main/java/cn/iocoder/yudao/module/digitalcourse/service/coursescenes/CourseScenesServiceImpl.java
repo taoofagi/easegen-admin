@@ -1,5 +1,6 @@
 package cn.iocoder.yudao.module.digitalcourse.service.coursescenes;
 
+import cn.hutool.core.convert.Converter;
 import cn.iocoder.yudao.framework.common.exception.ServiceException;
 import cn.iocoder.yudao.framework.mybatis.core.query.QueryWrapperX;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.backgrounds.vo.BackgroundsSaveReqVO;
@@ -21,6 +22,7 @@ import cn.iocoder.yudao.module.digitalcourse.service.coursescenetexts.CourseScen
 import cn.iocoder.yudao.module.digitalcourse.service.coursescenevoices.CourseSceneVoicesService;
 import cn.iocoder.yudao.module.digitalcourse.service.voices.VoicesService;
 import jakarta.annotation.Resource;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +34,9 @@ import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 
 import cn.iocoder.yudao.module.digitalcourse.dal.mysql.coursescenes.CourseScenesMapper;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -103,7 +107,55 @@ public class CourseScenesServiceImpl implements CourseScenesService {
 
     @Override
     public Boolean batchCreateCourseScenes(List<AppCourseScenesSaveReqVO> createReqVO) {
-        createReqVO.stream().forEach(e -> {
+        System.out.println(System.currentTimeMillis()+ "-------  新增courseSecnce开始");
+        List<CourseScenesDO> courseScenes = BeanUtils.toBean(createReqVO, CourseScenesDO.class);
+        courseScenesMapper.insertBatch(courseScenes);
+        //按照顺序设置VO id
+        Map<Integer, CourseScenesDO> map = courseScenes.stream().collect(Collectors.toMap(CourseScenesDO::getOrderNo, c -> c));
+        createReqVO.stream()
+                .forEach(voObj -> voObj.setId(map.get(Integer.parseInt(String.valueOf(voObj.getOrderNo()))).getId()));
+        System.out.println(System.currentTimeMillis()+ "-------  新增courseSecnce结束");
+        List<AppCourseSceneBackgroundsSaveReqVO> bgVO = new ArrayList<>();
+        List<AppCourseSceneComponentsSaveReqVO> componentVO = new ArrayList<>();
+        List<AppCourseSceneVoicesSaveReqVO> voiceVO = new ArrayList<>();
+        List<AppCourseSceneTextsSaveReqVO> textVO = new ArrayList<>();
+        List<AppCourseSceneAudiosSaveReqVO> audioVO = new ArrayList<>();
+        System.out.println(System.currentTimeMillis()+ "-------  新增组件开始");
+        createReqVO.stream().forEach(e->{
+            AppCourseSceneBackgroundsSaveReqVO sceneBackgrounds = e.getBackground();
+            sceneBackgrounds.setSceneId(e.getId());
+            if (sceneBackgrounds.getStatus() == null ) sceneBackgrounds.setStatus(0);
+            bgVO.add(sceneBackgrounds);
+            //插入组件
+            List<AppCourseSceneComponentsSaveReqVO> sceneComponents = e.getComponents();
+            sceneComponents.stream().forEach(sc -> {
+                sc.setSceneId(e.getId());
+                if (sc.getStatus() == null ) sc.setStatus(0);
+            });
+            componentVO.addAll(sceneComponents);
+            //声音模型
+            AppCourseSceneVoicesSaveReqVO sceneVoices = e.getVoice();
+            sceneVoices.setSceneId(e.getId());
+            if (sceneVoices.getStatus() == null ) sceneVoices.setStatus(0);
+            voiceVO.add(sceneVoices);
+            //文本
+            AppCourseSceneTextsSaveReqVO sceneTexts = e.getTextDriver();
+            sceneTexts.setSceneId(e.getId());
+            if (sceneTexts.getStatus() == null ) sceneTexts.setStatus(0);
+            textVO.add(sceneTexts);
+            //场景音频
+            AppCourseSceneAudiosSaveReqVO sceneAudios = e.getAudioDriver();
+            sceneAudios.setSceneId(e.getId());
+            if (sceneAudios.getStatus() == null ) sceneAudios.setStatus(0);
+            audioVO.add(sceneAudios);
+        });
+        backgroundsService.createCourseSceneBackgrounds(bgVO);
+        componentsService.batchCreateCourseSceneComponents(componentVO);
+        voicesService.createCourseSceneVoices(voiceVO);
+        textsService.createCourseSceneTexts(textVO);
+        audiosService.createCourseSceneAudios(audioVO);
+        System.out.println(System.currentTimeMillis()+ "-------  新增组件结束");
+        /*createReqVO.stream().forEach(e -> {
             try {
                 createCourseScenes(e);
             }catch (Exception exception){
@@ -111,15 +163,17 @@ public class CourseScenesServiceImpl implements CourseScenesService {
                 System.out.println(exception);
                 throw exception(COURSES_UPDATE_ERROR);
             }
-        });
+        });*/
         return true;
     }
 
     @Override
-    public Boolean batchRemoveCouseScenes(Long id) {
+    @Async
+    public void batchRemoveCouseScenes(Long id) {
+        System.out.println(System.currentTimeMillis()+"      删除开始");
         List<CourseScenesDO> courseScenesDOS = courseScenesMapper.selectList(new QueryWrapperX<CourseScenesDO>().lambda().eq(CourseScenesDO::getCourseId, id));
         Set<Long> scenesIds = courseScenesDOS.stream().map(e -> e.getId()).collect(Collectors.toSet());
-        if (scenesIds.isEmpty()) return true;
+        if (scenesIds.isEmpty()) return;
         audiosService.deleteBySceneId(scenesIds);
         textsService.deleteBySceneId(scenesIds);
         voicesService.deleteBySceneId(scenesIds);
@@ -127,7 +181,8 @@ public class CourseScenesServiceImpl implements CourseScenesService {
         backgroundsService.deleteBySceneId(scenesIds);
 
         courseScenesMapper.delete(new QueryWrapperX<CourseScenesDO>().lambda().in(CourseScenesDO::getId,scenesIds));
-        return true;
+        System.out.println(System.currentTimeMillis()+"      删除结束");
+
     }
 
     @Override

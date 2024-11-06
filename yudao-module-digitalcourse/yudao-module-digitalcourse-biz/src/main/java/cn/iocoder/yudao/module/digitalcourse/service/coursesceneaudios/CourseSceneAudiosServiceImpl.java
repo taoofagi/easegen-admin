@@ -39,6 +39,12 @@ public class CourseSceneAudiosServiceImpl implements CourseSceneAudiosService {
         // 返回
         return courseSceneAudios.getId();
     }
+    @Override
+    public Boolean createCourseSceneAudios(List<AppCourseSceneAudiosSaveReqVO> createReqVO) {
+        // 插入
+        List<CourseSceneAudiosDO> courseSceneAudios = BeanUtils.toBean(createReqVO, CourseSceneAudiosDO.class);
+        return courseSceneAudiosMapper.insertBatch(courseSceneAudios);
+    }
 
     @Override
     public void updateCourseSceneAudios(AppCourseSceneAudiosSaveReqVO updateReqVO) {

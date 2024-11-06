@@ -87,10 +87,11 @@ public class CoursesServiceImpl implements CoursesService {
         // 构造 COURSE_SCENE_TEXT_KEY 和 COURSE_SEGMENT_TEXT_KEY 所需要的缓存数据
         String sceneRedisKey = COURSE_SCENE_TEXT_KEY + updateObj.getId();
         String segmentRedisKey = COURSE_SEGMENT_TEXT_KEY + updateObj.getId();
-
+        System.out.println(System.currentTimeMillis()+"-------  删除历史数据开始");
         // 先删除历史数据
         courseScenesService.batchRemoveCouseScenes(updateReqVO.getId());
-
+        System.out.println(System.currentTimeMillis()+"-------  删除历史数据结束");
+        System.out.println(System.currentTimeMillis()+"-------  组装scenes数据开始");
         // 重新insert
         List<AppCourseScenesSaveReqVO> scenes = updateReqVO.getScenes();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -105,7 +106,8 @@ public class CoursesServiceImpl implements CoursesService {
             sceneData.put("background", e.getBackground().getSrc());
             scenesMap.put(String.valueOf(e.getOrderNo()), sceneData);
         });
-
+        System.out.println(System.currentTimeMillis()+"-------  组装scenes数据结束");
+        System.out.println(System.currentTimeMillis()+ "-------  redis开始");
         // 将所有场景数据存放到一个key中
         try {
             redisCache.delete(sceneRedisKey);
@@ -118,6 +120,7 @@ public class CoursesServiceImpl implements CoursesService {
             //不抛异常，不影响更新动作
 //            throw new RuntimeException(e);
         }
+        System.out.println(System.currentTimeMillis()+ "-------  redis结束");
 
 
         courseScenesService.batchCreateCourseScenes(scenes);

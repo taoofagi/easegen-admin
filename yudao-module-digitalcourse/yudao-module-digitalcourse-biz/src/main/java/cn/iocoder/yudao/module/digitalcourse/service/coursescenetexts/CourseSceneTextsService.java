@@ -24,6 +24,7 @@ public interface CourseSceneTextsService {
      * @return 编号
      */
     Long createCourseSceneTexts(@Valid AppCourseSceneTextsSaveReqVO createReqVO);
+    Boolean createCourseSceneTexts(@Valid List<AppCourseSceneTextsSaveReqVO> createReqVO);
 
     /**
      * 更新存储场景中的文本信息，包括文本内容、音调、速度等
