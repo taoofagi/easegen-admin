@@ -39,6 +39,12 @@ public class CourseSceneTextsServiceImpl implements CourseSceneTextsService {
         // 返回
         return courseSceneTexts.getId();
     }
+    @Override
+    public Boolean createCourseSceneTexts(List<AppCourseSceneTextsSaveReqVO> createReqVO) {
+        // 插入
+        List<CourseSceneTextsDO> courseSceneTexts = BeanUtils.toBean(createReqVO, CourseSceneTextsDO.class);
+        return courseSceneTextsMapper.insertBatch(courseSceneTexts);
+    }
 
     @Override
     public void updateCourseSceneTexts(AppCourseSceneTextsSaveReqVO updateReqVO) {

@@ -24,6 +24,7 @@ public interface CourseSceneAudiosService {
      * @return 编号
      */
     Long createCourseSceneAudios(@Valid AppCourseSceneAudiosSaveReqVO createReqVO);
+    Boolean createCourseSceneAudios(@Valid List<AppCourseSceneAudiosSaveReqVO> createReqVO);
 
     /**
      * 更新存储场景中的音频信息，包括音频ID和使用视频背景音频的标志等

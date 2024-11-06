@@ -39,6 +39,12 @@ public class CourseSceneVoicesServiceImpl implements CourseSceneVoicesService {
         // 返回
         return courseSceneVoices.getId();
     }
+    @Override
+    public Boolean createCourseSceneVoices(List<AppCourseSceneVoicesSaveReqVO> createReqVO) {
+        // 插入
+        List<CourseSceneVoicesDO> courseSceneVoices = BeanUtils.toBean(createReqVO, CourseSceneVoicesDO.class);
+        return courseSceneVoicesMapper.insertBatch(courseSceneVoices);
+    }
 
     @Override
     public void updateCourseSceneVoices(AppCourseSceneVoicesSaveReqVO updateReqVO) {
