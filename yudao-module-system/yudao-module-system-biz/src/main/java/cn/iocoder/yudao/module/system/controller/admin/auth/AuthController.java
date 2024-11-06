@@ -161,4 +161,11 @@ public class AuthController {
         return success(authService.socialLogin(reqVO));
     }
 
+    @PostMapping("/bind-mobile")
+    @PermitAll
+    @Operation(summary = "绑定、更换手机号")
+    public CommonResult<Boolean> bindMobile(@RequestBody @Valid AuthBindMobileRespVO reqVO) {
+        return success(authService.bindMobile(reqVO));
+    }
+
 }

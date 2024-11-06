@@ -11,6 +11,7 @@ import cn.iocoder.yudao.module.system.api.sms.SmsCodeApi;
 import cn.iocoder.yudao.module.system.api.social.dto.SocialUserBindReqDTO;
 import cn.iocoder.yudao.module.system.api.social.dto.SocialUserRespDTO;
 import cn.iocoder.yudao.module.system.controller.admin.auth.vo.*;
+import cn.iocoder.yudao.module.system.controller.admin.user.vo.user.UserSaveReqVO;
 import cn.iocoder.yudao.module.system.convert.auth.AuthConvert;
 import cn.iocoder.yudao.module.system.dal.dataobject.oauth2.OAuth2AccessTokenDO;
 import cn.iocoder.yudao.module.system.dal.dataobject.user.AdminUserDO;
@@ -37,6 +38,7 @@ import java.util.Objects;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.framework.common.util.servlet.ServletUtils.getClientIP;
+import static cn.iocoder.yudao.framework.security.core.util.SecurityFrameworkUtils.getLoginUserId;
 import static cn.iocoder.yudao.module.system.enums.ErrorCodeConstants.*;
 
 /**
@@ -112,11 +114,12 @@ public class AdminAuthServiceImpl implements AdminAuthService {
     @Override
     public void sendSmsCode(AuthSmsSendReqVO reqVO) {
         // 登录场景，验证是否存在
-       if (SmsSceneEnum.MEMBER_REGISTER.getScene() != reqVO.getScene()) {
+       if (SmsSceneEnum.ADMIN_MEMBER_LOGIN.getScene() == reqVO.getScene()) {
            if (userService.getUserByMobile(reqVO.getMobile()) == null) {
                throw exception(AUTH_MOBILE_NOT_EXISTS);
            }
-       } else {
+       }
+       if (SmsSceneEnum.MEMBER_REGISTER.getScene() == reqVO.getScene() || SmsSceneEnum.ADMIN_BIND_MOBILE.getScene() == reqVO.getScene() ){
            if (userService.getUserByMobile(reqVO.getMobile()) != null) {
                throw exception(AUTH_MOBILE_EXISTS_REGISTER);
            }
@@ -266,6 +269,15 @@ public class AdminAuthServiceImpl implements AdminAuthService {
 
         // 3. 创建 Token 令牌，记录登录日志
         return createTokenAfterLoginSuccess(userId, registerReqVO.getUsername(), LoginLogTypeEnum.LOGIN_USERNAME);
+    }
+
+    @Override
+    public Boolean bindMobile(AuthBindMobileRespVO reqVO) {
+        // 校验验证码
+        smsCodeApi.useSmsCode(AuthConvert.INSTANCE.convert(reqVO, SmsSceneEnum.ADMIN_BIND_MOBILE.getScene(), getClientIP()));
+        UserSaveReqVO userSaveReqVO = new UserSaveReqVO().setId(getLoginUserId()).setMobile(reqVO.getMobile());
+        userService.updateUser(userSaveReqVO);
+        return true;
     }
 
     @VisibleForTesting
