@@ -56,7 +56,7 @@ public class CourseMediaController {
     @DeleteMapping("/delete")
     @Operation(summary = "删除课程媒体")
     @Parameter(name = "id", description = "编号", required = true)
-    @PreAuthorize("@ss.hasPermission('digitalcourse:course-media:delete')")
+//    @PreAuthorize("@ss.hasPermission('digitalcourse:course-media:delete')")
     public CommonResult<Boolean> deleteCourseMedia(@RequestParam("id") Long id) {
         courseMediaService.deleteCourseMedia(id);
         return success(true);
