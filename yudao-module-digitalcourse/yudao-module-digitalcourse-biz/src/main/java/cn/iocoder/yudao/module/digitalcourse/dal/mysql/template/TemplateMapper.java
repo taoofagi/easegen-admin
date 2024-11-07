@@ -32,7 +32,7 @@ public interface TemplateMapper extends BaseMapperX<TemplateDO> {
                 .eqIfPresent(TemplateDO::getHumanY, reqVO.getHumanY())
                 .eqIfPresent(TemplateDO::getBgImage, reqVO.getBgImage())
                 .betweenIfPresent(TemplateDO::getCreateTime, reqVO.getCreateTime())
-                .orderByDesc(TemplateDO::getId));
+                .orderByAsc(TemplateDO::getId));
     }
 
 }
