@@ -13,16 +13,16 @@ public class TemplateSaveReqVO {
     @Schema(description = "编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "30885")
     private Long id;
 
-    @Schema(description = "0 不显示，1显示", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "0 不显示，1显示不能为空")
+    @Schema(description = "是否显示背景", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull(message = "是否显示背景不能为空")
     private Integer showBackground;
 
-    @Schema(description = "0 不显示，1显示", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "0 不显示，1显示不能为空")
+    @Schema(description = "是否显示数字人", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull(message = "是否显示数字人不能为空")
     private Integer showDigitalHuman;
 
-    @Schema(description = "0 不显示，1显示", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "0 不显示，1显示不能为空")
+    @Schema(description = "是否显示ppt", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull(message = "是否显示ppt不能为空")
     private Integer showPpt;
 
     @Schema(description = "ppt宽", requiredMode = Schema.RequiredMode.REQUIRED)
