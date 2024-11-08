@@ -7,6 +7,8 @@ import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenetexts.v
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursescenetexts.CourseSceneTextsDO;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.Set;
+
 /**
  * 存储场景中的文本信息，包括文本内容、音调、速度等 Mapper
  *
@@ -27,5 +29,6 @@ public interface CourseSceneTextsMapper extends BaseMapperX<CourseSceneTextsDO> 
                 .eqIfPresent(CourseSceneTextsDO::getStatus, reqVO.getStatus())
                 .orderByDesc(CourseSceneTextsDO::getId));
     }
+    int physicalDelete(Set<Long> ids);
 
 }

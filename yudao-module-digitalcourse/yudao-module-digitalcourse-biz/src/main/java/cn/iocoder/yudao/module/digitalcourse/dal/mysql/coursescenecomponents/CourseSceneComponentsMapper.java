@@ -7,6 +7,8 @@ import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenecompone
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursescenecomponents.CourseSceneComponentsDO;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.Set;
+
 /**
  * 存储每个场景中的组件信息，包括PPT、数字人等 Mapper
  *
@@ -36,4 +38,5 @@ public interface CourseSceneComponentsMapper extends BaseMapperX<CourseSceneComp
                 .orderByDesc(CourseSceneComponentsDO::getId));
     }
 
+    int physicalDelete(Set<Long> ids);
 }

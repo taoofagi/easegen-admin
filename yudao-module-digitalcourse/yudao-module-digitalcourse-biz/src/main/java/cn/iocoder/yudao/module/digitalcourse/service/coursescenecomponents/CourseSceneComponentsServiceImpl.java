@@ -65,7 +65,7 @@ public class CourseSceneComponentsServiceImpl implements CourseSceneComponentsSe
 
     @Override
     public void deleteBySceneId(Set<Long> id) {
-        courseSceneComponentsMapper.delete(new QueryWrapper<CourseSceneComponentsDO>().lambda().in(CourseSceneComponentsDO::getSceneId,id));
+        courseSceneComponentsMapper.physicalDelete(id);
     }
 
     @Override

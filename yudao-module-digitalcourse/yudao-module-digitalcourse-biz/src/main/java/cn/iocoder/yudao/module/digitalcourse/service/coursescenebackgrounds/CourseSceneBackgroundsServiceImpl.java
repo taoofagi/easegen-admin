@@ -65,7 +65,7 @@ public class CourseSceneBackgroundsServiceImpl implements CourseSceneBackgrounds
 
     @Override
     public void deleteBySceneId(Set<Long> id) {
-        courseSceneBackgroundsMapper.delete(new QueryWrapper<CourseSceneBackgroundsDO>().lambda().in(CourseSceneBackgroundsDO::getSceneId,id));
+        courseSceneBackgroundsMapper.physicalDelete(id);
     }
 
     @Override

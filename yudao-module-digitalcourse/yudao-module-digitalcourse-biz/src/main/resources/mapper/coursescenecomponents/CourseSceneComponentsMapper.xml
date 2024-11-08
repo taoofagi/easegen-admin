@@ -9,4 +9,11 @@
         文档可见：https://www.iocoder.cn/MyBatis/x-plugins/
      -->
 
+    <delete id="physicalDelete" parameterType="java.util.Set">
+        delete FROM digitalcourse_course_scene_components
+        WHERE scene_id IN
+        <foreach collection="ids" item="sceneId" open="(" separator="," close=")">
+            #{sceneId}
+        </foreach>
+    </delete>
 </mapper>
