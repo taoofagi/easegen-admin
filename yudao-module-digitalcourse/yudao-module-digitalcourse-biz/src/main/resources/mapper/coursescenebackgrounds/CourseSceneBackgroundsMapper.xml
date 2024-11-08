@@ -8,5 +8,11 @@
         代码生成器暂时只生成 Mapper XML 文件本身，更多推荐 MybatisX 快速开发插件来生成查询。
         文档可见：https://www.iocoder.cn/MyBatis/x-plugins/
      -->
-
+    <delete id="physicalDelete" parameterType="java.util.Set">
+        delete FROM digitalcourse_course_scene_backgrounds
+        WHERE scene_id IN
+        <foreach collection="ids" item="sceneId" open="(" separator="," close=")">
+            #{sceneId}
+        </foreach>
+    </delete>
 </mapper>

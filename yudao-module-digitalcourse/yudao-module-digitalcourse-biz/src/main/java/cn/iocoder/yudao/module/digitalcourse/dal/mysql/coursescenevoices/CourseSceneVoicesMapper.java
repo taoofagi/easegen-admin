@@ -7,6 +7,8 @@ import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenevoices.
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursescenevoices.CourseSceneVoicesDO;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.Set;
+
 /**
  * 存储每个场景中的声音信息 Mapper
  *
@@ -25,5 +27,6 @@ public interface CourseSceneVoicesMapper extends BaseMapperX<CourseSceneVoicesDO
                 .eqIfPresent(CourseSceneVoicesDO::getStatus, reqVO.getStatus())
                 .orderByDesc(CourseSceneVoicesDO::getId));
     }
+    int physicalDelete(Set<Long> ids);
 
 }

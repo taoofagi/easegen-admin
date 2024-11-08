@@ -7,6 +7,8 @@ import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenebackgro
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursescenebackgrounds.CourseSceneBackgroundsDO;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.Set;
+
 /**
  * 存储每个场景的背景信息 Mapper
  *
@@ -30,5 +32,6 @@ public interface CourseSceneBackgroundsMapper extends BaseMapperX<CourseSceneBac
                 .eqIfPresent(CourseSceneBackgroundsDO::getStatus, reqVO.getStatus())
                 .orderByDesc(CourseSceneBackgroundsDO::getId));
     }
+    int physicalDelete(Set<Long> ids);
 
 }

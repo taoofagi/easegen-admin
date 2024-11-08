@@ -65,7 +65,7 @@ public class CourseSceneTextsServiceImpl implements CourseSceneTextsService {
 
     @Override
     public void deleteBySceneId(Set<Long> id) {
-        courseSceneTextsMapper.delete(new QueryWrapperX<CourseSceneTextsDO>().lambda().in(CourseSceneTextsDO::getSceneId,id));
+        courseSceneTextsMapper.physicalDelete(id);
     }
 
     @Override

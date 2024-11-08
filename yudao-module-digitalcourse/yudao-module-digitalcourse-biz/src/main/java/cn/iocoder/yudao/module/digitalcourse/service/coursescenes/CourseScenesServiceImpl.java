@@ -180,7 +180,7 @@ public class CourseScenesServiceImpl implements CourseScenesService {
         componentsService.deleteBySceneId(scenesIds);
         backgroundsService.deleteBySceneId(scenesIds);
 
-        courseScenesMapper.delete(new QueryWrapperX<CourseScenesDO>().lambda().in(CourseScenesDO::getId,scenesIds));
+        courseScenesMapper.physicalDelete(scenesIds);
         System.out.println(System.currentTimeMillis()+"      删除结束");
 
     }
