@@ -12,6 +12,7 @@ import cn.iocoder.yudao.module.member.convert.auth.AuthConvert;
 import cn.iocoder.yudao.module.member.service.auth.MemberAuthService;
 import cn.iocoder.yudao.module.system.api.social.SocialClientApi;
 import cn.iocoder.yudao.module.system.api.social.dto.SocialWxJsapiSignatureRespDTO;
+import com.fhs.exception.ParamException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -27,7 +28,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 import java.io.IOException;
-import java.util.UUID;
 
 import static cn.iocoder.yudao.framework.common.pojo.CommonResult.success;
 import static cn.iocoder.yudao.framework.security.core.util.SecurityFrameworkUtils.getLoginUserId;
@@ -140,18 +140,12 @@ public class AppAuthController {
     }
 
 
-    @PostMapping({"/createCaptcha"})
+    @GetMapping({"/createCaptcha"})
     @Operation(summary = "获得验证码")
     @PermitAll
-    public void createCaptcha(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        LineCaptcha lineCaptcha = CaptchaUtil.createLineCaptcha(200, 100);
-        String code = lineCaptcha.getCode();
-        String key = UUID.randomUUID().toString();
-//        captchaService.set(key, code, 60);
-        lineCaptcha.write(response.getOutputStream());
-        // 关闭流
-        response.setHeader("key", key);
-        response.getOutputStream().close();
+    public void createCaptcha(@RequestParam String key, HttpServletResponse response) throws IOException {
+        if(StrUtil.isBlank(key)) throw new ParamException("参数错误，请传入key");
+        authService.createCaptcha(key,response);
     }
 
 }

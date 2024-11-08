@@ -31,6 +31,15 @@ public class AppAuthLoginReqVO {
     @Length(min = 4, max = 16, message = "密码长度为 4-16 位")
     private String password;
 
+    @Schema(description = "校验码", requiredMode = Schema.RequiredMode.REQUIRED, example = "buzhidao")
+    @NotEmpty(message = "校验码不能为空")
+    @Length(min = 4, max = 16, message = "校验码长度为 4-16 位")
+    private String code;
+
+    @Schema(description = "key", requiredMode = Schema.RequiredMode.REQUIRED, example = "buzhidao")
+    @NotEmpty(message = "key不能为空")
+    private String key;
+
     // ========== 绑定社交登录时，需要传递如下参数 ==========
 
     @Schema(description = "社交平台的类型，参见 SocialTypeEnum 枚举值", requiredMode = Schema.RequiredMode.REQUIRED, example = "10")
