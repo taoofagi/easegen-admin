@@ -2,6 +2,7 @@ package cn.iocoder.yudao.module.member.service.auth;
 
 import cn.iocoder.yudao.module.member.controller.app.auth.vo.*;
 
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 
 /**
@@ -85,4 +86,5 @@ public interface MemberAuthService {
      */
     AppAuthLoginRespVO refreshToken(String refreshToken);
 
+    void createCaptcha(String key, HttpServletResponse response);
 }

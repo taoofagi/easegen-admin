@@ -1,7 +1,10 @@
 package cn.iocoder.yudao.module.member.service.auth;
 
+import cn.hutool.captcha.CaptchaUtil;
+import cn.hutool.captcha.LineCaptcha;
 import cn.hutool.core.lang.Assert;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.enums.CommonStatusEnum;
 import cn.iocoder.yudao.framework.common.enums.TerminalEnum;
 import cn.iocoder.yudao.framework.common.enums.UserTypeEnum;
@@ -27,12 +30,17 @@ import cn.iocoder.yudao.module.system.enums.logger.LoginResultEnum;
 import cn.iocoder.yudao.module.system.enums.oauth2.OAuth2ClientConstants;
 import cn.iocoder.yudao.module.system.enums.sms.SmsSceneEnum;
 import cn.iocoder.yudao.module.system.enums.social.SocialTypeEnum;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.annotation.Resource;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
 import static cn.iocoder.yudao.framework.common.util.servlet.ServletUtils.getClientIP;
@@ -60,9 +68,20 @@ public class MemberAuthServiceImpl implements MemberAuthService {
     private SocialClientApi socialClientApi;
     @Resource
     private OAuth2TokenApi oauth2TokenApi;
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+    private final static String CAPTCHA_KEY = "captcha:";
 
     @Override
     public AppAuthLoginRespVO login(AppAuthLoginReqVO reqVO) {
+        //拉取reids校验码校验
+        String uuid = redisTemplate.opsForValue().get(CAPTCHA_KEY + reqVO.getKey());
+        if (StrUtil.isBlank(uuid)){
+            throw new RuntimeException("验证码过期，请重新获取！");
+        }
+        if (!StrUtil.equals(uuid.toLowerCase(),reqVO.getCode().toLowerCase())){
+            throw new RuntimeException("验证码错误");
+        }
         // 使用手机 + 密码，进行登录。
         MemberUserDO user = login0(reqVO.getMobile(), reqVO.getPassword());
 
@@ -294,6 +313,17 @@ public class MemberAuthServiceImpl implements MemberAuthService {
         OAuth2AccessTokenRespDTO accessTokenDO = oauth2TokenApi.refreshAccessToken(refreshToken,
                 OAuth2ClientConstants.CLIENT_ID_DEFAULT);
         return AuthConvert.INSTANCE.convert(accessTokenDO, null);
+    }
+
+    @SneakyThrows
+    @Override
+    public void createCaptcha(String key, HttpServletResponse response) {
+        LineCaptcha lineCaptcha = CaptchaUtil.createLineCaptcha(200, 100);
+        String code = lineCaptcha.getCode();
+        redisTemplate.opsForValue().set(CAPTCHA_KEY+key, code, 60, TimeUnit.SECONDS);
+        lineCaptcha.write(response.getOutputStream());
+        // 关闭流
+        response.getOutputStream().close();
     }
 
     private void createLogoutLog(Long userId) {
