@@ -65,6 +65,9 @@ https://ozij45g3ts.feishu.cn/docx/EgS3dm1HtoKOPkxReEQcn3MCncg
 
 [![Star History Chart](https://api.star-history.com/svg?repos=taoofagi/easegen-admin&type=Date)](https://star-history.com/#taoofagi/easegen-admin&Date)
 
+## 🤝 获奖信息
+1. [2024年华彩杯算力大赛总决赛二等奖，项目编号L01610474065](https://mp.weixin.qq.com/s/SE10-cxLVurf0BfAMaegmw)]
+
 ## 🧾 免责声明/许可
 
 1. `代码`：`easegen-admin` 的代码采用 `Apache` 许可证发布，学术用途和商业用途都可以。
