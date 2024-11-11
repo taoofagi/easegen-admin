@@ -73,7 +73,7 @@ public class TemplateController {
 
     @GetMapping("/page")
     @Operation(summary = "获得模板分页")
-    @PreAuthorize("@ss.hasPermission('digitalcourse:template:query')")
+//    @PreAuthorize("@ss.hasPermission('digitalcourse:template:query')")
     public CommonResult<PageResult<TemplateRespVO>> getTemplatePage(@Valid TemplatePageReqVO pageReqVO) {
         PageResult<TemplateDO> pageResult = templateService.getTemplatePage(pageReqVO);
         return success(BeanUtils.toBean(pageResult, TemplateRespVO.class));
