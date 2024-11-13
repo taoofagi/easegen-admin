@@ -1,36 +1,40 @@
 version: "3.4"
 
-name: yudao-system
+name: easegen
 
 services:
   mysql:
-    container_name: yudao-mysql
+    container_name: easegen-mysql
     image: mysql:8
     restart: unless-stopped
     tty: true
     ports:
       - "3306:3306"
     environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-ruoyi-vue-pro}
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-123456}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-easegen}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-Easegen@2024}
     volumes:
-      - mysql:/var/lib/mysql/
-      - ./sql/mysql/ruoyi-vue-pro.sql:/docker-entrypoint-initdb.d/ruoyi-vue-pro.sql:ro
-
+      - ./mysqldata:/var/lib/mysql/
+      - ./sql/easegen.sql:/docker-entrypoint-initdb.d/ruoyi-vue-pro.sql:ro
+    command: [
+      "--lower_case_table_names=1",         # 设置不区分大小写
+      "--bind-address=0.0.0.0"           # 允许公网访问
+    ]
   redis:
-    container_name: yudao-redis
+    container_name: easegen-redis
     image: redis:6-alpine
     restart: unless-stopped
     ports:
       - "6379:6379"
+    command: ["redis-server", "--requirepass", "Easegen@2024"] # 设置 Redis 密码
     volumes:
-      - redis:/data
+      - ./redisdata:/data
 
-  server:
-    container_name: yudao-server
+  easegen-admin:
+    container_name: easegen-admin
     build:
       context: ./yudao-server/
-    image: yudao-server
+    image: taoofagi/easegen-admin:v0.1
     restart: unless-stopped
     ports:
       - "48080:48080"
@@ -39,43 +43,31 @@ services:
       SPRING_PROFILES_ACTIVE: local
       JAVA_OPTS:
         ${JAVA_OPTS:-
-          -Xms512m
-          -Xmx512m
+          -Xms1024m
+          -Xmx1024m
           -Djava.security.egd=file:/dev/./urandom
         }
       ARGS:
-        --spring.datasource.dynamic.datasource.master.url=${MASTER_DATASOURCE_URL:-jdbc:mysql://yudao-mysql:3306/ruoyi-vue-pro?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&nullCatalogMeansCurrent=true}
+        --spring.datasource.dynamic.datasource.master.url=${MASTER_DATASOURCE_URL:-jdbc:mysql://easegen-mysql:3306/easegen?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&nullCatalogMeansCurrent=true}
         --spring.datasource.dynamic.datasource.master.username=${MASTER_DATASOURCE_USERNAME:-root}
-        --spring.datasource.dynamic.datasource.master.password=${MASTER_DATASOURCE_PASSWORD:-123456}
-        --spring.datasource.dynamic.datasource.slave.url=${SLAVE_DATASOURCE_URL:-jdbc:mysql://yudao-mysql:3306/ruoyi-vue-pro?useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true&nullCatalogMeansCurrent=true}
-        --spring.datasource.dynamic.datasource.slave.username=${SLAVE_DATASOURCE_USERNAME:-root}
-        --spring.datasource.dynamic.datasource.slave.password=${SLAVE_DATASOURCE_PASSWORD:-123456}
-        --spring.data.redis.host=${REDIS_HOST:-yudao-redis}
+        --spring.datasource.dynamic.datasource.master.password=${MASTER_DATASOURCE_PASSWORD:-Easegen@2024}
+        --spring.data.redis.host=${REDIS_HOST:-easegen-redis}
+        --spring.data.redis.password=${REDIS_PASSWORD:-Easegen@2024}
     depends_on:
       - mysql
       - redis
 
-  admin:
-    container_name: yudao-admin
-    build:
-      context: ./yudao-ui-admin
-      args:
-        NODE_ENV:
-          ENV=${NODE_ENV:-production}
-          PUBLIC_PATH=${PUBLIC_PATH:-/}
-          VUE_APP_TITLE=${VUE_APP_TITLE:-芋道管理系统}
-          VUE_APP_BASE_API=${VUE_APP_BASE_API:-/prod-api}
-          VUE_APP_APP_NAME=${VUE_APP_APP_NAME:-/}
-          VUE_APP_TENANT_ENABLE=${VUE_APP_TENANT_ENABLE:-true}
-          VUE_APP_CAPTCHA_ENABLE=${VUE_APP_CAPTCHA_ENABLE:-true}
-          VUE_APP_DOC_ENABLE=${VUE_APP_DOC_ENABLE:-true}
-          VUE_APP_BAIDU_CODE=${VUE_APP_BAIDU_CODE:-fadc1bd5db1a1d6f581df60a1807f8ab}
-    image: yudao-admin
+  easegen-front:
+    container_name: easegen-front
+    image: nginx:alpine               # 直接使用官方的 Nginx 镜像
     restart: unless-stopped
     ports:
-      - "8080:80"
+      - "48083:80"
+    volumes:
+      - ./dist:/usr/share/nginx/html        # 映射本地的静态文件目录
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro      # 映射本地的 Nginx 配置文件
     depends_on:
-      - server
+      - easegen-admin
 
 volumes:
   mysql:
