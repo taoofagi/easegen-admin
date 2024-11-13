@@ -37,7 +37,8 @@
 以下是我们计划在未来实现的主要功能和改进：
 - [x] 支持课程模板
 - [ ] 支持数字人形象声音定制
-- [ ] 支持docker快速部署
+- [x] 支持docker快速部署
+- [ ] 支持AI生成口播稿
 - [ ] 声音支持SSML语法
 - [ ] 增加教案生成
 - [ ] 增加教案转课件，生成可控PPT
@@ -50,7 +51,9 @@
 基于master-jdk17 分支开发
 
 ## 部署手册
-https://ozij45g3ts.feishu.cn/docx/EgS3dm1HtoKOPkxReEQcn3MCncg
+* [docker部署手册](https://ozij45g3ts.feishu.cn/docx/V1qmd6gsWobsRWxJFepcdrnbnXF)
+* [后端部署手册](https://ozij45g3ts.feishu.cn/docx/EgS3dm1HtoKOPkxReEQcn3MCncg)
+* [前端部署+系统初始化手册](https://ozij45g3ts.feishu.cn/docx/OIN8daguXoTzESx8nxFcJOvsnWc)
 
 ## 🔥 前端代码
 
