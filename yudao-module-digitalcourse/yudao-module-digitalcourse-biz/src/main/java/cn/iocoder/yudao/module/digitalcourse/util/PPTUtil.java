@@ -146,8 +146,7 @@ public class PPTUtil {
             // 下载PPT文件
             URL url = new URL(fileUrl);
             InputStream inputStream = url.openStream();
-            //在高并发情况下，临时文件名称需要保持唯一
-            String tempFileName = getTimeStamp();
+            String tempFileName = UUID.randomUUID().toString();
             File pptFile = File.createTempFile("downloaded_ppt_"+tempFileName, ".pptx");
             try (FileOutputStream outputStream = new FileOutputStream(pptFile)) {
                 byte[] buffer = new byte[4096];
@@ -184,7 +183,7 @@ public class PPTUtil {
 
                 // 保存PPT总页数到Redis
                 log.info("PPT总页数：" + pageCount);
-                redisCache.opsForValue().set(ANALYSIS_PPT_COUNT_KEY + pptId, String.valueOf(pageCount));
+                redisCache.opsForValue().set(ANALYSIS_PPT_COUNT_KEY + pptId, String.valueOf(pageCount), 1, TimeUnit.DAYS);
 
                 List<Future<JSONObject>> futures = new ArrayList<>();
                 for (int i = 0; i < pageCount; i++) {
@@ -224,8 +223,8 @@ public class PPTUtil {
         return picList;
     }
 
-    private File convertPptToPdf(File pptFile) throws IOException {
-        String tempFileName = getTimeStamp();
+    private File convertPptToPdf(File pptFile) throws IOException, InterruptedException {
+        String tempFileName = UUID.randomUUID().toString();
         File pdfFile = File.createTempFile("ppt_to_pdf_"+tempFileName, ".pdf");
         String command;
         if (isWindows()) {
@@ -234,11 +233,14 @@ public class PPTUtil {
             command = String.format("libreoffice --headless --convert-to pdf --outdir %s %s", pdfFile.getParent(), pptFile.getAbsolutePath());
         }
         Process process = Runtime.getRuntime().exec(command);
-        try {
-            process.waitFor();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new IOException("LibreOffice转换过程中被中断", e);
+        try (BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+            String line;
+            while ((line = stdError.readLine()) != null) {
+                log.error("LibreOffice 错误信息: {}", line);
+            }
+        }
+        if (process.waitFor() != 0) {
+            throw new IOException("LibreOffice 转换失败，退出码: " + process.exitValue());
         }
         return new File(pdfFile.getParent(), pptFile.getName().replaceFirst(".pptx?$", ".pdf"));
 
@@ -252,7 +254,7 @@ public class PPTUtil {
         try (PDDocument document = PDDocument.load(pdfFile)) {
             return document.getNumberOfPages() > 0;
         } catch (IOException e) {
-            log.error("PDF文件无效: " + e.getMessage(), e);
+            log.error("验证PDF文件失败: {}, 原因: {}", pdfFile.getAbsolutePath(), e.getMessage(), e);
             return false;
         }
     }
