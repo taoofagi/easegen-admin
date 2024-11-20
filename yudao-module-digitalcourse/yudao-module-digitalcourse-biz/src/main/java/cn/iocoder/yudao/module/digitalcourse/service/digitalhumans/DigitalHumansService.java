@@ -43,6 +43,7 @@ public interface DigitalHumansService {
      * @return 数字人模型
      */
     DigitalHumansDO getDigitalHumans(Long id);
+    Boolean auditing();
 
     /**
      * 获得数字人模型分页
@@ -51,5 +52,6 @@ public interface DigitalHumansService {
      * @return 数字人模型分页
      */
     PageResult<DigitalHumansDO> getDigitalHumansPage(DigitalHumansPageReqVO pageReqVO);
+    PageResult<DigitalHumansDO> getDigitalHumansCommonPage(DigitalHumansPageReqVO pageReqVO);
 
 }

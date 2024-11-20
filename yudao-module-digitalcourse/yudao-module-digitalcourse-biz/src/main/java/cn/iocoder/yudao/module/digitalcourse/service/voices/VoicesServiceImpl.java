@@ -1,11 +1,16 @@
 package cn.iocoder.yudao.module.digitalcourse.service.voices;
 
+import cn.hutool.core.lang.UUID;
 import cn.hutool.core.util.StrUtil;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.framework.security.core.util.SecurityFrameworkUtils;
+import cn.iocoder.yudao.framework.web.core.util.WebFrameworkUtils;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.digitalhumans.vo.DigitalHumansTrailVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.voices.vo.VoicesPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.voices.vo.VoicesSaveReqVO;
+import cn.iocoder.yudao.module.digitalcourse.controller.admin.voices.vo.VoicesTrailVO;
+import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.digitalhumans.DigitalHumansDO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.voices.AuditionDO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.voices.TTSDTO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.voices.VoicesDO;
@@ -57,6 +62,7 @@ public class VoicesServiceImpl implements VoicesService {
 
     @Override
     public Long createVoices(VoicesSaveReqVO createReqVO) {
+        createReqVO.setCode(UUID.fastUUID().toString());
         // 插入
         VoicesDO voices = BeanUtils.toBean(createReqVO, VoicesDO.class);
         voicesMapper.insert(voices);
@@ -71,6 +77,17 @@ public class VoicesServiceImpl implements VoicesService {
         // 更新
         VoicesDO updateObj = BeanUtils.toBean(updateReqVO, VoicesDO.class);
         voicesMapper.updateById(updateObj);
+        if (updateReqVO.getStatus() == 3){
+
+        }
+    }
+
+    private VoicesTrailVO transferVO(Long id) {
+        VoicesDO voices = this.getVoices(id);
+        VoicesTrailVO build = VoicesTrailVO.builder().build();
+        BeanUtils.copyProperties(voices, build);
+        build.setAccountId(voices.getCreator());
+        return build;
     }
 
     @Override
@@ -94,7 +111,18 @@ public class VoicesServiceImpl implements VoicesService {
 
     @Override
     public PageResult<VoicesDO> getVoicesPage(VoicesPageReqVO pageReqVO) {
+        if (WebFrameworkUtils.getLoginUserId() != 1) pageReqVO.setCreator(String.valueOf(WebFrameworkUtils.getLoginUserId()));
         return voicesMapper.selectPage(pageReqVO);
+    }
+    @Override
+    public PageResult<VoicesDO> getVoicesCommonPage(VoicesPageReqVO pageReqVO) {
+        return voicesMapper.selectPage(pageReqVO);
+    }
+
+    @Override
+    public Boolean auditing() {
+        Integer auditing = voicesMapper.auditing(WebFrameworkUtils.getLoginUserId());
+        return auditing == null;
     }
 
     @Override

@@ -8,6 +8,7 @@ import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.voices.VoicesDO;
 import org.apache.ibatis.annotations.Mapper;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.voices.vo.*;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 声音管理 Mapper
@@ -26,7 +27,10 @@ public interface VoicesMapper extends BaseMapperX<VoicesDO> {
                 .eqIfPresent(VoicesDO::getVoiceType, reqVO.getVoiceType())
                 .betweenIfPresent(VoicesDO::getCreateTime, reqVO.getCreateTime())
                 .eqIfPresent(VoicesDO::getStatus, reqVO.getStatus())
+                .eqIfPresent(VoicesDO::getCreator, reqVO.getCreator())
                 .orderByDesc(VoicesDO::getId));
     }
+
+    Integer auditing(@Param("creator") Long creator);
 
 }

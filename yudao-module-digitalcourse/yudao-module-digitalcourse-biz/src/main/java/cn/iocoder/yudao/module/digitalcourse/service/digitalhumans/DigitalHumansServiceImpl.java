@@ -1,15 +1,16 @@
 package cn.iocoder.yudao.module.digitalcourse.service.digitalhumans;
 
+import cn.hutool.core.lang.UUID;
+import cn.hutool.core.util.StrUtil;
+import cn.iocoder.yudao.framework.web.core.util.WebFrameworkUtils;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import org.springframework.stereotype.Service;
 import jakarta.annotation.Resource;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.digitalhumans.vo.*;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.digitalhumans.DigitalHumansDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
-import cn.iocoder.yudao.framework.common.pojo.PageParam;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 
 import cn.iocoder.yudao.module.digitalcourse.dal.mysql.digitalhumans.DigitalHumansMapper;
@@ -29,8 +30,12 @@ public class DigitalHumansServiceImpl implements DigitalHumansService {
     @Resource
     private DigitalHumansMapper digitalHumansMapper;
 
+    @Resource
+    private DigitalHumansServiceUtil digitalHumansServiceUtil;
+
     @Override
     public Long createDigitalHumans(DigitalHumansSaveReqVO createReqVO) {
+        createReqVO.setCode(UUID.fastUUID().toString());
         // 插入
         DigitalHumansDO digitalHumans = BeanUtils.toBean(createReqVO, DigitalHumansDO.class);
         digitalHumansMapper.insert(digitalHumans);
@@ -45,7 +50,25 @@ public class DigitalHumansServiceImpl implements DigitalHumansService {
         // 更新
         DigitalHumansDO updateObj = BeanUtils.toBean(updateReqVO, DigitalHumansDO.class);
         digitalHumansMapper.updateById(updateObj);
+
+        //异步训练模型
+        if (updateObj.getStatus() == 3){
+            digitalHumansServiceUtil.remoteTrain(transferVO(updateObj.getId()));
+        }
     }
+
+
+
+    private DigitalHumansTrailVO transferVO(Long id) {
+        DigitalHumansDO digitalHumans = this.getDigitalHumans(id);
+        DigitalHumansTrailVO build = DigitalHumansTrailVO.builder().build();
+        if (StrUtil.isBlank(digitalHumans.getFixVideoUrl())) build.setFixVideoUrl(digitalHumans.getVideoUrl());
+        if (StrUtil.isBlank(digitalHumans.getFixPictureUrl())) build.setFixPictureUrl(digitalHumans.getPictureUrl());
+        BeanUtils.copyProperties(digitalHumans, build);
+        build.setAccountId(digitalHumans.getCreator());
+        return build;
+    }
+
 
     @Override
     public void deleteDigitalHumans(Long id) {
@@ -67,7 +90,18 @@ public class DigitalHumansServiceImpl implements DigitalHumansService {
     }
 
     @Override
+    public Boolean auditing() {
+        Integer auditing = digitalHumansMapper.auditing(WebFrameworkUtils.getLoginUserId());
+        return auditing == null;
+    }
+
+    @Override
+    public PageResult<DigitalHumansDO> getDigitalHumansCommonPage(DigitalHumansPageReqVO pageReqVO) {
+        return digitalHumansMapper.selectPage(pageReqVO);
+    }
+    @Override
     public PageResult<DigitalHumansDO> getDigitalHumansPage(DigitalHumansPageReqVO pageReqVO) {
+        if (WebFrameworkUtils.getLoginUserId() != 1) pageReqVO.setCreator(String.valueOf(WebFrameworkUtils.getLoginUserId()));
         return digitalHumansMapper.selectPage(pageReqVO);
     }
 

@@ -37,4 +37,6 @@ public class VoicesPageReqVO extends PageParam {
     @Schema(description = "状态 (0: 正常, 1: 异常)", example = "2")
     private Integer status;
 
+    private String creator;
+
 }

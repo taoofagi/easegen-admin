@@ -8,6 +8,7 @@ import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.digitalhumans.DigitalHumansDO;
 import org.apache.ibatis.annotations.Mapper;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.digitalhumans.vo.*;
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 数字人模型 Mapper
@@ -25,7 +26,10 @@ public interface DigitalHumansMapper extends BaseMapperX<DigitalHumansDO> {
                 .eqIfPresent(DigitalHumansDO::getType, reqVO.getType())
                 .eqIfPresent(DigitalHumansDO::getUseModel, reqVO.getUseModel())
                 .eqIfPresent(DigitalHumansDO::getStatus, reqVO.getStatus())
+                .eqIfPresent(DigitalHumansDO::getCreator, reqVO.getCreator())
                 .orderByDesc(DigitalHumansDO::getId));
     }
+
+    Integer auditing(@Param("creator") Long creator);
 
 }

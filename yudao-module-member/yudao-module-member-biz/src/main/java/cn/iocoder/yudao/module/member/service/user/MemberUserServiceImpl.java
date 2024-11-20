@@ -3,6 +3,7 @@ package cn.iocoder.yudao.module.member.service.user;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.ListUtil;
 import cn.hutool.core.lang.Assert;
+import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.*;
 import cn.iocoder.yudao.framework.common.enums.CommonStatusEnum;
 import cn.iocoder.yudao.framework.common.enums.UserTypeEnum;
@@ -65,11 +66,14 @@ public class MemberUserServiceImpl implements MemberUserService {
     @Resource
     private MemberUserProducer memberUserProducer;
 
+    static Snowflake snowflake = IdUtil.createSnowflake(1,1);
+
     @Override
     public MemberUserDO registerUser(AppAuthRegisterReqVO registerReqVO) {
         MemberUserDO user = BeanUtils.toBean(registerReqVO, MemberUserDO.class);
         user.setStatus(CommonStatusEnum.ENABLE.getStatus()); // 默认开启
         user.setPassword(ObjectUtil.isNull(registerReqVO.getPassword())?"":encodePassword(registerReqVO.getPassword())); // 加密密码
+        user.setId(snowflake.nextId());
         memberUserMapper.insert(user);
         return user;
     }
