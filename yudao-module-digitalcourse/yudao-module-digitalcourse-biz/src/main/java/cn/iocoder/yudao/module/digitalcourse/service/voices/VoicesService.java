@@ -51,6 +51,9 @@ public interface VoicesService {
      * @return 声音管理分页
      */
     PageResult<VoicesDO> getVoicesPage(VoicesPageReqVO pageReqVO);
+    PageResult<VoicesDO> getVoicesCommonPage(VoicesPageReqVO pageReqVO);
 
     String audition(AuditionDO auditionDO);
+
+    Boolean auditing();
 }

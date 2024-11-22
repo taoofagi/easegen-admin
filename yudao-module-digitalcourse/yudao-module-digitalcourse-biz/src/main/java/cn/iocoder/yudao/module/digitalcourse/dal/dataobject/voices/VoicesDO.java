@@ -74,4 +74,6 @@ public class VoicesDO extends BaseDO {
      */
     private Integer status;
 
+    private String fixAuditionUrl;
+
 }

@@ -17,8 +17,7 @@ public class VoicesSaveReqVO {
     @NotEmpty(message = "声音名称不能为空")
     private String name;
 
-    @Schema(description = "声音编码", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotEmpty(message = "声音编码不能为空")
+    @Schema(description = "声音编码")
     private String code;
 
     @Schema(description = "试听URL", requiredMode = Schema.RequiredMode.REQUIRED)
@@ -51,5 +50,7 @@ public class VoicesSaveReqVO {
     @Schema(description = "状态 (0: 正常, 1: 异常)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
     @NotNull(message = "状态 (0: 正常, 1: 异常)不能为空")
     private Integer status;
+
+    private String fixAuditionUrl;
 
 }

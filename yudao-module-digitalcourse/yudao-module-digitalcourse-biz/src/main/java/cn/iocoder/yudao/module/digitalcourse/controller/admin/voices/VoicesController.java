@@ -44,14 +44,14 @@ public class VoicesController {
 
     @PostMapping("/create")
     @Operation(summary = "创建声音管理")
-    @PreAuthorize("@ss.hasPermission('digitalcourse:voices:create')")
+//    @PreAuthorize("@ss.hasPermission('digitalcourse:voices:create')")
     public CommonResult<Long> createVoices(@Valid @RequestBody VoicesSaveReqVO createReqVO) {
         return success(voicesService.createVoices(createReqVO));
     }
 
     @PutMapping("/update")
     @Operation(summary = "更新声音管理")
-    @PreAuthorize("@ss.hasPermission('digitalcourse:voices:update')")
+//    @PreAuthorize("@ss.hasPermission('digitalcourse:voices:update')")
     public CommonResult<Boolean> updateVoices(@Valid @RequestBody VoicesSaveReqVO updateReqVO) {
         voicesService.updateVoices(updateReqVO);
         return success(true);
@@ -81,6 +81,21 @@ public class VoicesController {
     public CommonResult<PageResult<VoicesRespVO>> getVoicesPage(@Valid VoicesPageReqVO pageReqVO) {
         PageResult<VoicesDO> pageResult = voicesService.getVoicesPage(pageReqVO);
         return success(BeanUtils.toBean(pageResult, VoicesRespVO.class));
+    }
+
+    @GetMapping("/common-page")
+    @Operation(summary = "获得声音管理分页")
+//    @PreAuthorize("@ss.hasPermission('digitalcourse:voices:query')")
+    public CommonResult<PageResult<VoicesRespVO>> getVoicesCommonPage(@Valid VoicesPageReqVO pageReqVO) {
+        PageResult<VoicesDO> pageResult = voicesService.getVoicesCommonPage(pageReqVO);
+        return success(BeanUtils.toBean(pageResult, VoicesRespVO.class));
+    }
+
+    @GetMapping("/auditing")
+    @Operation(summary = "查看自己流程中的数字人")
+    @Parameter(name = "id", description = "编号", required = true, example = "1024")
+    public CommonResult<Boolean> auditing() {
+        return success(voicesService.auditing());
     }
 
     @GetMapping("/export-excel")

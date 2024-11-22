@@ -32,13 +32,13 @@ public class DigitalHumansSaveReqVO {
     @NotEmpty(message = "数字人名称不能为空")
     private String name;
 
-    @Schema(description = "数字人编码", requiredMode = Schema.RequiredMode.REQUIRED, example = "zhangsan")
-    @NotEmpty(message = "数字人编码不能为空")
+    @Schema(description = "数字人编码")
     private String code;
 
-    @Schema(description = "图片URL", requiredMode = Schema.RequiredMode.REQUIRED, example = "https://www.iocoder.cn")
-    @NotEmpty(message = "图片URL不能为空")
+    @Schema(description = "图片URL", example = "https://www.iocoder.cn")
     private String pictureUrl;
+    @Schema(description = "视频URL",  example = "https://www.iocoder.cn")
+    private String videoUrl;
 
     @Schema(description = "姿势", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "姿势不能为空")
@@ -66,5 +66,10 @@ public class DigitalHumansSaveReqVO {
     @Schema(description = "状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
     @NotNull(message = "状态不能为空")
     private Integer status;
+
+    //修复图片
+    private String fixPictureUrl;
+    //修复视频
+    private String fixVideoUrl;
 
 }

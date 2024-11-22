@@ -119,4 +119,11 @@ public class DigitalHumansDO extends BaseDO {
      */
     private Integer status;
 
+    //视频
+    private String videoUrl;
+    //修复图片
+    private String fixPictureUrl;
+    //修复视频
+    private String fixVideoUrl;
+
 }

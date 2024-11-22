@@ -37,14 +37,12 @@ public class DigitalHumansController {
 
     @PostMapping("/create")
     @Operation(summary = "创建数字人模型")
-    @PreAuthorize("@ss.hasPermission('digitalcourse:digital-humans:create')")
     public CommonResult<Long> createDigitalHumans(@Valid @RequestBody DigitalHumansSaveReqVO createReqVO) {
         return success(digitalHumansService.createDigitalHumans(createReqVO));
     }
 
     @PutMapping("/update")
     @Operation(summary = "更新数字人模型")
-    @PreAuthorize("@ss.hasPermission('digitalcourse:digital-humans:update')")
     public CommonResult<Boolean> updateDigitalHumans(@Valid @RequestBody DigitalHumansSaveReqVO updateReqVO) {
         digitalHumansService.updateDigitalHumans(updateReqVO);
         return success(true);
@@ -68,11 +66,25 @@ public class DigitalHumansController {
         return success(BeanUtils.toBean(digitalHumans, DigitalHumansRespVO.class));
     }
 
+    @GetMapping("/auditing")
+    @Operation(summary = "查看自己流程中的数字人")
+    @Parameter(name = "id", description = "编号", required = true, example = "1024")
+    public CommonResult<Boolean> auditing() {
+        return success(digitalHumansService.auditing());
+    }
+
     @GetMapping("/page")
     @Operation(summary = "数字人模型分页")
 //    @PreAuthorize("@ss.hasPermission('digitalcourse:digital-humans:query')")
     public CommonResult<PageResult<DigitalHumansRespVO>> getDigitalHumansPage(@Valid DigitalHumansPageReqVO pageReqVO) {
         PageResult<DigitalHumansDO> pageResult = digitalHumansService.getDigitalHumansPage(pageReqVO);
+        return success(BeanUtils.toBean(pageResult, DigitalHumansRespVO.class));
+    }
+    @GetMapping("/common-page")
+    @Operation(summary = "数字人模型分页")
+//    @PreAuthorize("@ss.hasPermission('digitalcourse:digital-humans:query')")
+    public CommonResult<PageResult<DigitalHumansRespVO>> getDigitalHumansCommonPage(@Valid DigitalHumansPageReqVO pageReqVO) {
+        PageResult<DigitalHumansDO> pageResult = digitalHumansService.getDigitalHumansCommonPage(pageReqVO);
         return success(BeanUtils.toBean(pageResult, DigitalHumansRespVO.class));
     }
 

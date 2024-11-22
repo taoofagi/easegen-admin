@@ -75,6 +75,9 @@ public class DigitalHumansRespVO {
     @Schema(description = "图片URL", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("图片URL")
     private String pictureUrl;
+    @Schema(description = "视频URL", requiredMode = Schema.RequiredMode.REQUIRED)
+    @ExcelProperty("视频URL")
+    private String videoUrl;
 
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("创建时间")
@@ -84,5 +87,9 @@ public class DigitalHumansRespVO {
     @ExcelProperty(value = "状态", converter = DictConvert.class)
     @DictFormat("common_status") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
     private Integer status;
+    //修复图片
+    private String fixPictureUrl;
+    //修复视频
+    private String fixVideoUrl;
 
 }

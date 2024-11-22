@@ -6,13 +6,17 @@ FROM eclipse-temurin:17-jre-focal
 RUN mkdir -p /easegen-admin
 WORKDIR /easegen-admin
 
-# 更新为阿里云镜像源并安装 LibreOffice
-RUN sed -i 's|http://.*.ubuntu.com|http://mirrors.aliyun.com|g' /etc/apt/sources.list && \
-    apt-get update && \
-    apt-get install -y libreoffice && \
+# 更新为阿里云镜像源
+RUN sed -i 's|http://.*.ubuntu.com|http://mirrors.aliyun.com|g' /etc/apt/sources.list
+
+# 安装 LibreOffice 和常见中文字体
+RUN apt-get update && \
+    apt-get install -y libreoffice \
+                       fonts-noto-cjk \
+                       fonts-wqy-zenhei \
+                       fonts-wqy-microhei && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
 ## 将后端项目的 Jar 文件，复制到镜像中
 COPY ./target/yudao-server.jar app.jar
 

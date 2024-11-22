@@ -2,10 +2,7 @@ package cn.iocoder.yudao.module.digitalcourse.util;
 
 
 
-import cn.hutool.http.HttpRequest;
-import cn.hutool.json.JSONArray;
 import cn.hutool.json.JSONObject;
-import cn.hutool.json.JSONUtil;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.courseppts.CoursePptsDO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.pptmaterials.PptMaterialsDO;
@@ -25,13 +22,9 @@ import org.springframework.stereotype.Component;
 
 
 import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
@@ -71,33 +64,9 @@ public class PPTUtil {
     public void analysisPpt(String file,Long pptId){
         Boolean b = false;
         try {
-            log.info("开始解析ppt,pptId:"+pptId+",file:"+file);
-//            String path = file.substring(file.lastIndexOf("/")+1);
-//            byte[] fileContent = fileApi.getFileContent(4L, path);
-//            Path tempFilePath = Files.createTempFile(path,".pptx");
-//            File tempFile = tempFilePath.toFile();
-//            tempFile.deleteOnExit();
-//            try (InputStream inputStream = new ByteArrayInputStream(fileContent);
-//                 java.io.FileOutputStream outputStream = new java.io.FileOutputStream(tempFile)) {
-//                byte[] buffer = new byte[1024];
-//                int len;
-//                while ((len = inputStream.read(buffer)) != -1) {
-//                    outputStream.write(buffer, 0, len);
-//                }
-//            }
-            //直接传文件url
-            HashMap<String, Object> param = new HashMap<>();
-            param.put("file",file);
-            param.put("pptId",pptId);
-//            String apiUrl = configApi.getConfigValueByKey(EASEGEN_CORE_PPT_ANALYSIS_URL) + "/admin-api/digitalcourse/course-ppts/analysisPpt";
-//            String apiUrl = "http://127.0.0.1:7962" + "/admin-api/digitalcourse/course-ppts/analysisPpt";
-//            String body = HttpRequest.post(apiUrl)
-//                    .form("file", file)
-//                    .form("pptId", pptId)
-//                    .execute().body();
-//            JSONObject entries = JSONUtil.parseObj(body);
-//            JSONArray data = JSONUtil.parseArray(entries.getStr("data"));
+            log.info("[analysisPpt][开始] pptId:{}, file:{}", pptId, file);
             ArrayList<JSONObject> data = analysisPptLocal(file, pptId);
+            log.info("[analysisPpt][解析完成] pptId:{}, 页数:{}", pptId, data.size());
             List<PptMaterialsDO> list = new ArrayList<>();
             log.info("解析ppt数据："+data);
 
@@ -126,6 +95,7 @@ public class PPTUtil {
             }
 
             b = pptMaterialsService.batchInsert(list);
+            log.info("[analysisPpt][保存完成] pptId:{}, 结果:{}", pptId, b);
         }catch (Exception e){
             throw new RuntimeException(e);
         }finally {
@@ -138,16 +108,16 @@ public class PPTUtil {
 
     public ArrayList<JSONObject> analysisPptLocal(String fileUrl, Long pptId) {
         ArrayList<JSONObject> picList = new ArrayList<>();
-        ExecutorService executorService = Executors.newFixedThreadPool(1);  // 降低并发量，减轻负载
+        ExecutorService executorService = null;
 
         try {
             // 更新进度为开始
             redisCache.opsForValue().set(ANALYSIS_PPT_KEY + pptId, "0", 1, TimeUnit.DAYS);
             // 下载PPT文件
+            log.info("[analysisPptLocal][开始下载] pptId:{}, url:{}", pptId, fileUrl);
             URL url = new URL(fileUrl);
             InputStream inputStream = url.openStream();
-            //在高并发情况下，临时文件名称需要保持唯一
-            String tempFileName = getTimeStamp();
+            String tempFileName = UUID.randomUUID().toString();
             File pptFile = File.createTempFile("downloaded_ppt_"+tempFileName, ".pptx");
             try (FileOutputStream outputStream = new FileOutputStream(pptFile)) {
                 byte[] buffer = new byte[4096];
@@ -165,26 +135,33 @@ public class PPTUtil {
 
 
             // 使用LibreOffice将PPT转换为PDF
+            log.info("[analysisPptLocal][开始转换PDF] pptId:{}", pptId);
             File pdfFile = convertPptToPdf(pptFile);
+            log.info("[analysisPptLocal][转换完成] pptId:{}", pptId);
 
             if (!isValidPdf(pdfFile)) {
+                log.error("[analysisPptLocal][PDF无效] pptId:{}", pptId);
+                redisCache.opsForValue().set(ANALYSIS_PPT_KEY + pptId, "-1", 1, TimeUnit.DAYS);
                 throw new RuntimeException("生成的PDF文件无效");
             }
-
+            executorService = Executors.newFixedThreadPool(1);
             // 将PDF转换为图片
             PDDocument document = null;
             try {
+                log.info("[analysisPptLocal][PDF加载] pptId:{}", pptId);
                 document = PDDocument.load(pdfFile);
+                log.info("[analysisPptLocal][PDF加载完成] pptId:{}", pptId);
             } catch (IOException e) {
                 throw new RuntimeException("PDF加载失败: " + e.getMessage(), e);
             }
 
             try {
                 int pageCount = document.getNumberOfPages();
+                log.info("[analysisPptLocal][开始处理页面] pptId:{}, 总页数:{}", pptId, pageCount);
 
                 // 保存PPT总页数到Redis
                 log.info("PPT总页数：" + pageCount);
-                redisCache.opsForValue().set(ANALYSIS_PPT_COUNT_KEY + pptId, String.valueOf(pageCount));
+                redisCache.opsForValue().set(ANALYSIS_PPT_COUNT_KEY + pptId, String.valueOf(pageCount), 1, TimeUnit.DAYS);
 
                 List<Future<JSONObject>> futures = new ArrayList<>();
                 for (int i = 0; i < pageCount; i++) {
@@ -217,6 +194,9 @@ public class PPTUtil {
             pdfFile.delete();
             pptFile.delete();
         } catch (Exception e) {
+            // 所有异常都更新Redis进度为-1
+            redisCache.opsForValue().set(ANALYSIS_PPT_KEY + pptId, "-1", 1, TimeUnit.DAYS);
+            log.error("[analysisPptLocal][异常] pptId:{}, 错误:{}", pptId, e.getMessage(), e);
             throw new RuntimeException("PPT解析失败: " + e.getMessage(), e);
         } finally {
             executorService.shutdown();
@@ -224,25 +204,32 @@ public class PPTUtil {
         return picList;
     }
 
-    private File convertPptToPdf(File pptFile) throws IOException {
-        String tempFileName = getTimeStamp();
+    private File convertPptToPdf(File pptFile) throws IOException, InterruptedException {
+        log.info("[convertPptToPdf][开始] pptFile:{}", pptFile.getName());
+        String tempFileName = UUID.randomUUID().toString();
         File pdfFile = File.createTempFile("ppt_to_pdf_"+tempFileName, ".pdf");
         String command;
         if (isWindows()) {
-            command = String.format("\"C:\\Program Files\\LibreOffice\\program\\soffice.exe\" --headless --convert-to pdf --outdir %s %s", pdfFile.getParent(), pptFile.getAbsolutePath());
+            command = String.format("\"C:\\Program Files\\LibreOffice\\program\\soffice.com\" --headless --convert-to pdf --outdir %s %s", pdfFile.getParent(), pptFile.getAbsolutePath());
         } else {
             command = String.format("libreoffice --headless --convert-to pdf --outdir %s %s", pdfFile.getParent(), pptFile.getAbsolutePath());
         }
+        log.info("[convertPptToPdf][执行命令] command:{}", command);
         Process process = Runtime.getRuntime().exec(command);
-        try {
-            process.waitFor();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            throw new IOException("LibreOffice转换过程中被中断", e);
+        try (BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
+            String line;
+            while ((line = stdError.readLine()) != null) {
+                log.error("LibreOffice 错误信息: {}", line);
+            }
         }
+        if (process.waitFor() != 0) {
+            throw new IOException("LibreOffice 转换失败，退出码: " + process.exitValue());
+        }
+        log.info("[convertPptToPdf][转换成功] pptFile:{}", pptFile.getName());
         return new File(pdfFile.getParent(), pptFile.getName().replaceFirst(".pptx?$", ".pdf"));
 
     }
+
 
     private boolean isWindows() {
         return System.getProperty("os.name").toLowerCase().contains("win");
@@ -252,7 +239,7 @@ public class PPTUtil {
         try (PDDocument document = PDDocument.load(pdfFile)) {
             return document.getNumberOfPages() > 0;
         } catch (IOException e) {
-            log.error("PDF文件无效: " + e.getMessage(), e);
+            log.error("验证PDF文件失败: {}, 原因: {}", pdfFile.getAbsolutePath(), e.getMessage(), e);
             return false;
         }
     }
