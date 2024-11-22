@@ -1,76 +1,79 @@
-我 全栈工程师，AGI时代超级个体践行者，希望通过开源为AI发展做贡献。
 
-如果这个项目让你有所收获，记得 Star 关注哦，这对我是非常不错的鼓励与支持。
+<p align="center">
+  <a href="./README.md">English</a> |
+  <a href="./README_cn.md">简体中文</a> 
+</p>
 
-## 🐶 新手必读
+I am a full-stack engineer, a practitioner of the AGI era super individual, hoping to contribute to AI development through open source.
 
-* 演示地址【Vue3 + element-plus】：<http://36.103.251.108:48083> 请自行注册试用
-* 启动文档、操作手册：请加入飞书群获取
-![飞书](.image%2Fdigitalcourse%2Ffeishu.png)
-* 项目合作&技术交流加微信，备注easegen：
-![微信](.image%2Fdigitalcourse%2Fwechat.png)
-## 🐯 平台简介
+If this project has helped you, remember to Star and follow, which would be great encouragement and support for me.
 
-**easegen**，开源数字人课程制作平台。
+## 🐶 Beginner's Guide
 
-* 前端基于 [yudao-ui-admin-vue3](https://gitee.com/yudaocode/yudao-ui-admin-vue3) 实现
-* 后端基于 [ruoyi-vue-pro](https://gitee.com/zhijiantianya/ruoyi-vue-pro) 实现
-* 智能课件基于[文多多AIPPT](https://easegen.docmee.cn)实现
+* Demo URL 【Vue3 + element-plus】: <http://36.103.251.108:48083> Please register to try it yourself.
+* Startup documentation, operation manual: Please join the discard group to get it.
+discard:https://discord.gg/q2RK3sEQwW
+* Project collaboration & technical exchanges: add WeChat, note easegen:
+![WeChat](.image%2Fdigitalcourse%2Fwechat.png)
 
-* 课程制作页
+## 🐯 Platform Introduction
+
+**easegen**, an open-source digital human course creation platform.
+
+* Frontend is implemented based on [yudao-ui-admin-vue3](https://gitee.com/yudaocode/yudao-ui-admin-vue3).
+* Backend is implemented based on [ruoyi-vue-pro](https://gitee.com/zhijiantianya/ruoyi-vue-pro).
+* Intelligent courseware is realized based on [Wenduoduo AIPPT](https://easegen.docmee.cn).
+
+* Course creation page
 
 ![digitalhuman_course.png](.image%2Fdigitalcourse%2Fdigitalhuman_course.gif)
 
-* 智能课件
+* Intelligent Courseware
 
 ![aippt.png](.image%2Fdigitalcourse%2Faippt.gif)
-* 智能出题
+* Intelligent Test Creation
 
 ![ai_gen_test.png](.image%2Fdigitalcourse%2Fai_gen_test.gif)
 
-*  [样课展示](https://www.bilibili.com/video/av113088116297160/)
+*  [Sample Course](https://www.bilibili.com/video/av113088116297160/)
 
-[![B站视频](.image%2Fdigitalcourse%2Fdemo_course.png)](https://www.bilibili.com/video/av113088116297160/)
+[![Bilibili Video](.image%2Fdigitalcourse%2Fdemo_course.png)](https://www.bilibili.com/video/av113088116297160/)
 
-## 🗺️ 开发路线图
+## 🗺️ Development Roadmap
 
-以下是我们计划在未来实现的主要功能和改进：
-- [x] 支持课程模板
-- [ ] 支持数字人形象声音定制
-- [ ] 支持docker快速部署
-- [ ] 声音支持SSML语法
-- [ ] 增加教案生成
-- [ ] 增加教案转课件，生成可控PPT
-- [ ] 支持实时数字人讲课功能
-- [ ] 增加智能助理
+Here are the major features and improvements we plan to implement in the future:
+- [x] Support for course templates
+- [ ] Support for digital human image and voice customization
+- [ ] Support for docker quick deployment
+- [ ] SSML syntax support for voice
+- [ ] Adding lesson plan generation
+- [ ] Convert lesson plans to courseware and generate controllable PPTs
+- [ ] Support for real-time digital human teaching
+- [ ] Adding an intelligent assistant
 
-## 技术栈
+## Technology Stack
 
-参考 [yudao-framework](https://gitee.com/zhijiantianya/ruoyi-vue-pro)
-基于master-jdk17 分支开发
+Refer to [yudao-framework](https://gitee.com/zhijiantianya/ruoyi-vue-pro)
+Developed based on the master-jdk17 branch.
 
-## 部署手册
+## Deployment Manual
 https://ozij45g3ts.feishu.cn/docx/EgS3dm1HtoKOPkxReEQcn3MCncg
 
-## 🔥 前端代码
-
+## 🔥 Frontend Code
 
 ① easegen-front：<https://github.com/taoofagi/easegen-front>
 
-
-### 若依其他系统功能
-请参考[ruoyi-vue-pro](https://gitee.com/zhijiantianya/ruoyi-vue-pro#-%E5%86%85%E7%BD%AE%E5%8A%9F%E8%83%BD)
+### Additional Features
+Refer to [ruoyi-vue-pro](https://gitee.com/zhijiantianya/ruoyi-vue-pro#-%E5%86%85%E7%BD%AE%E5%8A%9F%E8%83%BD)
 
 ## 🌟 Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=taoofagi/easegen-admin&type=Date)](https://star-history.com/#taoofagi/easegen-admin&Date)
 
-## 🤝 获奖信息
-1. [2024年华彩杯算力大赛总决赛二等奖，项目编号L01610474065](https://mp.weixin.qq.com/s/SE10-cxLVurf0BfAMaegmw)]
+## 🤝 Awards
+1. [2024 Huacai Cup Compute Power Competition Finals Second Prize, Project No. L01610474065](https://mp.weixin.qq.com/s/SE10-cxLVurf0BfAMaegmw)]
 
-## 🧾 免责声明/许可
+## 🧾 Disclaimer/License
 
-1. `代码`：`easegen-admin` 的代码采用 `Apache` 许可证发布，学术用途和商业用途都可以。
-2. `AIGC`：本项目旨在积极影响基于人工智能的文字、语音、视频生成领域。用户被授予使用此工具创建文字、语音、视频的自由，但他们应该遵守当地法律，并负责任地使用。开发人员不对用户可能的不当使用承担任何责任。
-
-
+1. `Code`: The `easegen-admin` code is released under the `Apache` license for academic and commercial use.
+2. `AIGC`: This project aims to positively impact the AI-generated text, speech, and video field. Users are granted the freedom to use this tool to create text, speech, and videos, but they should comply with local laws and use it responsibly. Developers bear no responsibility for any misuse of the tool by users.
