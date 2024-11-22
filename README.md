@@ -43,8 +43,9 @@ discard:https://discord.gg/q2RK3sEQwW
 
 Here are the major features and improvements we plan to implement in the future:
 - [x] Support for course templates
+- [x] Support for intelligent script generation
 - [ ] Support for digital human image and voice customization
-- [ ] Support for docker quick deployment
+- [x] Support for docker quick deployment
 - [ ] SSML syntax support for voice
 - [ ] Adding lesson plan generation
 - [ ] Convert lesson plans to courseware and generate controllable PPTs
