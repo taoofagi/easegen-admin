@@ -111,7 +111,10 @@ public class VoicesServiceImpl implements VoicesService {
 
     @Override
     public PageResult<VoicesDO> getVoicesPage(VoicesPageReqVO pageReqVO) {
-        if (WebFrameworkUtils.getLoginUserId() != 1) pageReqVO.setCreator(String.valueOf(WebFrameworkUtils.getLoginUserId()));
+        if(pageReqVO.getVoiceType()==1){
+            //查询非公共声音，只能查询自己的，公共声音，可以查询所有的
+            if (WebFrameworkUtils.getLoginUserId() != 1) pageReqVO.setCreator(String.valueOf(WebFrameworkUtils.getLoginUserId()));
+        }
         return voicesMapper.selectPage(pageReqVO);
     }
     @Override
