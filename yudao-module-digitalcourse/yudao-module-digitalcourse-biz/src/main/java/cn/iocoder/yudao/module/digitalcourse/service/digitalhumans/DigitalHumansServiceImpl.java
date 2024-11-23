@@ -101,7 +101,10 @@ public class DigitalHumansServiceImpl implements DigitalHumansService {
     }
     @Override
     public PageResult<DigitalHumansDO> getDigitalHumansPage(DigitalHumansPageReqVO pageReqVO) {
-        if (WebFrameworkUtils.getLoginUserId() != 1) pageReqVO.setCreator(String.valueOf(WebFrameworkUtils.getLoginUserId()));
+        if(pageReqVO.getType()==1){
+            //查询非公共数字人，只能查询自己的，公共数字人，可以查询所有的
+            if (WebFrameworkUtils.getLoginUserId() != 1) pageReqVO.setCreator(String.valueOf(WebFrameworkUtils.getLoginUserId()));
+        }
         return digitalHumansMapper.selectPage(pageReqVO);
     }
 
