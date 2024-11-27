@@ -126,4 +126,10 @@ public class DigitalHumansDO extends BaseDO {
     //修复视频
     private String fixVideoUrl;
 
+
+    /**
+     * 过期时间
+     */
+    private Date expireDate;
+
 }

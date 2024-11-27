@@ -76,4 +76,9 @@ public class VoicesDO extends BaseDO {
 
     private String fixAuditionUrl;
 
+    /**
+     * 过期时间
+     */
+    private Date expireDate;
+
 }

@@ -27,6 +27,7 @@ public interface DigitalHumansMapper extends BaseMapperX<DigitalHumansDO> {
                 .eqIfPresent(DigitalHumansDO::getUseModel, reqVO.getUseModel())
                 .eqIfPresent(DigitalHumansDO::getStatus, reqVO.getStatus())
                 .eqIfPresent(DigitalHumansDO::getCreator, reqVO.getCreator())
+                .gtIfPresent(DigitalHumansDO::getExpireDate, reqVO.getExpireDate())
                 .orderByDesc(DigitalHumansDO::getId));
     }
 

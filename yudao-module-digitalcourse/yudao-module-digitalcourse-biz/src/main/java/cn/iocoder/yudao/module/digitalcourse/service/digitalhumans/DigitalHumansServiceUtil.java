@@ -18,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -141,6 +143,10 @@ public class DigitalHumansServiceUtil {
                         .collect(Collectors.toMap(jsonObject -> jsonObject.getString("code"), jsonObject -> jsonObject));
 
                 log.info(JSON.toJSONString(resultMap));
+                Calendar instance = Calendar.getInstance();
+                instance.setTime(new Date());
+                instance.add(Calendar.YEAR, 1);
+                Date time = instance.getTime();
                 codes.stream().forEach(e->{
                     JSONObject jsonObject = resultMap.get(e);
                     if (jsonObject != null) {
@@ -148,7 +154,10 @@ public class DigitalHumansServiceUtil {
                         if (status != null) {
                             // 合并状态，0：训练成功，1：未开始，2：训练中，3：训练失败
                             if (status == 0){
-                                digitalHumansMapper.update(new UpdateWrapper<DigitalHumansDO>().lambda().set(DigitalHumansDO::getStatus,COMPLETE_STATUS).eq(DigitalHumansDO::getCode,e));
+                                digitalHumansMapper.update(new UpdateWrapper<DigitalHumansDO>().lambda()
+                                        .set(DigitalHumansDO::getStatus,COMPLETE_STATUS)
+                                        .set(DigitalHumansDO::getExpireDate, time)
+                                        .eq(DigitalHumansDO::getCode,e));
                             } else if (status == 3) {
                                 digitalHumansMapper.update(new UpdateWrapper<DigitalHumansDO>().lambda().set(DigitalHumansDO::getStatus,ERROR_STATUS).eq(DigitalHumansDO::getCode,e));
                             }

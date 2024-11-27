@@ -113,7 +113,12 @@ public class VoicesServiceImpl implements VoicesService {
     public PageResult<VoicesDO> getVoicesPage(VoicesPageReqVO pageReqVO) {
         if(pageReqVO.getVoiceType()==1){
             //查询非公共声音，只能查询自己的，公共声音，可以查询所有的
-            if (WebFrameworkUtils.getLoginUserId() != 1) pageReqVO.setCreator(String.valueOf(WebFrameworkUtils.getLoginUserId()));
+            if (WebFrameworkUtils.getLoginUserId() != 1) {
+                pageReqVO.setCreator(String.valueOf(WebFrameworkUtils.getLoginUserId()));
+                pageReqVO.setVoiceType(1);
+            }
+        }else {
+            pageReqVO.setVoiceType(0);
         }
         return voicesMapper.selectPage(pageReqVO);
     }
@@ -138,6 +143,9 @@ public class VoicesServiceImpl implements VoicesService {
             ttsdto.setRequest_id(StrUtil.uuid());
             ttsdto.setUser_id(String.valueOf(SecurityFrameworkUtils.getLoginUser().getId()));
             ttsdto.setVoice_type(String.valueOf(voice.getVoiceType()));
+            ttsdto.setPitch(auditionDO.getPitch());
+            ttsdto.setRate(auditionDO.getSpeed());
+            ttsdto.setVolume(auditionDO.getVolume());
         } else {
             throw exception(VOICES_NOT_EXISTS);
         }

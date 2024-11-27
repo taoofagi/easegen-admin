@@ -18,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -136,6 +138,12 @@ public class VoicesServiceUtil {
                         .collect(Collectors.toMap(jsonObject -> jsonObject.getString("code"), jsonObject -> jsonObject));
 
                 log.info(JSON.toJSONString(resultMap));
+
+                Calendar instance = Calendar.getInstance();
+                instance.setTime(new Date());
+                instance.add(Calendar.YEAR, 1);
+                Date time = instance.getTime();
+
                 codes.stream().forEach(e->{
                     JSONObject jsonObject = resultMap.get(e);
                     if (jsonObject != null) {
@@ -143,7 +151,9 @@ public class VoicesServiceUtil {
                         if (status != null) {
                             // 合并状态，0：训练成功，1：未开始，2：训练中，3：训练失败
                             if (status == 0){
-                                voicesMapper.update(new UpdateWrapper<VoicesDO>().lambda().set(VoicesDO::getStatus,COMPLETE_STATUS).eq(VoicesDO::getCode,e));
+                                voicesMapper.update(new UpdateWrapper<VoicesDO>().lambda()
+                                        .set(VoicesDO::getStatus,COMPLETE_STATUS)
+                                        .set(VoicesDO::getExpireDate, time).eq(VoicesDO::getCode,e));
                             } else if (status == 3) {
                                 voicesMapper.update(new UpdateWrapper<VoicesDO>().lambda().set(VoicesDO::getStatus,ERROR_STATUS).eq(VoicesDO::getCode,e));
                             }

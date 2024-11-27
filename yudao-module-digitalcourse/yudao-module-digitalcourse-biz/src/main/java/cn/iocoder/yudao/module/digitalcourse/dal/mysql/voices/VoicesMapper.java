@@ -28,6 +28,7 @@ public interface VoicesMapper extends BaseMapperX<VoicesDO> {
                 .betweenIfPresent(VoicesDO::getCreateTime, reqVO.getCreateTime())
                 .eqIfPresent(VoicesDO::getStatus, reqVO.getStatus())
                 .eqIfPresent(VoicesDO::getCreator, reqVO.getCreator())
+                .gtIfPresent(VoicesDO::getExpireDate, reqVO.getExpireDate())
                 .orderByDesc(VoicesDO::getId));
     }
 
