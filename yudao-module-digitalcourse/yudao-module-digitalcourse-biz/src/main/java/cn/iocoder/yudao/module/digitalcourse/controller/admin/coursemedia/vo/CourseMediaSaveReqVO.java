@@ -39,4 +39,7 @@ public class CourseMediaSaveReqVO {
     @Schema(description = "课程名称", example = "李四")
     private String courseName;
 
+    @Schema(description = "背景图片")
+    private String thumbnail;
+
 }

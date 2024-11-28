@@ -270,6 +270,7 @@ public class CourseMediaServiceUtil {
                                 e.setDuration(jsonObject.getLong("duration"));
                                 e.setProgress(jsonObject.getFloat("completion_percentage")); // 合成进度
                                 e.setSubtitlesUrl(jsonObject.getString("subtitles_url"));
+                                e.setThumbnail(jsonObject.getString("thumbnail"));
                                 try {
                                     String vtturl = srtToVttUtil.convertAndUploadSrtToVtt(jsonObject.getString("subtitles_url"));
                                     e.setSubtitlesVttUrl(vtturl);

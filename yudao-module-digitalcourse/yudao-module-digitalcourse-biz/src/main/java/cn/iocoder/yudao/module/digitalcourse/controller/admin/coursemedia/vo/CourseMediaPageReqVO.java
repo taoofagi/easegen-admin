@@ -61,4 +61,8 @@ public class CourseMediaPageReqVO extends PageParam {
     @Schema(description = "宇幕样式", example = "")
     private String subtitlesStyle;
 
+
+    @Schema(description = "背景图片")
+    private String thumbnail;
+
 }

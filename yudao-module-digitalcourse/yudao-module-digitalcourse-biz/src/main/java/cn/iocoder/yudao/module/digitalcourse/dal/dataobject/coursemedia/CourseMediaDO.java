@@ -85,4 +85,5 @@ public class CourseMediaDO extends BaseDO {
      */
     private String subtitlesStyle;
 
+    private String thumbnail;
 }

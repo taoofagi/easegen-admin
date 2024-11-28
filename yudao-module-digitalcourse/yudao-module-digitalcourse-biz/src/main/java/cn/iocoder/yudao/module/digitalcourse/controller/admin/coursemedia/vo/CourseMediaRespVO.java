@@ -72,4 +72,7 @@ public class CourseMediaRespVO {
     @ExcelProperty("宇幕样式")
     private String subtitlesStyle;
 
+    @Schema(description = "背景图片")
+    private String thumbnail;
+
 }
