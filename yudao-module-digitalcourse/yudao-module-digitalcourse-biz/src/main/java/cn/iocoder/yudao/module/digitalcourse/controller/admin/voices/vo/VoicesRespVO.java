@@ -68,4 +68,6 @@ public class VoicesRespVO {
 
     private String fixAuditionUrl;
 
+    private Date expireDate;
+
 }

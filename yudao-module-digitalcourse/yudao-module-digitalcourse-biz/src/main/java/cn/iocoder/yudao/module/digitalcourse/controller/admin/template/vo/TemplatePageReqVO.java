@@ -61,5 +61,7 @@ public class TemplatePageReqVO extends PageParam {
      */
     @Schema(description = "效果图")
     private String previewImage;
+    @Schema(description = "模板名称")
+    private String templateName;;
 
 }

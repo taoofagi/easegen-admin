@@ -71,5 +71,7 @@ public class TemplateRespVO {
 
     @Schema(description = "效果图")
     private String previewImage;
+    @Schema(description = "效果图")
+    private String templateName;
 
 }

@@ -63,5 +63,8 @@ public class TemplateSaveReqVO {
 
     @Schema(description = "效果图")
     private String previewImage;
+    @Schema(description = "模板名称",maxLength = 50)
+    @NotEmpty(message = "模板名称不能为空")
+    private String templateName;
 
 }
