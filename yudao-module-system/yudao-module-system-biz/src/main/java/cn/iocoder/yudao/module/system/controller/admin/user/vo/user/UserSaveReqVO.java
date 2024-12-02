@@ -56,6 +56,10 @@ public class UserSaveReqVO {
     @DiffLogField(name = "手机号码")
     private String mobile;
 
+    @Schema(description = "用户类型", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull
+    private Integer type;
+
     @Schema(description = "用户性别，参见 SexEnum 枚举类", example = "1")
     @DiffLogField(name = "用户性别", function = SexParseFunction.NAME)
     private Integer sex;
