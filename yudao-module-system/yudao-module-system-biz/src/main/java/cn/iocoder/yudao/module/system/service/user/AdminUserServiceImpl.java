@@ -146,6 +146,7 @@ public class AdminUserServiceImpl implements AdminUserService {
         AdminUserDO user = BeanUtils.toBean(registerReqVO, AdminUserDO.class);
         user.setStatus(CommonStatusEnum.ENABLE.getStatus()); // 默认开启
         user.setPassword(encodePassword(registerReqVO.getPassword())); // 加密密码
+        user.setType(CommonStatusEnum.ENABLE.getStatus());
         userMapper.insert(user);
 
         // 3.设置测试角色

@@ -81,7 +81,7 @@ public class WorkCenterController {
 
     @GetMapping("/page")
     @Operation(summary = "获得作品中心分页")
-    @PreAuthorize("@ss.hasPermission('member:work-center:query')")
+//    @PreAuthorize("@ss.hasPermission('member:work-center:query')")
     public CommonResult<PageResult<WorkCenterRespVO>> getWorkCenterPage(@Valid WorkCenterPageReqVO pageReqVO) {
         PageResult<WorkCenterDO> pageResult = workCenterService.getWorkCenterPage(pageReqVO);
         return success(BeanUtils.toBean(pageResult, WorkCenterRespVO.class));

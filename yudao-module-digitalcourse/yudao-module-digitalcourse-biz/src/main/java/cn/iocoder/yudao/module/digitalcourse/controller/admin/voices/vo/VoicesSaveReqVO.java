@@ -32,15 +32,13 @@ public class VoicesSaveReqVO {
     @NotEmpty(message = "语言类型不能为空")
     private String language;
 
-    @Schema(description = "性别", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "性别不能为空")
+    @Schema(description = "性别")
     private Integer gender;
 
     @Schema(description = "介绍")
     private String introduction;
 
-    @Schema(description = "音质评分", requiredMode = Schema.RequiredMode.REQUIRED, example = "10")
-    @NotNull(message = "音质评分不能为空")
+    @Schema(description = "音质评分")
     private Integer quality;
 
     @Schema(description = "声音类型 ", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")

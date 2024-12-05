@@ -17,17 +17,17 @@ public class AuditionDO {
     /**
      * 语速
      */
-    private Integer speed;
+    private Float speed;
 
     /**
      * 音高
      */
-    private Integer pitch;
+    private Float pitch;
 
     /**
      * 音量
      */
-    private Integer volume;
+    private Float volume;
 
     /**
      * 声音类型

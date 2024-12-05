@@ -97,4 +97,7 @@ public class AdminUserDO extends TenantBaseDO {
      */
     private String apikey;
 
+    private Integer type;
+
+
 }

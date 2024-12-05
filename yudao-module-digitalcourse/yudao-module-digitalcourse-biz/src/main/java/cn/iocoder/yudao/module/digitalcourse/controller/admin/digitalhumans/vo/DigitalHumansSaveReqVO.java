@@ -21,8 +21,7 @@ public class DigitalHumansSaveReqVO {
     @Schema(description = "完成时间")
     private LocalDateTime finishTime;
 
-    @Schema(description = "性别", requiredMode = Schema.RequiredMode.REQUIRED, example = "男")
-    @NotNull(message = "性别不能为空")
+    @Schema(description = "性别")
     private Integer gender;
 
     @Schema(description = "抠图标识")

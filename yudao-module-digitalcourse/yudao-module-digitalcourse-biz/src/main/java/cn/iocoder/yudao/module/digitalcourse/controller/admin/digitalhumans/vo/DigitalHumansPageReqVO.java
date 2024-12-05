@@ -35,4 +35,6 @@ public class DigitalHumansPageReqVO extends PageParam {
     @Schema(description = "状态", example = "2")
     private String creator;
 
+    private Date expireDate = new Date();
+
 }

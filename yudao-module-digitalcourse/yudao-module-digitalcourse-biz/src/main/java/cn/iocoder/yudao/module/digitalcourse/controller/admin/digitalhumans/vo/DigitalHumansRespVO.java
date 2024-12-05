@@ -91,5 +91,7 @@ public class DigitalHumansRespVO {
     private String fixPictureUrl;
     //修复视频
     private String fixVideoUrl;
+    //过期时间
+    private Date expireDate;
 
 }

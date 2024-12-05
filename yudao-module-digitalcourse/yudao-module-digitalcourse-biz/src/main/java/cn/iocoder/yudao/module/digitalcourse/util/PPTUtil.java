@@ -109,34 +109,35 @@ public class PPTUtil {
     public ArrayList<JSONObject> analysisPptLocal(String fileUrl, Long pptId) {
         ArrayList<JSONObject> picList = new ArrayList<>();
         ExecutorService executorService = null;
+        File downloadedFile = null;
+        File pdfFile = null;
 
         try {
             // 更新进度为开始
             redisCache.opsForValue().set(ANALYSIS_PPT_KEY + pptId, "0", 1, TimeUnit.DAYS);
-            // 下载PPT文件
+            
+            // 下载文件
             log.info("[analysisPptLocal][开始下载] pptId:{}, url:{}", pptId, fileUrl);
-            URL url = new URL(fileUrl);
-            InputStream inputStream = url.openStream();
-            String tempFileName = UUID.randomUUID().toString();
-            File pptFile = File.createTempFile("downloaded_ppt_"+tempFileName, ".pptx");
-            try (FileOutputStream outputStream = new FileOutputStream(pptFile)) {
-                byte[] buffer = new byte[4096];
-                int bytesRead;
-                while ((bytesRead = inputStream.read(buffer)) != -1) {
-                    outputStream.write(buffer, 0, bytesRead);
+            downloadedFile = downloadFile(fileUrl);
+
+            // 判断文件类型
+            String fileExtension = getFileExtension(fileUrl).toLowerCase();
+
+
+            XMLSlideShow ppt = null;
+            if ("pdf".equals(fileExtension)) {
+                log.info("[analysisPptLocal][文件为PDF，直接处理] pptId:{}", pptId);
+                pdfFile = downloadedFile;
+            } else if ("ppt".equals(fileExtension) || "pptx".equals(fileExtension)) {
+                log.info("[analysisPptLocal][文件为PPT，开始转换] pptId:{}", pptId);
+                pdfFile = convertPptToPdf(downloadedFile);
+                // 重新打开文件输入流来创建 XMLSlideShow
+                try (FileInputStream fileInputStream = new FileInputStream(downloadedFile)) {
+                    ppt = new XMLSlideShow(fileInputStream);
                 }
+            } else {
+                throw new IllegalArgumentException("不支持的文件格式：" + fileExtension);
             }
-            XMLSlideShow ppt = new XMLSlideShow();
-            // 重新打开文件输入流来创建 XMLSlideShow
-            try (FileInputStream fileInputStream = new FileInputStream(pptFile)) {
-                ppt = new XMLSlideShow(fileInputStream);
-            }
-
-
-
-            // 使用LibreOffice将PPT转换为PDF
-            log.info("[analysisPptLocal][开始转换PDF] pptId:{}", pptId);
-            File pdfFile = convertPptToPdf(pptFile);
             log.info("[analysisPptLocal][转换完成] pptId:{}", pptId);
 
             if (!isValidPdf(pdfFile)) {
@@ -144,64 +145,45 @@ public class PPTUtil {
                 redisCache.opsForValue().set(ANALYSIS_PPT_KEY + pptId, "-1", 1, TimeUnit.DAYS);
                 throw new RuntimeException("生成的PDF文件无效");
             }
+            // 处理PDF文件
             executorService = Executors.newFixedThreadPool(1);
-            // 将PDF转换为图片
-            PDDocument document = null;
-            try {
-                log.info("[analysisPptLocal][PDF加载] pptId:{}", pptId);
-                document = PDDocument.load(pdfFile);
-                log.info("[analysisPptLocal][PDF加载完成] pptId:{}", pptId);
-            } catch (IOException e) {
-                throw new RuntimeException("PDF加载失败: " + e.getMessage(), e);
-            }
-
-            try {
-                int pageCount = document.getNumberOfPages();
-                log.info("[analysisPptLocal][开始处理页面] pptId:{}, 总页数:{}", pptId, pageCount);
-
-                // 保存PPT总页数到Redis
-                log.info("PPT总页数：" + pageCount);
-                redisCache.opsForValue().set(ANALYSIS_PPT_COUNT_KEY + pptId, String.valueOf(pageCount), 1, TimeUnit.DAYS);
-
-                List<Future<JSONObject>> futures = new ArrayList<>();
-                for (int i = 0; i < pageCount; i++) {
-                    int pageIndex = i;
-                    PDDocument splitDoc = new PDDocument();
-                    splitDoc.addPage(document.getPage(pageIndex));
-                    XMLSlideShow finalPpt = ppt;
-                    Future<JSONObject> future = executorService.submit(() -> processPdfPage(splitDoc, pageIndex, pptId, pageCount, finalPpt));
-                    futures.add(future);
-                }
-
-                // 等待所有任务完成并收集结果
-                for (Future<JSONObject> future : futures) {
-                    try {
-                        picList.add(future.get());
-                    } catch (ExecutionException ee) {
-                        log.error("处理PDF页面时发生错误: " + ee.getMessage(), ee);
-                    }
-                }
-
-                // 更新进度为完成
-                redisCache.opsForValue().set(ANALYSIS_PPT_KEY + pptId, "1");
-            } finally {
-                if (document != null) {
-                    document.close();
-                }
-            }
-
-            inputStream.close();
-            pdfFile.delete();
-            pptFile.delete();
+            picList = processPdfFile(pdfFile, pptId, executorService,ppt);
+            return picList;
         } catch (Exception e) {
-            // 所有异常都更新Redis进度为-1
             redisCache.opsForValue().set(ANALYSIS_PPT_KEY + pptId, "-1", 1, TimeUnit.DAYS);
             log.error("[analysisPptLocal][异常] pptId:{}, 错误:{}", pptId, e.getMessage(), e);
-            throw new RuntimeException("PPT解析失败: " + e.getMessage(), e);
+            throw new RuntimeException("文件解析失败: " + e.getMessage(), e);
         } finally {
-            executorService.shutdown();
+            // 清理资源
+            cleanupResources(executorService, downloadedFile, pdfFile);
         }
-        return picList;
+    }
+
+    private String getFileExtension(String fileUrl) {
+        int lastDotIndex = fileUrl.lastIndexOf('.');
+        if (lastDotIndex > 0) {
+            return fileUrl.substring(lastDotIndex + 1);
+        }
+        throw new IllegalArgumentException("无法识别文件格式：" + fileUrl);
+    }
+
+    private File downloadFile(String fileUrl) throws IOException {
+        log.info("[downloadFile][开始] url:{}", fileUrl);
+        URL url = new URL(fileUrl);
+        String tempFileName = UUID.randomUUID().toString();
+        String extension = getFileExtension(fileUrl);
+        File downloadedFile = File.createTempFile("downloaded_file_" + tempFileName, "." + extension);
+
+        try (InputStream inputStream = url.openStream();
+             FileOutputStream outputStream = new FileOutputStream(downloadedFile)) {
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+        }
+        log.info("[downloadFile][完成] url:{}, file:{}", fileUrl, downloadedFile.getAbsolutePath());
+        return downloadedFile;
     }
 
     private File convertPptToPdf(File pptFile) throws IOException, InterruptedException {
@@ -241,6 +223,65 @@ public class PPTUtil {
         } catch (IOException e) {
             log.error("验证PDF文件失败: {}, 原因: {}", pdfFile.getAbsolutePath(), e.getMessage(), e);
             return false;
+        }
+    }
+
+    private ArrayList<JSONObject> processPdfFile(File pdfFile, Long pptId, ExecutorService executorService,XMLSlideShow ppt) throws IOException {
+        ArrayList<JSONObject> picList = new ArrayList<>();
+        PDDocument document = PDDocument.load(pdfFile);
+        try {
+            int pageCount = document.getNumberOfPages();
+            log.info("[processPdfFile][开始处理] pptId:{}, 总页数:{}", pptId, pageCount);
+            redisCache.opsForValue().set(ANALYSIS_PPT_COUNT_KEY + pptId, String.valueOf(pageCount), 1, TimeUnit.DAYS);
+
+            List<Future<JSONObject>> futures = new ArrayList<>();
+            for (int i = 0; i < pageCount; i++) {
+                PDDocument splitDoc = new PDDocument();
+                splitDoc.addPage(document.getPage(i));
+                int pageIndex = i;
+                Future<JSONObject> future = executorService.submit(() ->
+                        processPdfPage(splitDoc, pageIndex, pptId, pageCount, ppt));
+                futures.add(future);
+            }
+
+            for (int i = 0; i < futures.size(); i++) {
+                try {
+                    JSONObject result = futures.get(i).get(5, TimeUnit.MINUTES);
+                    picList.add(result);
+                    log.info("[processPdfFile][处理进度] pptId:{}, 当前页:{}/{}", pptId, i + 1, pageCount);
+                } catch (Exception e) {
+                    log.error("[processPdfFile][处理失败] pptId:{}, 页码:{}", pptId, i, e);
+                    throw new IOException("处理PDF页面失败", e);
+                }
+            }
+        } finally {
+            document.close();
+        }
+        return picList;
+    }
+
+    private void cleanupResources(ExecutorService executorService, File... files) {
+        // 关闭线程池
+        if (executorService != null) {
+            try {
+                executorService.shutdown();
+                if (!executorService.awaitTermination(1, TimeUnit.MINUTES)) {
+                    executorService.shutdownNow();
+                }
+            } catch (InterruptedException ie) {
+                executorService.shutdownNow();
+                Thread.currentThread().interrupt();
+            }
+        }
+
+        // 删除临时文件
+        for (File file : files) {
+            if (file != null && file.exists()) {
+                boolean deleted = file.delete();
+                if (!deleted) {
+                    log.warn("[cleanupResources][删除临时文件失败] file:{}", file.getAbsolutePath());
+                }
+            }
         }
     }
 
@@ -346,14 +387,20 @@ public class PPTUtil {
 
     private JSONObject processPdfPage(PDDocument document, int pageIndex, Long pptId, int count, XMLSlideShow ppt) throws IOException {
         String text = "";
-        // 尝试获取PPT备注
-        String notesText = getPptNotes(pageIndex, ppt);
-        if (!notesText.isEmpty()) {
-            text = notesText;
-        } else {
-            // 如果备注不存在，提取PDF页面的文字
+        // 如果ppt为空，则不获取ppt备注
+        if(null == ppt){
             text = extractTextFromPdfPage(document, pageIndex);
+        }else{
+            // 尝试获取PPT备注
+            String notesText = getPptNotes(pageIndex, ppt);
+            if (!notesText.isEmpty()) {
+                text = notesText;
+            } else {
+                // 如果备注不存在，提取PDF页面的文字
+                text = extractTextFromPdfPage(document, pageIndex);
+            }
         }
+
         try {
             PDFRenderer pdfRenderer = new PDFRenderer(document);
             BufferedImage bufferedImage = pdfRenderer.renderImageWithDPI(0, 150);

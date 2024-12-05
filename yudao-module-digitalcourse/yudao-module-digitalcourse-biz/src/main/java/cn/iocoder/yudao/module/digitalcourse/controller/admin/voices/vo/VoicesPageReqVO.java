@@ -39,4 +39,6 @@ public class VoicesPageReqVO extends PageParam {
 
     private String creator;
 
+    private Date expireDate = new Date();
+
 }
