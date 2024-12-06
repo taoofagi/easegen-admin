@@ -60,6 +60,7 @@ spring:
 --- #################### 定时任务相关配置 ####################
 
 # Quartz 配置项，对应 QuartzProperties 配置类
+spring:
   quartz:
     auto-startup: true # 测试环境，需要开启 Job
     scheduler-name: schedulerName # Scheduler 名字。默认为 schedulerName
