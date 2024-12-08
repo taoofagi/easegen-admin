@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
 
@@ -54,7 +55,7 @@ public class VoicesServiceUtil {
         while (retryCount < maxRetries && !success) {
             try {
                 // 发送POST请求
-                HttpResponse execute = HttpRequest.post(configApi.getConfigValueByKey(EASEGEN_CORE_URL) + "/api/clone_digital_human")
+                HttpResponse execute = HttpRequest.post(configApi.getConfigValueByKey(EASEGEN_CORE_URL) + "/api/clone_voice")
                         .header("X-API-Key", configApi.getConfigValueByKey(EASEGEN_CORE_KEY))
                         .body(mapper.writeValueAsString(trailVO))
                         .execute();
@@ -85,6 +86,7 @@ public class VoicesServiceUtil {
                     }
                     continue; // 重新尝试
                 }
+                success = true;
             }catch (Exception e){
                 retryCount++;
                 if (retryCount >= maxRetries) {
@@ -107,6 +109,7 @@ public class VoicesServiceUtil {
 
 
 
+    @Async
     public void queryRemoteTrainResult(){
         try {
             List<String> codes = voicesMapper.selectList(new QueryWrapper<VoicesDO>().lambda().eq(VoicesDO::getStatus, TARIN_STATUS))
@@ -115,7 +118,7 @@ public class VoicesServiceUtil {
             if (codes == null || codes.isEmpty()) return;
 
             // 批量调用远程接口
-            String result = HttpRequest.get(configApi.getConfigValueByKey(EASEGEN_CORE_URL) + "/api/clone_digital_human/result")
+            String result = HttpRequest.get(configApi.getConfigValueByKey(EASEGEN_CORE_URL) + "/api/clone_voice/result")
                     .header("X-API-Key", configApi.getConfigValueByKey(EASEGEN_CORE_KEY))
                     .form("codes", String.join(",", codes))
                     .timeout(5000)  // 设置超时时间
@@ -124,7 +127,7 @@ public class VoicesServiceUtil {
 
             // 检查远程接口返回的结果是否有效
             if (result == null || result.isEmpty()) {
-                System.err.println("Remote API returned empty or null response.");
+                log.error("Remote API returned empty or null response.");
                 return;
             }
 
@@ -139,11 +142,6 @@ public class VoicesServiceUtil {
 
                 log.info(JSON.toJSONString(resultMap));
 
-                Calendar instance = Calendar.getInstance();
-                instance.setTime(new Date());
-                instance.add(Calendar.YEAR, 1);
-                Date time = instance.getTime();
-
                 codes.stream().forEach(e->{
                     JSONObject jsonObject = resultMap.get(e);
                     if (jsonObject != null) {
@@ -151,9 +149,10 @@ public class VoicesServiceUtil {
                         if (status != null) {
                             // 合并状态，0：训练成功，1：未开始，2：训练中，3：训练失败
                             if (status == 0){
+                                Date expireDate = jsonObject.getDate("expire_date");
                                 voicesMapper.update(new UpdateWrapper<VoicesDO>().lambda()
                                         .set(VoicesDO::getStatus,COMPLETE_STATUS)
-                                        .set(VoicesDO::getExpireDate, time).eq(VoicesDO::getCode,e));
+                                        .set(VoicesDO::getExpireDate, expireDate).eq(VoicesDO::getCode,e));
                             } else if (status == 3) {
                                 voicesMapper.update(new UpdateWrapper<VoicesDO>().lambda().set(VoicesDO::getStatus,ERROR_STATUS).eq(VoicesDO::getCode,e));
                             }

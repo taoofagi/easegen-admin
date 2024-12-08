@@ -214,6 +214,7 @@ public class CourseMediaServiceUtil {
      * 远程查询合并结果（定时任务）
      */
 
+    @Async
     public void queryRemoteMegerResult() {
         try {
             List<CourseMediaDO> courseMediaDOS = courseMediaMapper.selectList(new QueryWrapperX<CourseMediaDO>().lambda().eq(CourseMediaDO::getStatus, 1));

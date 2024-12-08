@@ -6,11 +6,9 @@ import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 import cn.iocoder.yudao.framework.security.core.util.SecurityFrameworkUtils;
 import cn.iocoder.yudao.framework.web.core.util.WebFrameworkUtils;
-import cn.iocoder.yudao.module.digitalcourse.controller.admin.digitalhumans.vo.DigitalHumansTrailVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.voices.vo.VoicesPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.voices.vo.VoicesSaveReqVO;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.voices.vo.VoicesTrailVO;
-import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.digitalhumans.DigitalHumansDO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.voices.AuditionDO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.voices.TTSDTO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.voices.VoicesDO;
@@ -33,7 +31,6 @@ import org.apache.hc.core5.http.io.entity.StringEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import static cn.iocoder.yudao.framework.common.exception.util.ServiceExceptionUtil.exception;
@@ -60,6 +57,10 @@ public class VoicesServiceImpl implements VoicesService {
     @Resource
     private ConfigApi configApi;
 
+    @Resource
+    private VoicesServiceUtil voicesServiceUtil;
+
+
     @Override
     public Long createVoices(VoicesSaveReqVO createReqVO) {
         createReqVO.setCode(UUID.fastUUID().toString());
@@ -78,7 +79,7 @@ public class VoicesServiceImpl implements VoicesService {
         VoicesDO updateObj = BeanUtils.toBean(updateReqVO, VoicesDO.class);
         voicesMapper.updateById(updateObj);
         if (updateReqVO.getStatus() == 3){
-
+            voicesServiceUtil.remoteTrain(transferVO(updateReqVO.getId()));
         }
     }
 

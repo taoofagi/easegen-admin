@@ -17,6 +17,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -112,6 +113,7 @@ public class DigitalHumansServiceUtil {
 
     }
 
+    @Async
     public void queryRemoteTrainResult(){
         try {
             List<String> codes = digitalHumansMapper.selectList(new QueryWrapper<DigitalHumansDO>().lambda().eq(DigitalHumansDO::getStatus, TARIN_STATUS))

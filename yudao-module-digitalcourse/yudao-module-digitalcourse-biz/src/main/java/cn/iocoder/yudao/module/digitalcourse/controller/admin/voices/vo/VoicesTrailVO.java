@@ -10,6 +10,7 @@ public class VoicesTrailVO {
     private String name;
     private String code;
     private String fixAuditionUrl;
-    private String useModel;
+    private String language;
+    private String gender;
     private String accountId;
 }
