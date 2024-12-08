@@ -156,9 +156,12 @@ public class DigitalHumansServiceUtil {
                         if (status != null) {
                             // 合并状态，0：训练成功，1：未开始，2：训练中，3：训练失败
                             if (status == 0){
+                                String snapshotUrl = jsonObject.getString("snapshot_url");
                                 digitalHumansMapper.update(new UpdateWrapper<DigitalHumansDO>().lambda()
                                         .set(DigitalHumansDO::getStatus,COMPLETE_STATUS)
                                         .set(DigitalHumansDO::getExpireDate, time)
+                                        .set(DigitalHumansDO::getSnapshotUrl, snapshotUrl)
+                                        .set(DigitalHumansDO::getPictureUrl, snapshotUrl)
                                         .eq(DigitalHumansDO::getCode,e));
                             } else if (status == 3) {
                                 digitalHumansMapper.update(new UpdateWrapper<DigitalHumansDO>().lambda().set(DigitalHumansDO::getStatus,ERROR_STATUS).eq(DigitalHumansDO::getCode,e));
