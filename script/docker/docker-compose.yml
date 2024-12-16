@@ -5,7 +5,8 @@ name: easegen
 services:
   mysql:
     container_name: easegen-mysql
-    image: mysql:8
+#    image: mysql:8
+    image: registry.cn-hangzhou.aliyuncs.com/easegen/mysql:8
     restart: unless-stopped
     tty: true
     ports:
@@ -22,7 +23,8 @@ services:
     ]
   redis:
     container_name: easegen-redis
-    image: redis:6-alpine
+#    image: redis:6-alpine
+    image: registry.cn-hangzhou.aliyuncs.com/easegen/redis:6-alpine
     restart: unless-stopped
     ports:
       - "6379:6379"
@@ -34,7 +36,8 @@ services:
     container_name: easegen-admin
     build:
       context: ./yudao-server/
-    image: taoofagi/easegen-admin:v0.1
+#    image: taoofagi/easegen-admin:v0.1
+    image: registry.cn-hangzhou.aliyuncs.com/easegen/easegen-admin:v0.2
     restart: unless-stopped
     ports:
       - "48080:48080"
@@ -59,7 +62,8 @@ services:
 
   easegen-front:
     container_name: easegen-front
-    image: nginx:alpine               # 直接使用官方的 Nginx 镜像
+#    image: nginx:alpine               # 直接使用官方的 Nginx 镜像
+    image: registry.cn-hangzhou.aliyuncs.com/easegen/nginx:alpine
     restart: unless-stopped
     ports:
       - "48083:80"
