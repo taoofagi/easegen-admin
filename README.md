@@ -10,7 +10,7 @@ If this project has helped you, remember to Star and follow, which would be grea
 
 ## 🐶 Beginner's Guide
 
-* Demo URL 【Vue3 + element-plus】: <http://36.103.251.108:48083> Please register to try it yourself.
+* Demo URL 【Vue3 + element-plus】: <http://1.95.87.0:48083> Please register to try it yourself.
 * Startup documentation, operation manual: Please join the discard group to get it.
 discard:https://discord.gg/q2RK3sEQwW
 * Project collaboration & technical exchanges: add WeChat, note easegen:

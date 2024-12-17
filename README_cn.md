@@ -9,7 +9,7 @@
 
 ## 🐶 新手必读
 
-* 演示地址【Vue3 + element-plus】：<http://36.103.251.108:48083> 请自行注册试用
+* 演示地址【Vue3 + element-plus】：<http://1.95.87.0:48083> 请自行注册试用
 * 启动文档、操作手册：请加入飞书群获取
 ![飞书](.image%2Fdigitalcourse%2Ffeishu.png)
 * 项目合作&技术交流加微信，备注easegen：
