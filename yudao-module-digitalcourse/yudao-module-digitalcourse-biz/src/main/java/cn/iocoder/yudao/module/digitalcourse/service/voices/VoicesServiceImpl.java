@@ -121,6 +121,8 @@ public class VoicesServiceImpl implements VoicesService {
         }else {
             pageReqVO.setVoiceType(0);
         }
+        //只查询状态正常的数据
+        pageReqVO.setStatus(0);
         return voicesMapper.selectPage(pageReqVO);
     }
     @Override
