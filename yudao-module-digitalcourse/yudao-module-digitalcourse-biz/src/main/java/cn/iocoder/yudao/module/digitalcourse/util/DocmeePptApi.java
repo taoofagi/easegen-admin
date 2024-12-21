@@ -25,7 +25,7 @@ public class DocmeePptApi {
 
     @Resource
     private StringRedisTemplate stringRedisTemplate;
-    public static final String BASE_URL = "https://docmee.cn";
+    public static final String BASE_URL = "https://easegen.docmee.cn";
     private static final long CACHE_EXPIRE_TIME = 1; // 缓存1小时
 
     public String createApiToken(String apiKey, String uid, Integer limit) {
