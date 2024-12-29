@@ -53,6 +53,10 @@ Here are the major features and improvements we plan to implement in the future:
 - [ ] Support for real-time digital human teaching
 - [ ] Adding an intelligent assistant
 
+## Architecture Diagram
+
+![easegen_diagram.png](.image%2Fdigitalcourse%2Feasegen_diagram.png)
+
 ## Technology Stack
 
 Refer to [yudao-framework](https://gitee.com/zhijiantianya/ruoyi-vue-pro)

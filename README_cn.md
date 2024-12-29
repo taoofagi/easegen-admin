@@ -50,6 +50,9 @@
 - [ ] 增加教案转课件，生成可控PPT
 - [ ] 支持实时数字人讲课功能
 - [ ] 增加智能助理
+## 架构图
+
+![easegen_diagram.png](.image%2Fdigitalcourse%2Feasegen_diagram.png)
 
 ## 技术栈
 
