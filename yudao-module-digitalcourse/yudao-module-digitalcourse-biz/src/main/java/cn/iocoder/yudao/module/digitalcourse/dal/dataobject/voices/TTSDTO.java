@@ -30,7 +30,7 @@ public class TTSDTO {
      */
     private String voice_type;
 
-    private Float rate;
+    private Float speed;
     private Float pitch;
     private Float volume;
 

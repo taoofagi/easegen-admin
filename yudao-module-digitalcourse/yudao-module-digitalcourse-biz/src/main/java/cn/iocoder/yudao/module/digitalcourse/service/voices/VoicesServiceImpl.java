@@ -147,7 +147,7 @@ public class VoicesServiceImpl implements VoicesService {
             ttsdto.setUser_id(String.valueOf(SecurityFrameworkUtils.getLoginUser().getId()));
             ttsdto.setVoice_type(String.valueOf(voice.getVoiceType()));
             ttsdto.setPitch(auditionDO.getPitch());
-            ttsdto.setRate(auditionDO.getSpeed());
+            ttsdto.setSpeed(auditionDO.getSpeed());
             ttsdto.setVolume(auditionDO.getVolume());
         } else {
             throw exception(VOICES_NOT_EXISTS);
