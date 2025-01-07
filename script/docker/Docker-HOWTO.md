@@ -51,4 +51,4 @@ docker compose --env-file docker.env up -d
 
 
 ## 构建后端镜像
-docker build -t registry.cn-hangzhou.aliyuncs.com/easegen/easegen-admin:v0.2.1 .
+docker build -t registry.cn-hangzhou.aliyuncs.com/easegen/easegen-admin:v0.2.4 .
