@@ -15,6 +15,8 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
@@ -155,6 +157,18 @@ public class JobServiceImpl implements JobService {
             }
             log.info("[syncJob][id({}) handlerName({}) 同步完成]", job.getId(), job.getHandlerName());
         }
+    }
+
+    @EventListener(ApplicationReadyEvent.class)
+    public void onApplicationReady() {
+        System.out.println("应用启动，自动同步定时任务...");
+        try {
+            syncJob();
+        } catch (SchedulerException e) {
+            log.error("[onApplicationReady][同步失败]", e);
+            throw new RuntimeException(e);
+        }
+        log.info("[onApplicationReady][同步完成]");
     }
 
     @Override
