@@ -10,6 +10,6 @@
      -->
 
     <select id="auditing">
-        select 1 from digitalcourse_digital_humans where deleted = 0 and creator = #{creator} and status in (1,2,4)
+        select count(1) from digitalcourse_digital_humans where deleted = 0 and creator = #{creator} and status in (1,2,4)
     </select>
 </mapper>

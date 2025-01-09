@@ -174,7 +174,10 @@ public class VoicesServiceImpl implements VoicesService {
                     // 解码Base64音频字符串
                     byte[] audioBytes = Base64.decodeBase64(audioBase64);
                     // 保存音频文件
-                    return fileApi.createFile("output.wav", null, audioBytes);
+                    // 指定文件路径（你可以根据实际情况设置）
+                    String fileName = StrUtil.uuid() + ".wav";
+                    String filePath = "temp/wav/" + fileName;
+                    return fileApi.createFile(fileName, filePath, audioBytes);
 //                    try (FileOutputStream fos = new FileOutputStream("output.wav")) {
 //                        fos.write(audioBytes);
 //                        String path = fileApi.createFile("output.wav", null, audioBytes);
