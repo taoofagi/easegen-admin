@@ -83,8 +83,8 @@ public class DigitalHumansRespVO {
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;
 
-    @Schema(description = "状态", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
-    @ExcelProperty(value = "状态", converter = DictConvert.class)
+    @Schema(description = "状态(0: 正常, 1: 待审核，2：已受理，3：训练中，4：不通过，5：训练失败)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
+    @ExcelProperty(value = "状态(0: 正常, 1: 待审核，2：已受理，3：训练中，4：不通过，5：训练失败)", converter = DictConvert.class)
     @DictFormat("common_status") // TODO 代码优化：建议设置到对应的 DictTypeConstants 枚举类中
     private Integer status;
     //修复图片

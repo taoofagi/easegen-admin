@@ -30,9 +30,9 @@ public class DigitalHumansPageReqVO extends PageParam {
     @Schema(description = "使用模型类型")
     private String useModel;
 
-    @Schema(description = "状态", example = "2")
+    @Schema(description = "状态(0: 正常, 1: 待审核，2：已受理，3：训练中，4：不通过，5：训练失败)", example = "2")
     private Integer status;
-    @Schema(description = "状态", example = "2")
+    @Schema(description = "创建人", example = "2")
     private String creator;
 
     private Date expireDate = new Date();

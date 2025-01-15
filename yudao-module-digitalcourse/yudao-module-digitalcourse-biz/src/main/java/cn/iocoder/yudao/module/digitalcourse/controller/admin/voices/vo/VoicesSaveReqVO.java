@@ -45,10 +45,13 @@ public class VoicesSaveReqVO {
     @NotNull(message = "声音类型 不能为空")
     private Integer voiceType;
 
-    @Schema(description = "状态 (0: 正常, 1: 异常)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
-    @NotNull(message = "状态 (0: 正常, 1: 异常)不能为空")
+    @Schema(description = "状态 (0: 正常, 1: 待审核，2：已受理，3：训练中，4：不通过，5：训练失败)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
+    @NotNull(message = "状态 (0: 正常, 1: 待审核，2：已受理，3：训练中，4：不通过，5：训练失败)不能为空")
     private Integer status;
 
     private String fixAuditionUrl;
+
+    @Schema(description = "克隆类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+    private Integer type;
 
 }

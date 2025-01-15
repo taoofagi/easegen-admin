@@ -13,4 +13,5 @@ public class VoicesTrailVO {
     private String language;
     private String gender;
     private String accountId;
+    private Integer type;
 }

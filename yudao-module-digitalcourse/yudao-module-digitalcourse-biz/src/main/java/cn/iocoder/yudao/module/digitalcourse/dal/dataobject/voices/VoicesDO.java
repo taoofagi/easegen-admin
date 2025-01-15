@@ -70,7 +70,7 @@ public class VoicesDO extends BaseDO {
      */
     private Integer voiceType;
     /**
-     * 状态 (0: 正常, 1: 异常)
+     * 状态 (0: 正常, 1: 待审核，2：已受理，3：训练中，4：不通过，5：训练失败)
      */
     private Integer status;
 
@@ -80,5 +80,9 @@ public class VoicesDO extends BaseDO {
      * 过期时间
      */
     private Date expireDate;
+    /**
+     * 克隆类型（1：普通，2：高级）
+     */
+    private Integer type;
 
 }

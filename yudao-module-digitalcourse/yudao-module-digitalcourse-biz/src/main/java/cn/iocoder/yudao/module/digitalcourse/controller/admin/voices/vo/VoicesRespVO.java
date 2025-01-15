@@ -62,12 +62,15 @@ public class VoicesRespVO {
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;
 
-    @Schema(description = "状态 (0: 正常, 1: 异常)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
-    @ExcelProperty("状态 (0: 正常, 1: 异常)")
+    @Schema(description = "状态 (0: 正常, 1: 待审核，2：已受理，3：训练中，4：不通过，5：训练失败)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
+    @ExcelProperty("状态 (0: 正常, 1: 待审核，2：已受理，3：训练中，4：不通过，5：训练失败)")
     private Integer status;
 
     private String fixAuditionUrl;
 
     private Date expireDate;
+
+    @Schema(description = "克隆类型", requiredMode = Schema.RequiredMode.REQUIRED, example = "1")
+    private Integer type;
 
 }
