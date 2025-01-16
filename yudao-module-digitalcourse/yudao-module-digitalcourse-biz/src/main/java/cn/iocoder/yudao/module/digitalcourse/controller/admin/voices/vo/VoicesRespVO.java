@@ -1,11 +1,12 @@
 package cn.iocoder.yudao.module.digitalcourse.controller.admin.voices.vo;
 
+import com.fhs.core.trans.anno.Trans;
+import com.fhs.core.trans.constant.TransType;
+import com.fhs.core.trans.vo.VO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import java.util.*;
-import java.util.*;
-import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDateTime;
 import com.alibaba.excel.annotation.*;
 import cn.iocoder.yudao.framework.excel.core.annotations.DictFormat;
@@ -14,7 +15,7 @@ import cn.iocoder.yudao.framework.excel.core.convert.DictConvert;
 @Schema(description = "管理后台 - 声音管理 Response VO")
 @Data
 @ExcelIgnoreUnannotated
-public class VoicesRespVO {
+public class VoicesRespVO implements VO {
 
     @Schema(description = "声音ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "2413")
     @ExcelProperty("声音ID")
@@ -61,6 +62,13 @@ public class VoicesRespVO {
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;
+
+    @Schema(description = "创建人编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "1024")
+    @Trans(type = TransType.SIMPLE, targetClassName = "cn.iocoder.yudao.module.system.dal.dataobject.user.AdminUserDO",
+            fields = "nickname", ref = "creatorName")
+    private String creator;
+
+    private String creatorName;
 
     @Schema(description = "状态 (0: 正常, 1: 待审核，2：已受理，3：训练中，4：不通过，5：训练失败)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
     @ExcelProperty("状态 (0: 正常, 1: 待审核，2：已受理，3：训练中，4：不通过，5：训练失败)")

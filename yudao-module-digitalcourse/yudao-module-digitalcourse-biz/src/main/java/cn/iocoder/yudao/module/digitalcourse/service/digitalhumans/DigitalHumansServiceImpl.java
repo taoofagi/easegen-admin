@@ -91,6 +91,8 @@ public class DigitalHumansServiceImpl implements DigitalHumansService {
 
     @Override
     public Boolean auditing() {
+        // 管理员直接返回true
+        if (WebFrameworkUtils.getLoginUserId() == 1) return true;
         Integer auditing = digitalHumansMapper.auditing(WebFrameworkUtils.getLoginUserId());
         return auditing == null;
     }

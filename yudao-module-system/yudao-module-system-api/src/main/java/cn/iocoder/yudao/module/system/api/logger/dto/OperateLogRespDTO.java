@@ -80,4 +80,9 @@ public class OperateLogRespDTO implements VO {
      */
     private LocalDateTime createTime;
 
+    /**
+     * 创建者
+     */
+    private String creator;
+
 }
