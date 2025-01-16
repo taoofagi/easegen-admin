@@ -226,6 +226,7 @@ yudao:
       - /admin-api/digitalcourse/courses/getCoursePage
       - /admin-api/infra/config/get-value-by-key
       - /app-api/member/auth/**
+      - /admin-api/system/dict-data/simple-list
   websocket:
     enable: true # websocket的开关
     path: /infra/ws # 路径

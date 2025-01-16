@@ -37,7 +37,7 @@ services:
     build:
       context: ./yudao-server/
 #    image: taoofagi/easegen-admin:v0.1
-    image: registry.cn-hangzhou.aliyuncs.com/easegen/easegen-admin:v0.2.4
+    image: registry.cn-hangzhou.aliyuncs.com/easegen/easegen-admin:v0.2.5
     restart: unless-stopped
     ports:
       - "48080:48080"
