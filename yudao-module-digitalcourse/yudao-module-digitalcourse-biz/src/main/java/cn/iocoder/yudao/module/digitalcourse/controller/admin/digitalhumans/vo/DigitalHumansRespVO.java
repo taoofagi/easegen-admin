@@ -1,5 +1,8 @@
 package cn.iocoder.yudao.module.digitalcourse.controller.admin.digitalhumans.vo;
 
+import com.fhs.core.trans.anno.Trans;
+import com.fhs.core.trans.constant.TransType;
+import com.fhs.core.trans.vo.VO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import java.util.*;
@@ -13,7 +16,7 @@ import cn.iocoder.yudao.framework.excel.core.convert.DictConvert;
 @Schema(description = "管理后台 - 数字人模型 Response VO")
 @Data
 @ExcelIgnoreUnannotated
-public class DigitalHumansRespVO {
+public class DigitalHumansRespVO implements VO {
 
     @Schema(description = "课程PPT ID", requiredMode = Schema.RequiredMode.REQUIRED, example = "17318")
     @ExcelProperty("课程PPT ID")
@@ -82,6 +85,13 @@ public class DigitalHumansRespVO {
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;
+
+    @Schema(description = "创建人编号", requiredMode = Schema.RequiredMode.REQUIRED, example = "1024")
+    @Trans(type = TransType.SIMPLE, targetClassName = "cn.iocoder.yudao.module.system.dal.dataobject.user.AdminUserDO",
+            fields = "nickname", ref = "creatorName")
+    private String creator;
+
+    private String creatorName;
 
     @Schema(description = "状态(0: 正常, 1: 待审核，2：已受理，3：训练中，4：不通过，5：训练失败)", requiredMode = Schema.RequiredMode.REQUIRED, example = "2")
     @ExcelProperty(value = "状态(0: 正常, 1: 待审核，2：已受理，3：训练中，4：不通过，5：训练失败)", converter = DictConvert.class)
