@@ -73,5 +73,7 @@ public class TemplateRespVO {
     private String previewImage;
     @Schema(description = "效果图")
     private String templateName;
+    @Schema(description = "模板尺寸")
+    private String templateSize;
 
 }

@@ -3,6 +3,7 @@ package cn.iocoder.yudao.module.digitalcourse.service.courses;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.iocoder.yudao.framework.common.exception.ErrorCode;
 import cn.iocoder.yudao.framework.common.util.collection.CollectionUtils;
+import cn.iocoder.yudao.framework.web.core.util.WebFrameworkUtils;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.courses.vo.*;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursescenes.vo.AppCourseScenesSaveReqVO;
 import cn.iocoder.yudao.module.digitalcourse.service.coursescenes.CourseScenesService;
@@ -155,6 +156,9 @@ public class CoursesServiceImpl implements CoursesService {
     @Override
     public PageResult<AppCoursesRespVO> getCoursesPage(AppCoursesPageReqVO pageReqVO) {
         // 获取分页的课程列表
+        if (WebFrameworkUtils.getLoginUserId() != 1L) {
+            pageReqVO.setCreator(String.valueOf(WebFrameworkUtils.getLoginUserId()));
+        }
         PageResult<CoursesDO> pageResult = coursesMapper.selectPage(pageReqVO);
 
         // 将 CoursesDO 转换为 AppCoursesRespVO，并设置进度信息

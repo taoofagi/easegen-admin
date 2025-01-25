@@ -5,7 +5,12 @@ import cn.iocoder.yudao.framework.mybatis.core.mapper.BaseMapperX;
 import cn.iocoder.yudao.framework.mybatis.core.query.LambdaQueryWrapperX;
 import cn.iocoder.yudao.module.digitalcourse.controller.admin.coursemedia.vo.CourseMediaPageReqVO;
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursemedia.CourseMediaDO;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * 课程媒体 Mapper
@@ -27,7 +32,14 @@ public interface CourseMediaMapper extends BaseMapperX<CourseMediaDO> {
                 .eqIfPresent(CourseMediaDO::getProgress, reqVO.getProgress())
                 .eqIfPresent(CourseMediaDO::getCourseId, reqVO.getCourseId())
                 .likeIfPresent(CourseMediaDO::getCourseName, reqVO.getCourseName())
+                .eqIfPresent(CourseMediaDO::getCreator, reqVO.getCreator())
                 .orderByDesc(CourseMediaDO::getId));
     }
 
+
+    IPage<CourseMediaDO> selectPageMedia(IPage page , @Param("reqVO") CourseMediaPageReqVO reqVO);
+    CourseMediaDO selectByIdAndStatusOne(@Param("id") Long id,@Param("status") List<Integer> status);
+    List<CourseMediaDO> selectByIdAndStatusList(@Param("id") Long id,@Param("status") List<Integer> status);
+
+    Integer lockPoint(@Param("userId") Long userId, @Param("status") List<Integer> status);
 }

@@ -83,4 +83,7 @@ public class BackgroundsDO extends BaseDO {
      */
     private String pptRemark;
 
+    //背景尺寸
+    private String templateSize;
+
 }

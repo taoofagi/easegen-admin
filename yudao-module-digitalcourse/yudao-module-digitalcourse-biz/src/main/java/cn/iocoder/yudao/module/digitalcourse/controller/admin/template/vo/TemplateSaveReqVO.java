@@ -57,7 +57,8 @@ public class TemplateSaveReqVO {
     @NotNull(message = "数字人距离左侧位置不能为空")
     private BigDecimal humanY;
 
-    @Schema(description = "背景图片")
+    @Schema(description = "背景图片", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotEmpty(message = "背景图片不能为空")
     private String bgImage;
 
     @Schema(description = "效果图")
@@ -65,5 +66,8 @@ public class TemplateSaveReqVO {
     @Schema(description = "模板名称",maxLength = 50)
     @NotEmpty(message = "模板名称不能为空")
     private String templateName;
+
+    @Schema(description = "模板尺寸")
+    private String templateSize;
 
 }

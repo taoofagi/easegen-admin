@@ -54,4 +54,7 @@ public class CourseMediaMegerVO {
 
     private List<String> ppt;
 
+    @Schema(description = "前端传的预估时间 秒", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private Long expectedDuration;
+
 }

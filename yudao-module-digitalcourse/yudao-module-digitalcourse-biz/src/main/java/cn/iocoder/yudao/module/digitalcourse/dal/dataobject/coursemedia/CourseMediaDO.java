@@ -86,4 +86,9 @@ public class CourseMediaDO extends BaseDO {
     private String subtitlesStyle;
 
     private String thumbnail;
+
+    /*
+    * 预估所需扣除的积分
+    * */
+    private Integer expectedReducePoint;
 }

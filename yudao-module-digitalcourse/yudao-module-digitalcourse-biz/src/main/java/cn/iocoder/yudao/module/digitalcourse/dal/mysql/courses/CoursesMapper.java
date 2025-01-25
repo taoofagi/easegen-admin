@@ -27,6 +27,7 @@ public interface CoursesMapper extends BaseMapperX<CoursesDO> {
                 .eqIfPresent(CoursesDO::getStatus, reqVO.getStatus())
                 .eqIfPresent(CoursesDO::getPageInfo, reqVO.getPageInfo())
                 .eqIfPresent(CoursesDO::getSubtitlesStyle, reqVO.getSubtitlesStyle())
+                .eqIfPresent(CoursesDO::getCreator, reqVO.getCreator())
                 .betweenIfPresent(CoursesDO::getCreateTime, reqVO.getCreateTime())
                 .orderByDesc(CoursesDO::getId));
     }

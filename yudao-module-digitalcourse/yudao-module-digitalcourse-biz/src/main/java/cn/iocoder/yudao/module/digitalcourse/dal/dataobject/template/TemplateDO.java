@@ -81,6 +81,9 @@ public class TemplateDO extends BaseDO {
     /**
      * 模板名称
      */
-    private String templateName;;
+    private String templateName;
+
+    // 模板尺寸
+    private String templateSize;
 
 }

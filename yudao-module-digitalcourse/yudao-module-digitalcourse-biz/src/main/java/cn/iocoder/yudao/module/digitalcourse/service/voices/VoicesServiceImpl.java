@@ -87,6 +87,7 @@ public class VoicesServiceImpl implements VoicesService {
         VoicesDO voices = this.getVoices(id);
         VoicesTrailVO build = VoicesTrailVO.builder().build();
         BeanUtils.copyProperties(voices, build);
+        if (StrUtil.isBlank(voices.getFixAuditionUrl())) build.setFixAuditionUrl(voices.getAuditionUrl());
         build.setAccountId(voices.getCreator());
         return build;
     }

@@ -2,7 +2,6 @@ package cn.iocoder.yudao.module.digitalcourse.job;
 
 import cn.iocoder.yudao.framework.quartz.core.handler.JobHandler;
 import cn.iocoder.yudao.framework.tenant.core.job.TenantJob;
-import cn.iocoder.yudao.module.digitalcourse.service.coursemedia.CourseMediaService;
 import cn.iocoder.yudao.module.digitalcourse.service.coursemedia.CourseMediaServiceUtil;
 import cn.iocoder.yudao.module.digitalcourse.service.digitalhumans.DigitalHumansServiceUtil;
 import cn.iocoder.yudao.module.digitalcourse.service.voices.VoicesServiceUtil;

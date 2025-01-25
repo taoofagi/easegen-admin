@@ -28,6 +28,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Operation;
 
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.io.IOException;
@@ -167,7 +168,7 @@ public class AppCoursesController {
             // Set the content type for Excel file
             response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
             String timestamp = new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
-            response.setHeader("Content-Disposition", "attachment; filename=智能试题_" + timestamp + ".xlsx");
+            response.setHeader("Content-Disposition", "attachment; filename="+ URLEncoder.encode("智能试题_","UTF-8") + timestamp + ".xlsx");
 
             try (ServletOutputStream outputStream = response.getOutputStream()) {
                 workbook.write(outputStream);

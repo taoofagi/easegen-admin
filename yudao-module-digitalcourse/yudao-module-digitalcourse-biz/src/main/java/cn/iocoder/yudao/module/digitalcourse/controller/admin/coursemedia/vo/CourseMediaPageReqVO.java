@@ -65,4 +65,6 @@ public class CourseMediaPageReqVO extends PageParam {
     @Schema(description = "背景图片")
     private String thumbnail;
 
+    private String creator;
+
 }

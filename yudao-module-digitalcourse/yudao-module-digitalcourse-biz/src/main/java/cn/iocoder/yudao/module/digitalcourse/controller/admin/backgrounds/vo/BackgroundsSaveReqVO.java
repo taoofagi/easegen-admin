@@ -49,5 +49,7 @@ public class BackgroundsSaveReqVO {
 
     @Schema(description = "pptRemark", requiredMode = Schema.RequiredMode.REQUIRED)
     private String pptRemark;
+    @Schema(description = "templateSize")
+    private String templateSize;
 
 }

@@ -60,7 +60,7 @@ public class VoicesController {
     @DeleteMapping("/delete")
     @Operation(summary = "删除声音管理")
     @Parameter(name = "id", description = "编号", required = true)
-    @PreAuthorize("@ss.hasPermission('digitalcourse:voices:delete')")
+    //@PreAuthorize("@ss.hasPermission('digitalcourse:voices:delete')")
     public CommonResult<Boolean> deleteVoices(@RequestParam("id") Long id) {
         voicesService.deleteVoices(id);
         return success(true);

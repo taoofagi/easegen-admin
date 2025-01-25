@@ -67,5 +67,7 @@ public class BackgroundsRespVO {
     private LocalDateTime createTime;
 
     private String pptRemark;
+    //背景尺寸
+    private String templateSize;
 
 }
