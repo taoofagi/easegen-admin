@@ -39,6 +39,14 @@ public class DigitalHumansServiceImpl implements DigitalHumansService {
         // 插入
         DigitalHumansDO digitalHumans = BeanUtils.toBean(createReqVO, DigitalHumansDO.class);
         digitalHumansMapper.insert(digitalHumans);
+        // 判断如果是极速模式，自动开始训练
+        if (digitalHumans.getUseModel().equals("3")) {
+            DigitalHumansSaveReqVO reqVO = BeanUtils.toBean(digitalHumans, DigitalHumansSaveReqVO.class);
+            reqVO.setStatus(3);
+            reqVO.setFixVideoUrl(digitalHumans.getVideoUrl());
+            updateDigitalHumans(reqVO);
+        }
+
         // 返回
         return digitalHumans.getId();
     }
