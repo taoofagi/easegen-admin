@@ -51,6 +51,6 @@ docker compose --env-file docker.env up -d
 
 
 ## 构建后端镜像
-docker build -t registry.cn-hangzhou.aliyuncs.com/easegen/easegen-admin:v0.2.5 .
+docker build -t registry.cn-hangzhou.aliyuncs.com/easegen/easegen-admin:v0.2.6 .
 docker login --username=云河blockchain registry.cn-hangzhou.aliyuncs.com
-docker push registry.cn-hangzhou.aliyuncs.com/easegen/easegen-admin:v0.2.5
+docker push registry.cn-hangzhou.aliyuncs.com/easegen/easegen-admin:v0.2.6
