@@ -67,6 +67,13 @@ public class VoicesServiceImpl implements VoicesService {
         // 插入
         VoicesDO voices = BeanUtils.toBean(createReqVO, VoicesDO.class);
         voicesMapper.insert(voices);
+        // 判断如果是极速模式，自动开始训练
+        if(voices.getType()==1) {
+            VoicesSaveReqVO reqVO = BeanUtils.toBean(voices, VoicesSaveReqVO.class);
+            reqVO.setStatus(3);
+            reqVO.setFixAuditionUrl(voices.getAuditionUrl());
+            updateVoices(reqVO);
+        }
         // 返回
         return voices.getId();
     }
@@ -122,8 +129,7 @@ public class VoicesServiceImpl implements VoicesService {
         }else {
             pageReqVO.setVoiceType(0);
         }
-        //只查询状态正常的数据
-        pageReqVO.setStatus(0);
+        
         return voicesMapper.selectPage(pageReqVO);
     }
     @Override
@@ -133,8 +139,10 @@ public class VoicesServiceImpl implements VoicesService {
 
     @Override
     public Boolean auditing() {
+        // 管理员直接返回true
+        if (WebFrameworkUtils.getLoginUserId() == 1) return true;
         Integer auditing = voicesMapper.auditing(WebFrameworkUtils.getLoginUserId());
-        return auditing == null;
+        return (auditing == null || auditing == 0);
     }
 
     @Override

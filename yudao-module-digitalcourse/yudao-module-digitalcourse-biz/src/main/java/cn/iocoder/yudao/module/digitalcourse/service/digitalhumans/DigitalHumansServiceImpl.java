@@ -102,7 +102,7 @@ public class DigitalHumansServiceImpl implements DigitalHumansService {
         // 管理员直接返回true
         if (WebFrameworkUtils.getLoginUserId() == 1) return true;
         Integer auditing = digitalHumansMapper.auditing(WebFrameworkUtils.getLoginUserId());
-        return auditing == null;
+        return (auditing == null || auditing == 0);
     }
 
     @Override
@@ -115,8 +115,6 @@ public class DigitalHumansServiceImpl implements DigitalHumansService {
             //查询非公共数字人，只能查询自己的，公共数字人，可以查询所有的
             if (WebFrameworkUtils.getLoginUserId() != 1) pageReqVO.setCreator(String.valueOf(WebFrameworkUtils.getLoginUserId()));
         }
-        //只查询状态正常的数据
-        pageReqVO.setStatus(0);
         return digitalHumansMapper.selectPage(pageReqVO);
     }
 
