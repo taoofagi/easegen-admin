@@ -51,7 +51,7 @@ public class DigitalHumansController {
     @DeleteMapping("/delete")
     @Operation(summary = "删除数字人模型")
     @Parameter(name = "id", description = "编号", required = true)
-    @PreAuthorize("@ss.hasPermission('digitalcourse:digital-humans:delete')")
+//    @PreAuthorize("@ss.hasPermission('digitalcourse:digital-humans:delete')")
     public CommonResult<Boolean> deleteDigitalHumans(@RequestParam("id") Long id) {
         digitalHumansService.deleteDigitalHumans(id);
         return success(true);
