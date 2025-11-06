@@ -91,4 +91,50 @@ public class CourseMediaDO extends BaseDO {
     * 预估所需扣除的积分
     * */
     private Integer expectedReducePoint;
+
+    // ========== 3D数字人相关字段 ==========
+    /**
+     * 平台类型：1-2D（easegen），2-3D（魔珐星云）
+     */
+    private Integer platformType;
+    /**
+     * 平台任务ID（如魔珐星云的task_id）
+     */
+    private String platformTaskId;
+    /**
+     * 数字人形象名称（3D使用）
+     */
+    private String lookName;
+    /**
+     * 音色名称（3D使用）
+     */
+    private String ttsVcnName;
+    /**
+     * 演播室名称（3D使用）
+     */
+    private String studioName;
+    /**
+     * 字幕开关：on/off（3D使用）
+     */
+    private String subTitle;
+    /**
+     * 是否显示AI生成标识：0-否，1-是（3D使用）
+     */
+    private Integer ifAigcMark;
+    /**
+     * PPT解析文件名（3D使用）
+     */
+    private String parsePptFileName;
+    /**
+     * 合成状态：not_send/waiting/processing/finished/error/cancel（3D使用）
+     */
+    private String synthStatus;
+    /**
+     * 合成开始时间（3D使用）
+     */
+    private java.time.LocalDateTime synthStartTime;
+    /**
+     * 合成完成时间（3D使用）
+     */
+    private java.time.LocalDateTime synthFinishTime;
 }

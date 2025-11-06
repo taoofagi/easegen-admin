@@ -57,4 +57,35 @@ public class CourseMediaMegerVO {
     @Schema(description = "前端传的预估时间 秒", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private Long expectedDuration;
 
+    // ========== 3D数字人相关字段 ==========
+    @Schema(description = "平台类型：1-2D（easegen），2-3D（魔珐星云）", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private Integer platformType;
+
+    @Schema(description = "数字人形象名称（3D使用）", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private String lookName;
+
+    @Schema(description = "音色名称（3D使用）", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private String ttsVcnName;
+
+    @Schema(description = "演播室名称（3D使用）", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private String studioName;
+
+    @Schema(description = "字幕开关：on/off（3D使用）", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private String subTitle;
+
+    @Schema(description = "是否显示AI生成标识：0-否，1-是（3D使用）", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private Integer ifAigcMark;
+
+    @Schema(description = "合成方式：segment-文本片段，ppt-PPT文件", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private String synthesisType;
+
+    @Schema(description = "PPT文件URL（ppt方式）", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private String pptFileUrl;
+
+    @Schema(description = "文本内容（segment方式）", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private String text;
+
+    @Schema(description = "请求JSON（用于存储额外的请求参数）", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    private String reqJson;
+
 }

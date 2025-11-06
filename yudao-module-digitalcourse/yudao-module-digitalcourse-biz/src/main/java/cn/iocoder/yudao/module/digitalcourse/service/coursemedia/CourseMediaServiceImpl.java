@@ -16,6 +16,8 @@ import cn.iocoder.yudao.module.digitalcourse.dal.mysql.coursemedia.CourseMediaMa
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+
+import java.util.List;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -52,6 +54,9 @@ public class CourseMediaServiceImpl implements CourseMediaService {
 
     @Resource
     private CourseMediaServiceUtil courseMediaServiceUtil;
+
+    @Resource
+    private List<cn.iocoder.yudao.module.digitalcourse.service.coursemedia.provider.VideoSynthesisProvider> providers;
 
     @Override
     public Long createCourseMedia(CourseMediaSaveReqVO createReqVO) {
@@ -106,6 +111,23 @@ public class CourseMediaServiceImpl implements CourseMediaService {
             courseMediaDO.setMediaType(1);
             courseMediaDO.setName(updateReqVO.getName());
             courseMediaDO.setCourseName(updateReqVO.getName());
+            
+            // 设置平台类型（默认2D）
+            Integer platformType = updateReqVO.getPlatformType();
+            if (platformType == null) {
+                platformType = 1; // 默认2D
+            }
+            courseMediaDO.setPlatformType(platformType);
+            
+            // 设置3D相关字段（如果使用3D）
+            if (platformType == 2) {
+                courseMediaDO.setLookName(updateReqVO.getLookName());
+                courseMediaDO.setTtsVcnName(updateReqVO.getTtsVcnName());
+                courseMediaDO.setStudioName(updateReqVO.getStudioName());
+                courseMediaDO.setSubTitle(updateReqVO.getSubTitle() != null ? updateReqVO.getSubTitle() : "on");
+                courseMediaDO.setIfAigcMark(updateReqVO.getIfAigcMark() != null ? updateReqVO.getIfAigcMark() : 1);
+            }
+            
             //将updateReqVO 转换为json字符串
             courseMediaDO.setReqJson(JSON.toJSONString(updateReqVO));
             courseMediaMapper.insert(courseMediaDO);
@@ -113,9 +135,29 @@ public class CourseMediaServiceImpl implements CourseMediaService {
             return CommonResult.error(BAD_REQUEST.getCode(),"已存在合成中视频，不允许重复合成");
         }
         updateReqVO.setCourseMediaId(courseMediaDO.getId());
-        //异步调用数字人视频渲染接口，开始合并
-        courseMediaServiceUtil.remoteMegerMedia(updateReqVO);
-        return CommonResult.success(true);
+        
+        // 根据平台类型选择对应的Provider
+        Integer platformType = courseMediaDO.getPlatformType() != null ? courseMediaDO.getPlatformType() : 1;
+        cn.iocoder.yudao.module.digitalcourse.service.coursemedia.provider.VideoSynthesisProvider provider = getProvider(platformType);
+        
+        // 调用对应的Provider创建任务
+        try {
+            provider.createSynthesisTask(courseMediaDO, updateReqVO);
+            return CommonResult.success(true);
+        } catch (Exception e) {
+            log.error("创建视频合成任务失败，courseMediaId: {}", courseMediaDO.getId(), e);
+            return CommonResult.error(BAD_REQUEST.getCode(), "创建视频合成任务失败: " + e.getMessage());
+        }
+    }
+
+    /**
+     * 获取视频合成提供者
+     */
+    private cn.iocoder.yudao.module.digitalcourse.service.coursemedia.provider.VideoSynthesisProvider getProvider(Integer platformType) {
+        return providers.stream()
+                .filter(p -> p.supports(platformType))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("不支持的平台类型: " + platformType));
     }
 
     @Override

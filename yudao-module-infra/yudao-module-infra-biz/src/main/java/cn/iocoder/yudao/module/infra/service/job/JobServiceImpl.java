@@ -164,6 +164,10 @@ public class JobServiceImpl implements JobService {
         System.out.println("应用启动，自动同步定时任务...");
         try {
             syncJob();
+        } catch (cn.iocoder.yudao.framework.common.exception.ServiceException e) {
+            // Quartz 被禁用时，不抛出异常，只打印日志
+            log.warn("[onApplicationReady][定时任务已禁用，跳过同步]: {}", e.getMessage());
+            return;
         } catch (SchedulerException e) {
             log.error("[onApplicationReady][同步失败]", e);
             throw new RuntimeException(e);
