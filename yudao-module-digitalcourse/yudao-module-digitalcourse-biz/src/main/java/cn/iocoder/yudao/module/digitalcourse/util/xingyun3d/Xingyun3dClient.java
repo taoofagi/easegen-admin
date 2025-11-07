@@ -434,10 +434,12 @@ public class Xingyun3dClient {
             }
 
             // 4. 更新任务状态
+            log.info("[DEBUG] 准备调用updateCourseMediaFromResponse，courseMediaId: {}", courseMedia.getId());
             updateCourseMediaFromResponse(courseMedia, dataObj);
+            log.info("[DEBUG] updateCourseMediaFromResponse调用完成，courseMediaId: {}", courseMedia.getId());
 
         } catch (Exception e) {
-            log.error("查询任务状态失败，courseMediaId: {}", courseMedia.getId(), e);
+            log.error("查询任务状态失败，courseMediaId: {}, 异常: ", courseMedia.getId(), e);
         }
     }
 
@@ -445,22 +447,28 @@ public class Xingyun3dClient {
      * 从响应更新CourseMediaDO
      */
     private void updateCourseMediaFromResponse(CourseMediaDO courseMedia, JSONObject dataObj) {
+        log.info("[DEBUG] updateCourseMediaFromResponse开始，courseMediaId: {}", courseMedia.getId());
         // 更新合成状态
         String synthStatus = dataObj.getString("synth_state");
         courseMedia.setSynthStatus(synthStatus);
+        log.info("[DEBUG] synthStatus: {}, courseMediaId: {}", synthStatus, courseMedia.getId());
 
         // 更新状态映射：finished -> 2（成功），error -> 3（失败），其他 -> 1（合成中）
         if ("finished".equals(synthStatus)) {
+            log.info("[DEBUG] 任务已完成，准备更新状态为2，courseMediaId: {}", courseMedia.getId());
             courseMedia.setStatus(2); // 成功
             // 更新视频URL
             String renderVideoOss = dataObj.getString("render_video_oss");
+            log.info("[DEBUG] renderVideoOss: {}, courseMediaId: {}", renderVideoOss, courseMedia.getId());
             if (StrUtil.isNotBlank(renderVideoOss)) {
                 // 下载视频并上传到OSS
                 try {
+                    log.info("[DEBUG] 开始下载并上传视频，courseMediaId: {}", courseMedia.getId());
                     String ossUrl = downloadAndUploadVideo(renderVideoOss);
                     courseMedia.setPreviewUrl(ossUrl);
+                    log.info("[DEBUG] 视频下载上传成功，ossUrl: {}, courseMediaId: {}", ossUrl, courseMedia.getId());
                 } catch (Exception e) {
-                    log.error("下载并上传视频失败", e);
+                    log.error("下载并上传视频失败，courseMediaId: {}, 使用原始URL", courseMedia.getId(), e);
                     // 如果下载失败，直接使用原始URL
                     courseMedia.setPreviewUrl(renderVideoOss);
                 }
@@ -507,7 +515,10 @@ public class Xingyun3dClient {
         }
 
         // 保存更新
+        log.info("[DEBUG] 准备调用courseMediaMapper.updateById，courseMediaId: {}, status: {}, previewUrl: {}",
+                 courseMedia.getId(), courseMedia.getStatus(), courseMedia.getPreviewUrl());
         courseMediaMapper.updateById(courseMedia);
+        log.info("[DEBUG] courseMediaMapper.updateById调用完成，courseMediaId: {}", courseMedia.getId());
     }
 
     /**

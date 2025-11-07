@@ -50,6 +50,9 @@ public class AppCoursesUpdateReqVO {
     @Schema(description = "字幕样式", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
     private String subtitlesStyle;
 
+    @Schema(description = "平台类型：1-2D（easegen），2-3D（魔珐星云）", requiredMode = Schema.RequiredMode.NOT_REQUIRED, example = "1")
+    private Integer platformType;
+
     private List<String> ppt;
 
     //场景

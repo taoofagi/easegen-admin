@@ -75,4 +75,8 @@ public class CourseMediaRespVO {
     @Schema(description = "背景图片")
     private String thumbnail;
 
+    @Schema(description = "平台类型：1-2D（easegen），2-3D（魔珐星云）", example = "1")
+    @ExcelProperty("平台类型")
+    private Integer platformType;
+
 }

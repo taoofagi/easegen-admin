@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
 import java.util.List;
@@ -170,19 +171,41 @@ public class PPTUtil {
     private File downloadFile(String fileUrl) throws IOException {
         log.info("[downloadFile][开始] url:{}", fileUrl);
         URL url = new URL(fileUrl);
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        // 设置超时：连接超时10秒，读取超时30秒
+        connection.setConnectTimeout(10000);
+        connection.setReadTimeout(30000);
+
         String tempFileName = UUID.randomUUID().toString();
         String extension = getFileExtension(fileUrl);
         File downloadedFile = File.createTempFile("downloaded_file_" + tempFileName, "." + extension);
 
-        try (InputStream inputStream = url.openStream();
-             FileOutputStream outputStream = new FileOutputStream(downloadedFile)) {
-            byte[] buffer = new byte[4096];
+        try (InputStream inputStream = connection.getInputStream();
+             BufferedInputStream bis = new BufferedInputStream(inputStream);
+             FileOutputStream outputStream = new FileOutputStream(downloadedFile);
+             BufferedOutputStream bos = new BufferedOutputStream(outputStream)) {
+
+            // 使用128KB缓冲区，大幅提升IO性能
+            byte[] buffer = new byte[8192 * 16];
             int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, bytesRead);
+            long totalBytes = 0;
+            long startTime = System.currentTimeMillis();
+
+            while ((bytesRead = bis.read(buffer)) != -1) {
+                bos.write(buffer, 0, bytesRead);
+                totalBytes += bytesRead;
             }
+
+            long duration = System.currentTimeMillis() - startTime;
+            double sizeMB = totalBytes / 1024.0 / 1024.0;
+            double speedMBps = sizeMB / (duration / 1000.0);
+            log.info("[downloadFile][完成] 文件:{}, 大小:{:.2f}MB, 耗时:{}ms, 速度:{:.2f}MB/s",
+                     downloadedFile.getAbsolutePath(), sizeMB, duration, speedMBps);
+        } finally {
+            connection.disconnect();
         }
-        log.info("[downloadFile][完成] url:{}, file:{}", fileUrl, downloadedFile.getAbsolutePath());
+
         return downloadedFile;
     }
 

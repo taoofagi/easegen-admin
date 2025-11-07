@@ -68,6 +68,10 @@ public class AppCoursesRespVO {
     @ExcelProperty("字幕样式")
     private String subtitlesStyle;
 
+    @Schema(description = "平台类型：1-2D（easegen），2-3D（魔珐星云）", example = "1")
+    @ExcelProperty("平台类型")
+    private Integer platformType;
+
     @Schema(description = "创建时间", requiredMode = Schema.RequiredMode.REQUIRED)
     @ExcelProperty("创建时间")
     private LocalDateTime createTime;

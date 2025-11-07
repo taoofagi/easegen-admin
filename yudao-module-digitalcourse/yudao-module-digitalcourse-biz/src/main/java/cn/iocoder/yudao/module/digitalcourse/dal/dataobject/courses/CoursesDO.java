@@ -77,5 +77,9 @@ public class CoursesDO extends BaseDO {
      * 字幕样式
      */
     private String subtitlesStyle;
+    /**
+     * 平台类型：1-2D（easegen），2-3D（魔珐星云）
+     */
+    private Integer platformType;
 
 }
