@@ -39,6 +39,38 @@ discard:https://discord.gg/q2RK3sEQwW
 
 [![Bilibili Video](.image%2Fdigitalcourse%2Fdemo_course.png)](https://www.bilibili.com/video/av113088116297160/)
 
+## ✨ Key Features
+
+### 2D/3D Dual-Platform Digital Human Video Synthesis
+
+**easegen** now supports both 2D and 3D digital human video synthesis platforms, providing more diverse content creation options:
+
+#### 2D Digital Human (Easegen Platform)
+- Traditional 2D digital human video synthesis
+- Fast processing speed
+- Suitable for mass production scenarios
+
+#### 3D Digital Human (Mofa Xingyun Platform)
+- High-quality 3D digital human video generation
+- More realistic digital human images
+- Supports custom digital human appearance, voice, and studio
+- Two synthesis methods:
+  - **Segment Mode**: Create videos from text segments with background images
+  - **PPT Mode**: Automatically parse PPT files to generate course videos
+- Complete workflow support:
+  - Create rendering tasks
+  - Real-time status query
+  - Task cancellation
+  - Automatic video download and storage
+
+#### Technical Implementation
+- **Strategy Pattern**: Elegant support for multiple platforms
+- **Unified Interface**: Switch between 2D/3D modes seamlessly
+- **Scheduled Tasks**: Automatic task status polling
+- **OSS Integration**: Automatic video file upload and management
+
+**Configuration**: Simple setup with App ID and App Secret to enable 3D digital human functionality
+
 ## 🗺️ Development Roadmap
 
 Here are the major features and improvements we plan to implement in the future:
@@ -47,6 +79,8 @@ Here are the major features and improvements we plan to implement in the future:
 - [x] Support for digital human image and voice customization
 - [x] Support for docker quick deployment
 - [x] Support for AI-generated scriptwriting
+- [x] **2D/3D dual-platform digital human video synthesis**
+- [x] **Mofa Xingyun 3D digital human integration**
 - [ ] SSML syntax support for voice
 - [ ] Adding lesson plan generation
 - [ ] Convert lesson plans to courseware and generate controllable PPTs
