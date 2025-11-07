@@ -102,7 +102,18 @@ public class Xingyun3dClient {
     private Map<String, String> buildHeaders(String apiPath, String method, Object data) {
         Map<String, String> headers = new HashMap<>();
         long timestamp = System.currentTimeMillis() / 1000;
+
+        log.info("[DEBUG] 签名计算参数:");
+        log.info("[DEBUG]   - apiPath: {}", apiPath);
+        log.info("[DEBUG]   - method: {}", method);
+        log.info("[DEBUG]   - timestamp: {}", timestamp);
+        log.info("[DEBUG]   - appId: {}", getAppId());
+        log.info("[DEBUG]   - appSecret: {}", getAppSecret() != null ? getAppSecret().substring(0, Math.min(8, getAppSecret().length())) + "..." : "null");
+        log.info("[DEBUG]   - data: {}", JSON.toJSONString(data));
+
         String token = Xingyun3dSignatureUtil.generateToken(apiPath, method, data, getAppSecret(), timestamp);
+
+        log.info("[DEBUG]   - 生成的token: {}", token);
 
         headers.put("X-APP-ID", getAppId());
         headers.put("X-TIMESTAMP", String.valueOf(timestamp));

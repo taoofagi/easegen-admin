@@ -38,7 +38,7 @@ public class Xingyun3DProvider implements VideoSynthesisProvider {
 
     @Override
     public void createSynthesisTask(CourseMediaDO courseMedia, CourseMediaMegerVO mergeVO) {
-        log.info("创建3D数字人视频合成任务，courseMediaId: {}", courseMedia.getId());
+        log.info("[DEBUG] 创建3D数字人视频合成任务，courseMediaId: {}, 当前platformType: {}", courseMedia.getId(), courseMedia.getPlatformType());
 
         try {
             Integer taskId;
@@ -47,24 +47,27 @@ public class Xingyun3DProvider implements VideoSynthesisProvider {
             String synthesisType = mergeVO.getSynthesisType();
             if ("ppt".equalsIgnoreCase(synthesisType) && StrUtil.isNotBlank(mergeVO.getPptFileUrl())) {
                 // PPT方式：先解析PPT，再创建任务
-                log.info("使用PPT方式创建3D数字人视频合成任务");
+                log.info("[DEBUG] 使用PPT方式创建3D数字人视频合成任务");
                 String parsePptFileName = xingyun3dClient.parsePptFile(mergeVO.getPptFileUrl());
                 courseMedia.setParsePptFileName(parsePptFileName);
                 taskId = xingyun3dClient.createRenderTaskByPpt(courseMedia, parsePptFileName);
             } else {
                 // segment方式：直接创建任务
-                log.info("使用segment方式创建3D数字人视频合成任务");
+                log.info("[DEBUG] 使用segment方式创建3D数字人视频合成任务");
                 List<Map<String, Object>> segments = buildSegments(mergeVO);
                 taskId = xingyun3dClient.createRenderTaskBySegment(courseMedia, segments);
             }
 
             // 更新任务信息
+            log.info("[DEBUG] 准备更新任务信息，设置platformTaskId: {}, platformType: 2", taskId);
             courseMedia.setPlatformTaskId(String.valueOf(taskId));
             courseMedia.setPlatformType(2); // 3D
             courseMedia.setStatus(1); // 合成中
             courseMedia.setSynthStatus("waiting"); // 等待处理
             courseMedia.setSynthStartTime(java.time.LocalDateTime.now());
+            log.info("[DEBUG] 调用updateById之前，courseMedia.platformType: {}", courseMedia.getPlatformType());
             courseMediaMapper.updateById(courseMedia);
+            log.info("[DEBUG] 调用updateById之后，重新查询platformType");
 
             log.info("3D数字人视频合成任务创建成功，courseMediaId: {}, taskId: {}", courseMedia.getId(), taskId);
 
@@ -73,8 +76,8 @@ public class Xingyun3DProvider implements VideoSynthesisProvider {
             // 更新任务状态为失败
             courseMedia.setStatus(3); // 失败
             courseMedia.setSynthStatus("error");
-            courseMedia.setErrorReason(e.getMessage() != null && e.getMessage().length() > 500 
-                    ? e.getMessage().substring(0, 500) 
+            courseMedia.setErrorReason(e.getMessage() != null && e.getMessage().length() > 500
+                    ? e.getMessage().substring(0, 500)
                     : e.getMessage());
             courseMediaMapper.updateById(courseMedia);
             throw new RuntimeException("创建3D数字人视频合成任务失败: " + e.getMessage(), e);
@@ -112,11 +115,13 @@ public class Xingyun3DProvider implements VideoSynthesisProvider {
             if (segments.isEmpty() && mergeVO.getScenes() != null && !mergeVO.getScenes().isEmpty()) {
                 // 从scenes中提取文本作为segments
                 for (var scene : mergeVO.getScenes()) {
-                    if (scene.getText() != null) {
+                    // 从background中获取pptRemark作为文本
+                    if (scene.getBackground() != null && scene.getBackground().getPptRemark() != null) {
                         Map<String, Object> segmentMap = new HashMap<>();
-                        segmentMap.put("text", scene.getText());
-                        if (scene.getBackgroundUrl() != null) {
-                            segmentMap.put("media_url", scene.getBackgroundUrl());
+                        segmentMap.put("text", scene.getBackground().getPptRemark());
+                        // 从background中获取src作为media_url
+                        if (scene.getBackground().getSrc() != null) {
+                            segmentMap.put("media_url", scene.getBackground().getSrc());
                         }
                         segments.add(segmentMap);
                     }

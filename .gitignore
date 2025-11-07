@@ -52,5 +52,23 @@ nbdist/
 rebel.xml
 
 application-my.yaml
+application-local.yaml
+application-dev.yaml
 
 /yudao-ui-app/unpackage/
+
+######################################################################
+# Test Files (Temporary)
+
+# 3D API测试相关临时文件
+Test*.java
+Test*.class
+test_*.py
+debug_*.py
+parse_*.py
+*_debug.txt
+segments*.json
+3d*.json
+test_output/
+update_xingyun3d_config.sql
+TEST_E2E_README.md

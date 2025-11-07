@@ -80,6 +80,12 @@
             <version>2.0.27</version>
         </dependency>
 
+        <!-- Fastjson2 用于魔珐星云3D API签名计算 -->
+        <dependency>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2</artifactId>
+            <version>2.0.43</version>
+        </dependency>
 
         <!-- DB 相关 -->
         <dependency>

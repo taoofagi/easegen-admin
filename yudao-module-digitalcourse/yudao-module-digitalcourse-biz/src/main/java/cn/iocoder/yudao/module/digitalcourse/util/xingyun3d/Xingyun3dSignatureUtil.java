@@ -18,6 +18,27 @@ import java.util.TreeMap;
 public class Xingyun3dSignatureUtil {
 
     /**
+     * 手动将字符串中的非ASCII字符转义为Unicode序列
+     * 例如：将"中文"转换为unicode转义格式
+     */
+    private static String escapeNonAscii(String input) {
+        if (input == null) {
+            return null;
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < input.length(); i++) {
+            char c = input.charAt(i);
+            if (c > 127) {
+                // 非ASCII字符，转义为unicode格式（反斜杠u加四位十六进制）
+                sb.append(String.format("\\u%04x", (int) c));
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
      * 生成X-TOKEN签名
      *
      * @param apiPath  接口路径（不包含host，如：/user/v1/video_synthesis_task/create_render_task）
@@ -35,17 +56,18 @@ public class Xingyun3dSignatureUtil {
             // 2. 将请求method方法转为小写形式
             String lowerMethod = method != null ? method.toLowerCase() : "";
 
-            // 3. 将data转换为json的字符串形式（排序，无空格）
+            // 3. 将data转换为json的字符串形式（深度排序所有key，无空格）
+            // 使用MapSortField递归排序所有Map的key（包括嵌套Map）
             String sortJsonStr = "";
             if (data != null) {
-                if (data instanceof Map) {
-                    // Map类型，转换为排序后的JSON
-                    TreeMap<String, Object> sortedMap = new TreeMap<>((Map<String, Object>) data);
-                    sortJsonStr = JSON.toJSONString(sortedMap).replace(" ", "");
-                } else {
-                    // 其他类型，转换为JSON
-                    sortJsonStr = JSON.toJSONString(data).replace(" ", "");
-                }
+                // 先使用fastjson2序列化（排序key）
+                String jsonStr = JSON.toJSONString(data,
+                    com.alibaba.fastjson2.JSONWriter.Feature.MapSortField
+                ).replace(" ", "");
+
+                // 然后手动转义所有非ASCII字符为Unicode序列
+                // 这样确保与Python的json.dumps(data, sort_keys=True, ensure_ascii=True)完全一致
+                sortJsonStr = escapeNonAscii(jsonStr);
             }
 
             // 4. 按照如下顺序连接字符串：lower_api_path + lower_method + sort_json_str + secret + timestamp
@@ -54,8 +76,8 @@ public class Xingyun3dSignatureUtil {
             // 5. 将sign以utf8编码，计算md5得到X-TOKEN
             String token = DigestUtil.md5Hex(signStr);
 
-            log.debug("Xingyun3d签名计算 - apiPath: {}, method: {}, data: {}, signStr: {}, token: {}", 
-                    apiPath, method, sortJsonStr, signStr, token);
+            log.debug("魔珐星云签名生成: apiPath={}, method={}, timestamp={}, token={}",
+                apiPath, method, timestamp, token);
 
             return token;
         } catch (Exception e) {

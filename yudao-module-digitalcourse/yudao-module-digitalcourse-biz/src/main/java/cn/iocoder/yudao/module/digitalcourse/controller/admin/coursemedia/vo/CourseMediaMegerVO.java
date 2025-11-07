@@ -59,6 +59,7 @@ public class CourseMediaMegerVO {
 
     // ========== 3D数字人相关字段 ==========
     @Schema(description = "平台类型：1-2D（easegen），2-3D（魔珐星云）", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+    @com.fasterxml.jackson.annotation.JsonProperty("platformType")
     private Integer platformType;
 
     @Schema(description = "数字人形象名称（3D使用）", requiredMode = Schema.RequiredMode.NOT_REQUIRED)

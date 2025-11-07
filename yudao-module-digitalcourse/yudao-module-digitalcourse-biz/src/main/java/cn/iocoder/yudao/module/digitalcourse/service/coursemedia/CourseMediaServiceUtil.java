@@ -217,7 +217,12 @@ public class CourseMediaServiceUtil {
     @Async
     public void queryRemoteMegerResult() {
         try {
-            List<CourseMediaDO> courseMediaDOS = courseMediaMapper.selectList(new QueryWrapperX<CourseMediaDO>().lambda().eq(CourseMediaDO::getStatus, 1));
+            // 只查询2D任务（platformType=1），3D任务由query3DTaskStatus()单独处理
+            List<CourseMediaDO> courseMediaDOS = courseMediaMapper.selectList(
+                new QueryWrapperX<CourseMediaDO>().lambda()
+                    .eq(CourseMediaDO::getStatus, 1)
+                    .eq(CourseMediaDO::getPlatformType, 1)
+            );
 
             // 检查 courseMediaDOS 是否为空
             if (courseMediaDOS == null || courseMediaDOS.isEmpty()) {

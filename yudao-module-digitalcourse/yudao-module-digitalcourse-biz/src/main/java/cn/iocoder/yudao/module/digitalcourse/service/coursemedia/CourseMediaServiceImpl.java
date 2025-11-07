@@ -103,6 +103,8 @@ public class CourseMediaServiceImpl implements CourseMediaService {
     @Override
     public CommonResult megerMedia(CourseMediaMegerVO updateReqVO) {
         Long id = updateReqVO.getId();
+        log.info("[DEBUG] 收到视频合成请求，课程ID: {}, 请求中的platformType: {}", id, updateReqVO.getPlatformType());
+
         CourseMediaDO courseMediaDO = courseMediaMapper.selectOne(new QueryWrapperX<CourseMediaDO>().lambda().eq(CourseMediaDO::getCourseId,id).in(CourseMediaDO::getStatus,0,1));
         if (courseMediaDO == null){
             courseMediaDO = new CourseMediaDO();
@@ -111,35 +113,43 @@ public class CourseMediaServiceImpl implements CourseMediaService {
             courseMediaDO.setMediaType(1);
             courseMediaDO.setName(updateReqVO.getName());
             courseMediaDO.setCourseName(updateReqVO.getName());
-            
+
             // 设置平台类型（默认2D）
             Integer platformType = updateReqVO.getPlatformType();
+            log.info("[DEBUG] 从请求VO获取的platformType: {}", platformType);
             if (platformType == null) {
                 platformType = 1; // 默认2D
+                log.info("[DEBUG] platformType为null，使用默认值: 1");
             }
             courseMediaDO.setPlatformType(platformType);
-            
+            log.info("[DEBUG] 设置到courseMediaDO的platformType: {}", courseMediaDO.getPlatformType());
+
             // 设置3D相关字段（如果使用3D）
             if (platformType == 2) {
+                log.info("[DEBUG] platformType=2，设置3D相关字段");
                 courseMediaDO.setLookName(updateReqVO.getLookName());
                 courseMediaDO.setTtsVcnName(updateReqVO.getTtsVcnName());
                 courseMediaDO.setStudioName(updateReqVO.getStudioName());
                 courseMediaDO.setSubTitle(updateReqVO.getSubTitle() != null ? updateReqVO.getSubTitle() : "on");
                 courseMediaDO.setIfAigcMark(updateReqVO.getIfAigcMark() != null ? updateReqVO.getIfAigcMark() : 1);
             }
-            
+
             //将updateReqVO 转换为json字符串
             courseMediaDO.setReqJson(JSON.toJSONString(updateReqVO));
+            log.info("[DEBUG] 准备插入数据库，courseMediaDO.platformType: {}", courseMediaDO.getPlatformType());
             courseMediaMapper.insert(courseMediaDO);
+            log.info("[DEBUG] 插入数据库完成，courseMediaId: {}, 重新查询platformType: {}", courseMediaDO.getId(), courseMediaDO.getPlatformType());
         }else{
             return CommonResult.error(BAD_REQUEST.getCode(),"已存在合成中视频，不允许重复合成");
         }
         updateReqVO.setCourseMediaId(courseMediaDO.getId());
-        
+
         // 根据平台类型选择对应的Provider
         Integer platformType = courseMediaDO.getPlatformType() != null ? courseMediaDO.getPlatformType() : 1;
+        log.info("[DEBUG] 准备选择Provider，使用的platformType: {}", platformType);
         cn.iocoder.yudao.module.digitalcourse.service.coursemedia.provider.VideoSynthesisProvider provider = getProvider(platformType);
-        
+        log.info("[DEBUG] 选择的Provider类型: {}", provider.getClass().getSimpleName());
+
         // 调用对应的Provider创建任务
         try {
             provider.createSynthesisTask(courseMediaDO, updateReqVO);
@@ -170,14 +180,50 @@ public class CourseMediaServiceImpl implements CourseMediaService {
         if (3!=courseMediaDO.getStatus()){
             return CommonResult.error(BAD_REQUEST.getCode(),"只有失败状态视频允许重新合成视频");
         }
-        //异步调用数字人视频渲染接口，开始合并
-        Boolean success = courseMediaServiceUtil.reMegerMedia(courseMediaDO);
-        if(success) {
-            return CommonResult.success(true);
-        } else {
-            return CommonResult.error(BAD_REQUEST.getCode(),"视频重新合成失败");
-        }
 
+        // 根据平台类型选择不同的重新合成逻辑
+        Integer platformType = courseMediaDO.getPlatformType() != null ? courseMediaDO.getPlatformType() : 1;
+
+        if (platformType == 1) {
+            // 2D：使用原有的重新合成逻辑
+            Boolean success = courseMediaServiceUtil.reMegerMedia(courseMediaDO);
+            if(success) {
+                return CommonResult.success(true);
+            } else {
+                return CommonResult.error(BAD_REQUEST.getCode(),"视频重新合成失败");
+            }
+        } else {
+            // 3D：使用Provider重新创建任务
+            try {
+                // 重置状态为初始状态
+                courseMediaDO.setStatus(0);
+                courseMediaDO.setErrorReason(null);
+                courseMediaDO.setPlatformTaskId(null);
+                courseMediaDO.setSynthStatus(null);
+                courseMediaMapper.updateById(courseMediaDO);
+
+                // 从reqJson恢复请求参数
+                CourseMediaMegerVO mergeVO;
+                if (StringUtils.isNotBlank(courseMediaDO.getReqJson())) {
+                    mergeVO = JSON.parseObject(
+                        courseMediaDO.getReqJson(),
+                        CourseMediaMegerVO.class
+                    );
+                } else {
+                    // 如果没有reqJson，使用当前传入的updateReqVO
+                    mergeVO = updateReqVO;
+                }
+
+                // 获取Provider并重新创建任务
+                cn.iocoder.yudao.module.digitalcourse.service.coursemedia.provider.VideoSynthesisProvider provider = getProvider(platformType);
+                provider.createSynthesisTask(courseMediaDO, mergeVO);
+
+                return CommonResult.success(true);
+            } catch (Exception e) {
+                log.error("3D视频重新合成失败，courseMediaId: {}", courseMediaDO.getId(), e);
+                return CommonResult.error(BAD_REQUEST.getCode(), "视频重新合成失败: " + e.getMessage());
+            }
+        }
     }
 
 
