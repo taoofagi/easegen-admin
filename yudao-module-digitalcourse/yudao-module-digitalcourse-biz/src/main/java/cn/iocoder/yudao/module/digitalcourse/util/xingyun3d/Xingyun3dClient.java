@@ -232,6 +232,8 @@ public class Xingyun3dClient {
             Map<String, String> headers = buildHeaders(apiPath, method, requestData);
 
             // 3. 发送请求
+            log.info("[3D API请求] 调用魔珐星云创建渲染任务, 请求数据: {}", JSON.toJSONString(requestData));
+
             int maxRetries = getRetryTimes();
             int retryCount = 0;
             while (retryCount < maxRetries) {
@@ -243,7 +245,7 @@ public class Xingyun3dClient {
                             .execute();
 
                     String body = response.body();
-                    log.info("创建渲染任务响应: {}", body);
+                    log.info("[3D API响应] 创建渲染任务响应: {}", body);
 
                     if (response.getStatus() != 200) {
                         retryCount++;

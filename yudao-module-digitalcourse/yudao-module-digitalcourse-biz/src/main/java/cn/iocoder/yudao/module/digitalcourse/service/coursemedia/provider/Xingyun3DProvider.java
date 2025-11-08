@@ -90,51 +90,113 @@ public class Xingyun3DProvider implements VideoSynthesisProvider {
     private List<Map<String, Object>> buildSegments(CourseMediaMegerVO mergeVO) {
         List<Map<String, Object>> segments = new ArrayList<>();
 
-            // 从reqJson中解析segments（如果存在）
-            if (StrUtil.isNotBlank(mergeVO.getReqJson())) {
-                try {
-                    com.alibaba.fastjson2.JSONObject reqJson = JSON.parseObject(mergeVO.getReqJson());
-                    JSONArray segmentsArray = reqJson.getJSONArray("segments");
-                    if (segmentsArray != null && !segmentsArray.isEmpty()) {
-                        for (int i = 0; i < segmentsArray.size(); i++) {
-                            com.alibaba.fastjson2.JSONObject segment = segmentsArray.getJSONObject(i);
-                            Map<String, Object> segmentMap = new HashMap<>();
-                            segmentMap.put("text", segment.getString("text"));
-                            if (segment.containsKey("media_url")) {
-                                segmentMap.put("media_url", segment.getString("media_url"));
-                            }
-                            segments.add(segmentMap);
-                        }
-                    }
-                } catch (Exception e) {
-                    log.warn("解析reqJson中的segments失败，将使用默认方式", e);
-                }
-            }
-            
-            // 如果还是没有segments，尝试从scenes中构建（如果存在）
-            if (segments.isEmpty() && mergeVO.getScenes() != null && !mergeVO.getScenes().isEmpty()) {
-                // 从scenes中提取文本作为segments
-                for (var scene : mergeVO.getScenes()) {
-                    // 从background中获取pptRemark作为文本
-                    if (scene.getBackground() != null && scene.getBackground().getPptRemark() != null) {
+        log.info("[buildSegments] 开始构建segments，reqJson存在: {}, scenes存在: {}",
+                StrUtil.isNotBlank(mergeVO.getReqJson()),
+                mergeVO.getScenes() != null && !mergeVO.getScenes().isEmpty());
+
+        // 从reqJson中解析segments（如果存在）
+        if (StrUtil.isNotBlank(mergeVO.getReqJson())) {
+            try {
+                com.alibaba.fastjson2.JSONObject reqJson = JSON.parseObject(mergeVO.getReqJson());
+                JSONArray segmentsArray = reqJson.getJSONArray("segments");
+                if (segmentsArray != null && !segmentsArray.isEmpty()) {
+                    log.info("[buildSegments] 从reqJson解析到{}个segment", segmentsArray.size());
+                    for (int i = 0; i < segmentsArray.size(); i++) {
+                        com.alibaba.fastjson2.JSONObject segment = segmentsArray.getJSONObject(i);
                         Map<String, Object> segmentMap = new HashMap<>();
-                        segmentMap.put("text", scene.getBackground().getPptRemark());
-                        // 从background中获取src作为media_url
-                        if (scene.getBackground().getSrc() != null) {
-                            segmentMap.put("media_url", scene.getBackground().getSrc());
+                        segmentMap.put("text", segment.getString("text"));
+                        String mediaUrl = segment.getString("media_url");
+
+                        log.info("[buildSegments] segment[{}]: text={}, media_url={}",
+                                i, segment.getString("text"), mediaUrl);
+
+                        // 如果reqJson中的media_url为空，尝试从scenes/components中补充
+                        if (StrUtil.isBlank(mediaUrl) && mergeVO.getScenes() != null && i < mergeVO.getScenes().size()) {
+                            var scene = mergeVO.getScenes().get(i);
+                            log.info("[buildSegments] segment[{}]的media_url为空，尝试从scene[{}]的components中提取", i, i);
+
+                            // 优先从components中查找画中画(category=1)
+                            if (scene.getComponents() != null && !scene.getComponents().isEmpty()) {
+                                log.info("[buildSegments] scene[{}]有{}个components", i, scene.getComponents().size());
+                                for (var component : scene.getComponents()) {
+                                    log.info("[buildSegments] component: category={}, src={}",
+                                            component.getCategory(), component.getSrc());
+                                    if (component.getCategory() != null && component.getCategory() == 1) {
+                                        mediaUrl = component.getSrc();
+                                        log.info("[buildSegments] 找到画中画! segment[{}]使用components中的URL: {}", i, mediaUrl);
+                                        break;
+                                    }
+                                }
+                            } else {
+                                log.info("[buildSegments] scene[{}]没有components", i);
+                            }
+
+                            // 如果还是没有找到，使用background的src
+                            if (StrUtil.isBlank(mediaUrl) && scene.getBackground() != null && scene.getBackground().getSrc() != null) {
+                                mediaUrl = scene.getBackground().getSrc();
+                                log.info("[buildSegments] segment[{}]使用background的URL: {}", i, mediaUrl);
+                            }
+                        }
+
+                        if (StrUtil.isNotBlank(mediaUrl)) {
+                            segmentMap.put("media_url", mediaUrl);
                         }
                         segments.add(segmentMap);
                     }
                 }
+            } catch (Exception e) {
+                log.error("[buildSegments] 解析reqJson中的segments失败", e);
             }
+        }
+
+        // 如果还是没有segments，尝试从scenes中构建（如果存在）
+        if (segments.isEmpty() && mergeVO.getScenes() != null && !mergeVO.getScenes().isEmpty()) {
+            log.info("[buildSegments] reqJson没有segments，从{}个scenes中构建", mergeVO.getScenes().size());
+            // 从scenes中提取文本作为segments
+            for (var scene : mergeVO.getScenes()) {
+                // 从background中获取pptRemark作为文本
+                if (scene.getBackground() != null && scene.getBackground().getPptRemark() != null) {
+                    Map<String, Object> segmentMap = new HashMap<>();
+                    segmentMap.put("text", scene.getBackground().getPptRemark());
+
+                    // 优先从components中查找画中画(category=1)作为media_url
+                    String mediaUrl = null;
+                    if (scene.getComponents() != null && !scene.getComponents().isEmpty()) {
+                        for (var component : scene.getComponents()) {
+                            // category=1表示画中画(PPT)
+                            if (component.getCategory() != null && component.getCategory() == 1) {
+                                mediaUrl = component.getSrc();
+                                log.info("[buildSegments] 场景{}使用画中画URL: {}", scene.getOrderNo(), mediaUrl);
+                                break; // 找到第一个画中画即可
+                            }
+                        }
+                    }
+
+                    // 如果没有找到画中画，使用background的src作为fallback
+                    if (mediaUrl == null && scene.getBackground().getSrc() != null) {
+                        mediaUrl = scene.getBackground().getSrc();
+                        log.info("[buildSegments] 场景{}使用背景URL: {}", scene.getOrderNo(), mediaUrl);
+                    }
+
+                    // 设置media_url
+                    if (mediaUrl != null) {
+                        segmentMap.put("media_url", mediaUrl);
+                    }
+
+                    segments.add(segmentMap);
+                }
+            }
+        }
 
         // 如果segments为空，使用默认方式（从courseMedia中获取文本）
         if (segments.isEmpty() && StrUtil.isNotBlank(mergeVO.getText())) {
+            log.info("[buildSegments] 使用默认文本构建segment");
             Map<String, Object> segmentMap = new HashMap<>();
             segmentMap.put("text", mergeVO.getText());
             segments.add(segmentMap);
         }
 
+        log.info("[buildSegments] 最终构建了{}个segments", segments.size());
         return segments;
     }
 
