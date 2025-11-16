@@ -215,6 +215,18 @@ public class AppCoursesController {
     }
 
 
+    @GetMapping("/debug/checkCache")
+    @Operation(summary = "调试：检查课程Redis缓存内容")
+    @Parameter(name = "course_id", description = "课程编号", required = true, example = "887")
+    public CommonResult<String> checkCache(@RequestParam String course_id) {
+        String redisKey = "COURSE_SCENE_TEXT_KEY:" + course_id;
+        String cachedData = redisCache.opsForValue().get(redisKey);
+        if (cachedData == null) {
+            return success("缓存不存在，key: " + redisKey);
+        }
+        return success(cachedData);
+    }
+
     @GetMapping("/getCourseProgress")
     @Operation(summary = "获得上课进度")
     @Parameter(name = "course_id", description = "课程编号", required = true, example = "1024")

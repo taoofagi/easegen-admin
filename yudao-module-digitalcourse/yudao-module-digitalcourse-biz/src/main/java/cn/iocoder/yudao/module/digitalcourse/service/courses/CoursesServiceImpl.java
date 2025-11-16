@@ -105,6 +105,20 @@ public class CoursesServiceImpl implements CoursesService {
             Map<String, String> sceneData = new HashMap<>();
             sceneData.put("text", e.getTextDriver().getTextJson());
             sceneData.put("background", e.getBackground().getSrc());
+            // 从 components 中提取 category=1 的 PPT 图片
+            log.info("[updateCourses] 场景OrderNo={}, components数量={}", e.getOrderNo(),
+                e.getComponents() != null ? e.getComponents().size() : 0);
+            String pptImage = e.getComponents() != null ?
+                e.getComponents().stream()
+                    .filter(c -> {
+                        log.info("[updateCourses] Component: category={}, src={}", c.getCategory(), c.getSrc());
+                        return c.getCategory() != null && c.getCategory() == 1;
+                    })
+                    .findFirst()
+                    .map(c -> c.getSrc())
+                    .orElse("") : "";
+            log.info("[updateCourses] 场景OrderNo={}, 提取的pptImage={}", e.getOrderNo(), pptImage);
+            sceneData.put("pptImage", pptImage);
             scenesMap.put(String.valueOf(e.getOrderNo()), sceneData);
         });
         System.out.println(System.currentTimeMillis()+"-------  组装scenes数据结束");
@@ -287,7 +301,7 @@ public class CoursesServiceImpl implements CoursesService {
                 "",
                 requestedSegment.getText(),
                 System.currentTimeMillis(),
-                requestedSegment.getImageUrl(),
+                requestedSegment.getPptImage(),
                 requestedSegment.getNo(),
                 segments.size(),
                 (requestedSegment.getNo() +"/"+segments.size())
@@ -309,6 +323,14 @@ public class CoursesServiceImpl implements CoursesService {
             Map<String, String> sceneData = new HashMap<>();
             sceneData.put("text", scene.getTextDriver().getTextJson());
             sceneData.put("background", scene.getBackground().getSrc());
+            // 从 components 中提取 category=1 的 PPT 图片
+            String pptImage = scene.getComponents() != null ?
+                scene.getComponents().stream()
+                    .filter(c -> c.getCategory() != null && c.getCategory() == 1)
+                    .findFirst()
+                    .map(c -> c.getSrc())
+                    .orElse("") : "";
+            sceneData.put("pptImage", pptImage);
             scenesMap.put(String.valueOf(scene.getOrderNo()), sceneData);
         });
     
@@ -352,7 +374,7 @@ public class CoursesServiceImpl implements CoursesService {
                         .sorted((e1, e2) -> Integer.compare(Integer.parseInt(e1.getKey()), Integer.parseInt(e2.getKey())))
                         .forEachOrdered(entry -> {
                             Map<String, String> sceneData = entry.getValue();
-                            scenes.add(new Scene(sceneData.get("text"), sceneData.get("background")));
+                            scenes.add(new Scene(sceneData.get("text"), sceneData.get("background"), sceneData.get("pptImage")));
                         });
             } catch (JsonProcessingException e) {
                 log.error("反序列化场景数据时发生错误", e);
@@ -381,7 +403,7 @@ public class CoursesServiceImpl implements CoursesService {
             for (String splitText : splitTexts) {
                 if (!splitText.isEmpty()) {
                     // 步骤 4：拆分后，循环构建Segment对象，放到list中
-                    segments.add(new Segment(++totalNo, splitText, scene.getImageUrl(), 0));
+                    segments.add(new Segment(++totalNo, splitText, scene.getImageUrl(), scene.getPptImage(), 0));
                 }
             }
         }
@@ -436,10 +458,12 @@ public class CoursesServiceImpl implements CoursesService {
     class Scene {
         private String text;
         private String imageUrl;
+        private String pptImage;
 
-        public Scene(String text, String imageUrl) {
+        public Scene(String text, String imageUrl, String pptImage) {
             this.text = text;
             this.imageUrl = imageUrl;
+            this.pptImage = pptImage;
         }
 
         public String getText() {
@@ -449,18 +473,24 @@ public class CoursesServiceImpl implements CoursesService {
         public String getImageUrl() {
             return imageUrl;
         }
+
+        public String getPptImage() {
+            return pptImage;
+        }
     }
 
     class Segment {
         private int no;
         private String text;
         private String imageUrl;
+        private String pptImage;
         private int totalNo;
 
-        public Segment(int no, String text, String imageUrl, int totalNo) {
+        public Segment(int no, String text, String imageUrl, String pptImage, int totalNo) {
             this.no = no;
             this.text = text;
             this.imageUrl = imageUrl;
+            this.pptImage = pptImage;
             this.totalNo = totalNo;
         }
 
@@ -474,6 +504,10 @@ public class CoursesServiceImpl implements CoursesService {
 
         public String getImageUrl() {
             return imageUrl;
+        }
+
+        public String getPptImage() {
+            return pptImage;
         }
 
         public int getTotalNo() {
