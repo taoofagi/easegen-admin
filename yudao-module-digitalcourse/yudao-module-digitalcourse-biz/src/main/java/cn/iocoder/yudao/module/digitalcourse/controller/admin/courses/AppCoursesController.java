@@ -111,7 +111,7 @@ public class AppCoursesController {
     @Operation(summary = "获得存储课程的基本信息，包括课程名称、时长、状态等分页")
     public CommonResult<PageResult<AppCoursesRespVO>> getCoursesPage(@Valid AppCoursesPageReqVO pageReqVO) {
         PageResult<AppCoursesRespVO> pageResult = coursesService.getCoursesPage(pageReqVO);
-        return success(BeanUtils.toBean(pageResult, AppCoursesRespVO.class));
+        return success(pageResult);
     }
 
     @GetMapping("/export-excel")
@@ -248,7 +248,7 @@ public class AppCoursesController {
             return error(BAD_REQUEST.getCode(), "未找到用户信息，请确认apikey是否正确");
         }
         PageResult<AppCoursesRespVO> pageResult = coursesService.getCoursesPage(pageReqVO, userid);
-        return success(BeanUtils.toBean(pageResult, AppCoursesRespVO.class));
+        return success(pageResult);
     }
 
 
