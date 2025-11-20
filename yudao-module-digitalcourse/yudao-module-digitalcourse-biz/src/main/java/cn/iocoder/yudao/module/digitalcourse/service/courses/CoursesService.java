@@ -56,4 +56,11 @@ public interface CoursesService {
 
     String getCourseProgress(String courseId);
 
+    /**
+     * 刷新课程缓存（清除并重建）
+     *
+     * @param courseId 课程ID
+     */
+    void refreshCourseCache(String courseId);
+
 }

@@ -21,10 +21,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.courses.CoursesDO;
+import cn.iocoder.yudao.module.digitalcourse.dal.dataobject.coursescenes.CourseScenesDO;
 import cn.iocoder.yudao.framework.common.pojo.PageResult;
 import cn.iocoder.yudao.framework.common.util.object.BeanUtils;
 
 import cn.iocoder.yudao.module.digitalcourse.dal.mysql.courses.CoursesMapper;
+import cn.iocoder.yudao.module.digitalcourse.dal.mysql.coursescenes.CourseScenesMapper;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -51,6 +53,8 @@ public class CoursesServiceImpl implements CoursesService {
 
     @Resource
     private CoursesMapper coursesMapper;
+    @Resource
+    private CourseScenesMapper courseScenesMapper;
     @Resource
     private CourseScenesService courseScenesService;
     @Resource
@@ -139,6 +143,43 @@ public class CoursesServiceImpl implements CoursesService {
 
 
         courseScenesService.batchCreateCourseScenes(scenes);
+
+        // 🆕 计算课程总时长（所有场景时长之和）
+        if (scenes != null && !scenes.isEmpty()) {
+            int totalDuration = scenes.stream()
+                    .mapToInt(scene -> scene.getDuration() != null ? scene.getDuration().intValue() : 0)
+                    .sum();
+            updateObj.setDuration(totalDuration);
+            log.info("[updateCourses] 计算课程总时长: courseId={}, totalDuration={}秒", updateObj.getId(), totalDuration);
+        }
+
+        // 🆕 自动设置缩略图（只在缩略图为空时设置，避免覆盖用户手动上传的图片）
+        // 从第一个场景的 components 中提取 category=1 的画中画作为缩略图
+        if (updateObj.getThumbnail() == null || updateObj.getThumbnail().isEmpty()) {
+            String thumbnailUrl = null;
+
+            // 从第一个场景的 components 中查找 category=1 的画中画
+            if (scenes != null && !scenes.isEmpty() && scenes.get(0).getComponents() != null) {
+                thumbnailUrl = scenes.get(0).getComponents().stream()
+                        .filter(c -> c.getCategory() != null && c.getCategory() == 1)
+                        .findFirst()
+                        .map(c -> c.getSrc())
+                        .orElse(null);
+
+                if (thumbnailUrl != null && !thumbnailUrl.isEmpty()) {
+                    log.info("[updateCourses] 使用第一个场景的画中画作为缩略图: courseId={}, thumbnail={}",
+                            updateObj.getId(), thumbnailUrl);
+                }
+            }
+
+            // 设置缩略图（如果没有找到则留空）
+            if (thumbnailUrl != null && !thumbnailUrl.isEmpty()) {
+                updateObj.setThumbnail(thumbnailUrl);
+            } else {
+                log.info("[updateCourses] 未找到画中画，缩略图留空: courseId={}", updateObj.getId());
+            }
+        }
+
         coursesMapper.updateById(updateObj);
     }
 
@@ -195,11 +236,11 @@ public class CoursesServiceImpl implements CoursesService {
         // 根据传入的userid创建查询条件
         LambdaQueryWrapper<CoursesDO> queryWrapper = new LambdaQueryWrapper<CoursesDO>()
                 .eq(CoursesDO::getCreator, Long.valueOf(userid));
-        
+
         // 使用带有查询条件的分页查询
         PageResult<CoursesDO> pageResult = coursesMapper.selectPage(pageReqVO, queryWrapper);
 
-        // 将 CoursesDO 转换为 AppCoursesRespVO，并设置进度信息
+        // 将 CoursesDO 转换为 AppCoursesRespVO，并设置进度信息和段落总数
         List<AppCoursesRespVO> respVOList = pageResult.getList().stream().map(course -> {
             AppCoursesRespVO respVO = new AppCoursesRespVO();
             // 复制课程的基本信息
@@ -207,6 +248,9 @@ public class CoursesServiceImpl implements CoursesService {
             // 获取并设置课程进度
             String progress = getCourseProgress(String.valueOf(course.getId()));
             respVO.setProgress(progress);
+            // 计算课程段落总数（使用与getCourseText相同的逻辑）
+            int segmentCount = calculateSegmentCount(String.valueOf(course.getId()));
+            respVO.setTotalNum(segmentCount);
             return respVO;
         }).collect(Collectors.toList());
 
@@ -308,7 +352,8 @@ public class CoursesServiceImpl implements CoursesService {
         );
     }
 
-    private void refreshCourseCache(String courseId) {
+    @Override
+    public void refreshCourseCache(String courseId) {
         // 获取课程完整信息
         AppCoursesUpdateReqVO courseInfo = getCourses(Long.parseLong(courseId));
         
@@ -354,6 +399,38 @@ public class CoursesServiceImpl implements CoursesService {
             return "";
         }
         return redisCache.opsForValue().get(COURSE_PROGRESS_KEY + courseId);
+    }
+
+    /**
+     * 计算课程的段落总数
+     * 使用与getCourseText相同的逻辑：获取场景并按标点符号拆分
+     *
+     * @param courseId 课程ID
+     * @return 段落总数
+     */
+    private int calculateSegmentCount(String courseId) {
+        try {
+            // 获取课程的所有场景
+            List<Scene> scenes = fetchScenesByCourseId(courseId);
+
+            // 如果缓存中没有数据，尝试刷新缓存
+            if (CollectionUtil.isEmpty(scenes)) {
+                refreshCourseCache(courseId);
+                scenes = fetchScenesByCourseId(courseId);
+            }
+
+            // 如果仍然没有场景，返回0
+            if (CollectionUtil.isEmpty(scenes)) {
+                return 0;
+            }
+
+            // 使用与getCourseText相同的拆分逻辑计算段落数
+            List<Segment> segments = splitScenesIntoSegments(scenes);
+            return segments.size();
+        } catch (Exception e) {
+            log.error("[calculateSegmentCount] 计算课程段落数失败: courseId={}", courseId, e);
+            return 0;
+        }
     }
 
     /**

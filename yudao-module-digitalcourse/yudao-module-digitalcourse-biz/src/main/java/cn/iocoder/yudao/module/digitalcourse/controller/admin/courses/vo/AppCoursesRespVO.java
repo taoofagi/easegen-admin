@@ -79,4 +79,7 @@ public class AppCoursesRespVO {
     @Schema(description = "课程进度")
     private String progress;
 
+    @Schema(description = "课程段落总数", example = "10")
+    private Integer totalNum;
+
 }

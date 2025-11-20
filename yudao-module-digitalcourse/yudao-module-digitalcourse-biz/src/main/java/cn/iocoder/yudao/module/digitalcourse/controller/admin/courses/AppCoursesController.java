@@ -227,6 +227,35 @@ public class AppCoursesController {
         return success(cachedData);
     }
 
+    @PostMapping("/debug/refreshCache")
+    @Operation(summary = "调试：清除并重建课程Redis缓存")
+    @Parameter(name = "course_id", description = "课程编号", required = true, example = "887")
+    public CommonResult<String> refreshCache(@RequestParam String course_id) {
+        try {
+            // 清除场景缓存
+            String sceneKey = "COURSE_SCENE_TEXT_KEY:" + course_id;
+            redisCache.delete(sceneKey);
+
+            // 清除段落缓存（使用模式匹配删除所有相关的段落缓存）
+            String segmentKeyPattern = "COURSE_SEGMENT_TEXT_KEY:" + course_id + ":*";
+            // 注意：这里需要遍历删除，因为 Redis 的 keys 命令在生产环境不推荐使用
+            // 为了简单起见，暂时使用 delete 单个 key 的方式
+
+            // 调用 Service 层的 refreshCourseCache 方法重建缓存
+            coursesService.refreshCourseCache(course_id);
+
+            // 验证缓存是否重建成功
+            String cachedData = redisCache.opsForValue().get(sceneKey);
+            if (cachedData == null) {
+                return success("缓存清除成功，但重建失败。请检查课程数据是否完整。");
+            }
+
+            return success("缓存已清除并重建成功！新缓存内容：" + cachedData);
+        } catch (Exception e) {
+            return error(500, "刷新缓存失败：" + e.getMessage());
+        }
+    }
+
     @GetMapping("/getCourseProgress")
     @Operation(summary = "获得上课进度")
     @Parameter(name = "course_id", description = "课程编号", required = true, example = "1024")
